@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="/libs/jquery-easyui/themes/icon.css">
+    <link rel="stylesheet" type="text/css" href="/libs/jquery-easyui/themes/gray/easyui.css">
+    <link rel="stylesheet" type="text/css" href="/build/css/admin.css">
+
+    <script type="text/javascript" src="/build/js/global.js"></script>
+    <script type="text/javascript" src="/libs/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="/libs/jquery-easyui/jquery.easyui.min.js"></script>
+</head>
+
+<body class="easyui-layout">
+    <!-- 头部 -->
+    <div data-options="region:'north',split:true" style="height:100px;"></div>
+
+    <!-- 菜单区 -->
+    <div data-options="region:'west',split:true" style="width:200px;">
+        <div id="accordion-nav" class="easyui-accordion" data-options="fit:true,border:true">
+            <div title="内容管理" data-options="selected:true">
+                <ul>
+                    <li>
+                        <a href="javascript:;" onclick="addTab(this,'article/index')">
+                            <img src="/images/icon/abiword_48.png" />
+                            <span>文章管理</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="javascript:;" onclick="addTab(this,'user/index')">
+                            <img src="/images/icon/access.png" />
+                            <span>用户</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="javascript:;" onclick="addTab(this,'comment/index')">
+                            <img src="/images/icon/zeitgeist.png" />
+                            <span>评论</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div title="其它内容">
+                content3
+            </div>
+        </div>
+    </div>
+
+    <!-- 内容区 -->
+    <div data-options="region:'center'">
+        <div id="ttHome" class="easyui-tabs" data-options="fit:true,border:false">
+        </div>
+    </div>
+</body>
+
+
+<script type="text/javascript">
+    function addTab(obj, href) {
+        var title = $(obj).find("span").text();
+        if ($('#ttHome').tabs('exists', title)) {
+            $('#ttHome').tabs('select', title);
+        } else {
+            $('#ttHome').tabs('add', {
+                title: title,
+                href: href,
+                cache:false,
+                closable: true,
+                selected:true,
+                iconCls: 'icon-man'
+            });
+        }
+    }
+
+
+    function OpenMessageAlert(msg, method) {
+        $.messager.alert('提示', msg, function (r) {
+            if (r) {
+                if (method != null && method != undefined) {
+                    eval(method);
+                }
+            }
+        });
+    }
+
+
+    function OpenConfirmAlert(msg, method) {
+        $.messager.confirm('提示', msg, function (r) {
+            if (r) {
+                if (method != null && method != undefined) {
+                    eval(method);
+                }
+            }
+        });
+    }
+</script>
+
+
+
+</html>

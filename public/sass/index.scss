@@ -1,0 +1,143 @@
+@charset "utf-8";
+@import "base";
+
+/* 文章详情页 */
+.article {
+  .article-title {
+    margin: 0 0 10px 0;
+    font-size: 30px;
+    text-indent: initial;
+    text-decoration: none;
+    color: #000;
+    overflow: hidden;
+    display:block;
+  }
+  .article-info {
+    span {
+      font-size:12px;
+    }
+    .article-create-date {
+      padding-right:12px;
+    }
+  }
+  .article-tags {
+    padding-top:20px;
+    i {
+      margin: 0 10px 0 0;
+      span,a {
+        padding-left: 5px;
+      }
+    }
+  }
+}
+
+
+
+/*文章显示*/
+.article-list-box {
+  .panel-body {
+    a {
+      h3 {
+        margin:8px 0 15px 0;
+      }
+    }
+    .article-info {
+      overflow: hidden;
+      margin:8px 0 0 0;
+      i {
+        margin: 0 10px 0 0;
+        span,a {
+          padding-left: 5px;
+        }
+      }
+
+    }
+  }
+}
+
+/* 评论 */
+.media-body {
+  .comment-reply-box {
+    display:none;
+    margin-top:15px;
+  }
+
+  .comment-operate {
+    i {
+      :hover {
+        cursor:pointer;
+      }
+      span {
+        font-size:13px;
+        padding-left:2px;
+        margin-right:10px;
+      }
+    }
+  }
+
+}
+
+
+
+/* scroll fixes */
+.modal-open {
+  .modal {
+    padding-left: 0px !important;
+    padding-right: 0px !important;
+    overflow-y: scroll;
+  }
+}
+
+
+/* 首页　列表　右侧css */
+.blog-info-content{
+  margin-top:15px;
+  li {
+    width:100%;
+    overflow: hidden;
+    float:left;
+    margin:5px 0;
+    > div {
+      text-indent: 15px;
+      width:50%;
+    }
+  }
+
+}
+
+.right-article-box li {
+  margin:8px 0;
+  width: 100%;
+  a {
+    color:#333;
+    font-size:13px;
+  }
+  i {
+    padding:0 7px 0 0;
+  }
+}
+
+.right-tags-box li {
+  display:inline-block;
+  padding:2px 12px;
+  background:#fff;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  border-radius: 6px;
+  margin:5px;
+  border:1px solid #ddd;
+  -webkit-box-shadow:0 0 3px 2px #eee;
+  -moz-box-shadow:0 0 3px 2px #eee;
+  box-shadow:0 0 3px 2px #eee;
+}
+
+
+/* 首页 列表 */
+.article-content-box {
+  color:#666;
+}
+
+
+
+
+

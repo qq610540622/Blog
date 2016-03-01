@@ -1,0 +1,61 @@
+
+<div class="win-box forum-operate">
+    <div class="hidden" id="operate"></div>
+    <form id="user-operate-form">
+        <input type="hidden" name="_id" value="<%= model._id %>"/>
+        <ul>
+            <li>
+                <div class="label">用户名：</div>
+                <div class="ipt">
+                    <input type="text" name="username" disabled value="<%= model.username %>"/>
+                </div>
+            </li>
+            <li>
+                <div class="label">密码</div>
+                <div class="ipt">
+                    <input type="password" name="password" disabled value="<%= model.password %>"/>
+                </div>
+            </li>
+            <li>
+                <div class="label">状态</div>
+                <div class="ipt">
+                    <input type="radio" name="status" value="0" <%= model.status == 0 ? "checked":"" %>/><span>正常</span>
+                    <input type="radio" name="status" value="1" <%= model.status == 1 ?"checked":"" %>/><span>禁用</span>
+                </div>
+            </li>
+            <li class="btn-box">
+                <a id="btn-user-confirm" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-ok',plain:false">确定</a>
+                <a id="btn-user-cancel" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-cancel',plain:false">取消</a>
+            </li>
+        </ul>
+    </form>
+</div>
+
+
+<script type="text/javascript">
+    $(function() {
+        $("#btn-user-confirm").click(function() {
+            var form = $("#user-operate-form").serialize();
+
+            $.ajax({
+                type:"post",
+                dataType:"text",
+                data:$("#user-operate-form").serialize(),
+                async:false,
+                url:"/user/update",
+                success:function(data) {
+                    if(data && data == "success") {
+                        window.parent.closeWindowAndReload();
+                    }
+                }
+            });
+
+        });
+        $("#btn-user-cancel").click(function() {
+            window.parent.closeWindow();
+        });
+    })
+</script>
+
+
+

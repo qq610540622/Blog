@@ -1,0 +1,132 @@
+
+<style type="text/css">
+    .user-wrap {
+        margin:20px;
+    }
+</style>
+
+
+<div class="user-wrap">
+    <table id="user"></table>
+    <div id="user-toolbar">
+        <!--<a id="btnUserCreate" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true">添加</a>-->
+        <a id="btn-user-edit" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-edit',plain:true">修改</a>
+        <a id="btn-user-remove" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:true">删除</a>
+        <div id="search-box">
+            <input type="text" id="username-search-keywords"/>
+            <a id="btn-user-search" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search',plain:true">搜索</a>
+        </div>
+    </div>
+</div>
+
+<div id="win-user-operate"></div>
+
+<script type="text/javascript">
+    $(function() {
+        //加载DataGrid
+        loadDataGrid();
+
+        //加载对话框
+        loadDialog();
+
+        //事件监听
+        listenerEvent();
+
+    })
+
+
+    /**
+     * 事件监听
+     */
+    function listenerEvent() {
+
+        /*编辑事件*/
+        $("#btn-user-edit").click(function() {
+            var selectedItem = $('#user').datagrid("getSelected");
+            if(selectedItem && selectedItem._id) {
+                var url = "/user/userOperate?_id="+selectedItem._id;
+                $('#win-user-operate').dialog({href:url,closed:false});
+            }
+        });
+
+        /* 删除 */
+        $("#btn-user-remove").click(function() {
+            var selectedItem = $('#user').datagrid("getSelected");
+            if(selectedItem && selectedItem._id) {
+                $.messager.confirm('删除','确定要删除?',function(r){
+                    if (r){
+                        $.post("/user/remove",{_id:selectedItem._id},function(data) {
+                            if(data && data == "success") {
+                                $("#user").datagrid("reload");
+                            }
+                        })
+                    }
+                });
+            }
+        });
+
+        /*搜索*/
+        $("#btn-user-search").click(function() {
+            var keywords = $("#username-search-keywords").val();
+            console.log(keywords);
+            $("#user").datagrid("load",{keywords:keywords});
+        });
+    }
+
+    /**
+     * 关闭窗口
+     */
+    function closeWindow() {
+        $('#win-user-operate').dialog({closed:true});
+    }
+    /**
+     *  关闭窗口并重新加载
+     */
+    function closeWindowAndReload() {
+        $('#user').datagrid("reload");
+        $('#win-user-operate').dialog({closed:true});
+    }
+
+
+    /**
+     * 加载对话框
+     */
+    function loadDialog() {
+        $('#win-user-operate').dialog({
+            title: '用户操作',
+            width: 400,
+            height: 200,
+            closed: true,
+            cache: false,
+            modal: true
+        });
+    }
+
+
+    /**
+     * 加载DataGrid
+     */
+    function loadDataGrid() {
+        $('#user').datagrid({
+            width:500,
+            height:400,
+            url:'/user/getList?keywords=',
+            toolbar:"#user-toolbar",
+            pagination:true,
+            singleSelect:true,
+            pageSize:10,
+            pageList:[10,20,30,40,50],
+            columns:[[
+                {field:'_id',checkbox:true},
+                {field:'username',title:'标题',align:"center",width:150},
+                {field:'password',title:'内容',align:"center",width:220},
+                {field:'status',title:'状态',align:"center",width:70,formatter: function(value,row,index){
+                    return value == 0 ? "正常" : "禁用";
+                }}
+            ]]
+        });
+    }
+
+</script>
+
+

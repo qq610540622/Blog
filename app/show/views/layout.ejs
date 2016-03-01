@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- css样式 -->
+    <link rel="stylesheet" type="text/css" href="/build/css/index.css">
+    <link rel="stylesheet" type="text/css" href="/libs/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/bootstrap/dist/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/Font-Awesome-3.2.1/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/bootstrapvalidator/dist/css/bootstrapValidator.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/csshake/dist/csshake.min.css">
+
+    <!-- javascript脚本 -->
+    <script type="text/javascript" src="/libs/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="/libs/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/libs/bootstrapvalidator/dist/js/bootstrapValidator.min.js"></script>
+    <script type="text/javascript" src="/build/js/global.js"></script>
+    <%-stylesheets%>
+    <%-scripts%>
+</head>
+<body>
+<header>
+    <% include includes/header %>
+</header>
+
+
+<section>
+    <%-body %>
+</section>
+<footer>
+    <% include includes/footer %>
+</footer>
+</body>
+</html>
+
+
+<script type="text/javascript">
+    var formObj = $(".search-form")
+    formObj.find(".btn-search").click(function() {
+        var keywords = formObj.find(".search-keywords").val();
+        window.location.href = "/show/lists?keywords="+keywords;
+    });
+</script>

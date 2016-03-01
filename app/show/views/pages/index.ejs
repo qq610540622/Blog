@@ -1,0 +1,168 @@
+<% layout('./../layout') %>
+
+<div class="container">
+    <!-- 左侧内容 -->
+    <div class="col-md-9 article-list-box">
+         <%
+         if(pageData) {
+             pageData.indexArticles.forEach(function(item) {
+         %>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <a href="/show/detail?articleId=<%= item._id %>"><h3><%= item.title %></h3></a>
+                    <div  class="article-content-box" data-id="<%= item._id %>">
+                        <%- item.content%>
+                    </div>
+
+                    <div class="article-info">
+                        <i class="icon-time"><span><script>document.write(convertTime(<%= item.createDate %>))</script></span></i>
+                        <i class="icon-tags"><script>
+                                var tag = "<%= item.tag %>";
+                                if(tag) {
+                                    var tags = tag.split(',');
+                                    for(var index in tags) {
+                                        document.write("<a href='/lists/tag?keywords="+tags[index]+"'>"+tags[index]+"</a>");
+                                    }
+                                }
+                            </script></i>
+                    </div>
+                </div>
+            </div>
+         <%
+             });
+         }
+         %>
+    </div>
+
+    <!-- 右侧内容 -->
+    <div class="col-md-3">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <div class="panel-title">
+                    网站信息
+                </div>
+            </div>
+            <div class="panel-body">
+                <div class="blog-info-icon text-center">
+                    <img src="/images/info-02.jpg" width="40%" height="40%" alt="..." class="img-circle">
+                </div>
+                <ul class="blog-info-content">
+                    <li>
+                        <div class="pull-left">
+                            <span class="key">管理员：</span>
+                            <span>jack</span>
+                        </div>
+                        <div class="pull-right">
+                            <span class="key">访问量：</span>
+                            <span id="read-count">200</span>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="pull-left">
+                            <span class="key">文章数：</span>
+                            <span id="article-count">200</span>
+                        </div>
+                        <div class="pull-right">
+                            <span class="key">标签数：</span>
+                            <span id="tag-count">200</span>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="pull-left">
+                            <span class="key">用户数：</span>
+                            <span id="user-count">200</span>
+                        </div>
+                        <div class="pull-right">
+                            <span class="key">评论数：</span>
+                            <span id="comment-count">200</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    最近文章
+                </h3>
+            </div>
+            <div class="panel-body">
+                <ul class="hot-article-box right-article-box">
+                    <% if(pageData) {
+                        pageData.newArticles.forEach(function(item) {
+                    %>
+                        <li class="shake-rotate"><a href="/show/detail?articleId=<%= item._id %>"><i class="icon-chevron-right"></i><%= item.title %></a></li>
+                    <%
+                        })
+                    }
+                     %>
+                </ul>
+            </div>
+        </div>
+
+
+        <div class="panel panel-success">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    热评文章
+                </h3>
+            </div>
+            <div class="panel-body">
+                <ul class="hot-article-box right-article-box">
+                    <% if(pageData) {
+                            pageData.hotArticles.forEach(function(item) {
+                    %>
+                                <li class="shake-rotate"><a href="/show/detail?articleId=<%= item._id %>"><i class="icon-caret-right icon-large"></i><%= item.title %></a></li>
+                    <%
+                            })
+                        }
+                    %>
+                </ul>
+            </div>
+        </div>
+
+        <div class="panel panel-danger">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    分类
+                </h3>
+            </div>
+            <div class="panel-body">
+                <ul class="right-tags-box">
+                    <%
+                        if(pageData) {
+                            pageData.tags.forEach(function(item) {
+                    %>
+                                <li class="shake shake-slow"><a href="/lists/tag?keywords=<%= item %>"><%= item %></a></li>
+                    <%      })
+                        }
+                     %>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(function() {
+        $(".article-content-box").html($(".article-content-box").text().substr(0,120));
+
+        $.ajax({
+            type:"post",
+            dataType:"json",
+            url:"/index/statistics",
+            success:function(data) {
+                if(data) {
+                    $("#read-count").text(data.article.readCount);
+                    $("#article-count").text(data.article.articleCount);
+                    $("#tag-count").text(data.article.tagCount);
+                    $("#user-count").text(data.userCount);
+                    $("#comment-count").text(data.commentCount);
+                }
+            }
+        });
+
+    })
+</script>

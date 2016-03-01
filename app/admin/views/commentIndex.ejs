@@ -1,0 +1,118 @@
+
+<style type="text/css">
+    .comment-wrap {
+        margin:20px;
+    }
+</style>
+
+
+<div class="comment-wrap">
+    <table id="comment"></table>
+    <div id="comment-toolbar">
+        <!--<a id="btncommentCreate" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true">添加</a>-->
+        <a id="btn-comment-remove" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:true">删除</a>
+    </div>
+</div>
+
+<div id="win-comment-operate"></div>
+
+<script type="text/javascript">
+    $(function() {
+        //加载DataGrid
+        loadDataGrid();
+
+        //事件监听
+        listenerEvent();
+
+    })
+
+
+    /**
+     * 事件监听
+     */
+    function listenerEvent() {
+        /* 删除 */
+        $("#btn-comment-remove").click(function() {
+            var selectedItem = $('#comment').datagrid("getSelected");
+            if(selectedItem && selectedItem._id) {
+                $.messager.confirm('删除','确定要删除?',function(r){
+                    if (r){
+                        console.log(selectedItem._id);
+                        $.post("/comment/remove",{_id:selectedItem._id},function(data) {
+                            console.log(data);
+                            if(data && data == "success") {
+                                $("#comment").datagrid("reload");
+                            }
+                        })
+                    }
+                });
+            }
+        });
+
+        /*搜索*/
+        $("#btn-comment-search").click(function() {
+            var keywords = $("#commentname-search-keywords").val();
+            console.log(keywords);
+            $("#comment").datagrid("load",{keywords:keywords});
+        });
+    }
+
+    /**
+     * 关闭窗口
+     */
+    function closeWindow() {
+        $('#win-comment-operate').dialog({closed:true});
+    }
+    /**
+     *  关闭窗口并重新加载
+     */
+    function closeWindowAndReload() {
+        $('#comment').datagrid("reload");
+        $('#win-comment-operate').dialog({closed:true});
+    }
+
+
+    /**
+     * 加载对话框
+     */
+    function loadDialog() {
+        $('#win-comment-operate').dialog({
+            title: '用户操作',
+            width: 400,
+            height: 200,
+            closed: true,
+            cache: false,
+            modal: true
+        });
+    }
+
+
+    /**
+     * 加载DataGrid
+     */
+    function loadDataGrid() {
+        $('#comment').datagrid({
+            width:600,
+            height:400,
+            url:'/comment/getList',
+            toolbar:"#comment-toolbar",
+            pagination:true,
+            singleSelect:true,
+            pageSize:10,
+            pageList:[10,20,30,40,50],
+            columns:[[
+                {field:'_id',checkbox:true},
+                {field:'content',title:'内容',align:"center",width:100},
+                {field:'articleId',title:'文章标题',align:"center",width:100},
+                {field:'username',title:'用户',align:"center",width:100},
+                {field:'commentTime',title:'时间',align:"center",width:100,formatter:function(value,row,index) {
+                    return convertTime(value);
+                }},
+                {field:'supportCount',title:'赞数',align:"center",width:100}
+            ]]
+        });
+    }
+
+</script>
+
+

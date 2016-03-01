@@ -1,0 +1,580 @@
+<!--  icon-thumbs-up --->
+<div class="comment">
+    <ul class="list-group">
+
+
+        <li class="list-group-item">
+            <form role="form">
+                <div class="form-group">
+                    <label for="name">评论</label>
+                    <textarea  placeholder="骚年既然来了，何不吐槽一翻呢？" class="form-control txt-comment-content" rows="5"></textarea>
+                </div>
+                <div class="form-group">
+                    <button type="button" class="btn btn-submit-comment btn-primary">发表评论</button>
+                </div>
+            </form>
+        </li>
+    </ul>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="myModalLabel">帐号</h4>
+            </div>
+
+            <div class="modal-body">
+                <ul id="myTab" class="nav nav-tabs">
+                    <li class="active"><a href="#login" data-toggle="tab">登录帐号</a></li>
+                    <li><a href="#signin" data-toggle="tab">注册帐号</a></li>
+                </ul>
+                <div id="myTabContent" class="tab-content">
+                    <div class="tab-pane fade in active" id="login">
+                        <div class="modal-body">
+                            <form class="form-horizontal" role="form" id="login-form" action="/user/login">
+                                <div class="form-group">
+                                    <label for="firstname" class="col-sm-2 control-label">用户名：</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" name="username" class="form-control" placeholder="请输入用户名">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="lastname" class="col-sm-2 control-label">密码：</label>
+                                    <div class="col-sm-10">
+                                        <input type="password" name="password" class="form-control" placeholder="请输入密码">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-offset-2 col-sm-10">
+                                        <button type="submit" class="btn btn-success">登录</button>
+                                        <button type="button" class="btn btn-default btn-cancel">取消</button>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="lastname" class="col-sm-2 control-label"></label>
+                                    <div class="col-sm-10">
+                                        <h5 id="login-error-message" class="hidden text-warning">用户名或密码不正确</h5>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="signin">
+                        <div class="modal-body">
+                            <form class="form-horizontal" role="form" id="signin-form">
+                                <div class="form-group">
+                                    <label for="firstname" class="col-sm-2 control-label">用户名：</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" name="username" class="form-control" placeholder="请输入用户名">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="lastname" class="col-sm-2 control-label">密码：</label>
+                                    <div class="col-sm-10">
+                                        <input type="password" name="password" class="form-control" placeholder="请输入密码">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="lastname" class="col-sm-2 control-label">验证码：</label>
+                                    <div class="col-sm-10" id="captcha-box">
+                                        <input type="text" name="captcha" class="form-control" placeholder="请输入验证码">
+                                        <img src='/user/captcha?width=100&height=30' onclick="this.src='/user/captcha?width=100&height=30&timestamp='+new Date().getTime();"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-offset-2 col-sm-10">
+                                        <button type="submit" class="btn btn-warning">注册</button>
+                                        <button type="button" class="btn btn-default btn-cancel">取消</button>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="lastname" class="col-sm-2 control-label"></label>
+                                    <div class="col-sm-10">
+                                        <h5 id="signin-error-message" class="hidden text-warning">验证码错误</h5>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!--<div class="modal-footer">
+            </div>-->
+        </div>
+    </div>
+</div>
+
+
+
+<!-- 评论模板 -->
+<div class="comment-template hidden">
+    <li class="list-group-item item">
+        <div class="media">
+            <a class="pull-left">
+                <img class="media-object comment-icon" src="/images/face/m24.gif">
+            </a>
+            <div class="media-body a1">
+                <h4 class="media-heading comment-username"></h4>
+                <span class="comment-content"></span>
+                <div class="comment-operate">
+                    <i class="icon-thumbs-up btn-comment-support"><span></span></i>
+                    <i class="icon-share-alt btn-comment-reply"><span>回复</span></i>
+                </div>
+
+                <!--  回复  -->
+                <form class="form-horizontal comment-reply-box">
+                    <div class="form-group">
+                        <div class="col-sm-12">
+                            <textarea  placeholder="回复:" class="form-control txt-comment-reply" rows="3"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-0 col-sm-10">
+                            <button data-id="2" type="button" class="btn btn-warning btn-reply-confirm">确定</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </li>
+</div>
+
+
+
+<script type="text/javascript">
+    var articleId;
+    var commentOrReply;
+    var $reply;
+    $(function() {
+        //显示第一屏
+        $('#myTab a:first').tab('show')
+
+        //居中显示模态框
+        $(".modal").on('show.bs.modal', function(e) {
+            centerModals($(this));
+        });
+        $(window).on('resize', centerModals);
+
+
+        articleId = "<%= pageData._id %>";
+        loadComment();
+
+        listenerEvent();
+
+        validate();
+    });
+
+    //模态框垂直居中
+    function centerModals($element) {
+        var $modals;
+        if ($element.length) {
+            $modals = $element;
+        } else {
+            $modals = $(".modal" + ':visible');
+        }
+        $modals.each( function(i) {
+            var $clone = $(this).clone().css('display', 'block').appendTo('body');
+            var top = Math.round(($clone.height() - $clone.find('.modal-content').height()) / 2);
+            top = top > 0 ? top : 0;
+            $clone.remove();
+            $(this).find('.modal-content').css("margin-top", top);
+        });
+    }
+
+    //验证
+    function validate() {
+
+        /**
+         * 登录
+         */
+        $("#login-form").bootstrapValidator({
+            message: '不是有效的值',
+            feedbackIcons: {
+                valid: 'glyphicon glyphicon-ok',
+                invalid: 'glyphicon glyphicon-remove',
+                validating: 'glyphicon glyphicon-refresh'
+            },
+            excluded: ':disabled',
+            fields: {
+                username: {
+                    message: '不是有效的值',
+                    validators: {
+                        notEmpty: {
+                            message: '用户名不能为空'
+                        },
+                        stringLength: {
+                            min: 3,
+                            max: 30,
+                            message: '长度必须长于3位，小于30位'
+                        },
+                        regexp: {
+                            regexp: /^[a-zA-Z0-9_]+$/,
+                            message: '只能包含字母数字_'
+                        }
+                    }
+                },
+                password: {
+                    validators: {
+                        notEmpty: {
+                            message: '密码不能为空'
+                        },
+                        stringLength: {
+                            min: 3,
+                            max: 30,
+                            message: '长度必须长于3位，小于30位'
+                        }
+                    }
+                }
+            }
+        }).on('success.form.bv', function (e) {
+            e.preventDefault();
+
+
+            $.ajax({
+                type:"post",
+                dataType:"text",
+                url:"/user/login",
+                data:$("#login-form").serialize(),
+                async:false,
+                success:function(data) {
+                    if(data && data == "success") {
+                        if(commentOrReply == "comment") {
+                            var comment = $(".txt-comment-content").val();
+                            commitComment(comment);
+                        } else if(commentOrReply == "reply") {
+                            var replyComment = $reply.parents(".comment-reply-box").find(".txt-comment-reply").val();
+                            var parentId = $reply.attr("data-id");
+                            commitReplyComment(parentId,replyComment);
+                        }
+
+                        $('#commentModal').modal('hide');
+                        $("#login-form").bootstrapValidator('resetForm', true);
+                        $("#signin-form").bootstrapValidator('resetForm', true);
+                    } else {
+                        $("#login-error-message").removeClass("hidden");
+                    }
+                }
+            });
+        });
+
+
+        /**
+         * 注册
+         */
+        $("#signin-form").bootstrapValidator({
+            message: '不是有效的值',
+            feedbackIcons: {
+                valid: 'glyphicon glyphicon-ok',
+                invalid: 'glyphicon glyphicon-remove',
+                validating: 'glyphicon glyphicon-refresh'
+            },
+            excluded: ':disabled',
+            fields: {
+                username: {
+                    message: '不是有效的值',
+                    validators: {
+                        notEmpty: {
+                            message: '用户名不能为空'
+                        },
+                        stringLength: {
+                            min: 2,
+                            max: 20,
+                            message: '长度必须长于2位，小于20位'
+                        },
+                        regexp: {
+                            regexp: /^[a-zA-Z0-9_\u4E00-\u9FA5]+$/,
+                            message: '只能包含字母数字_'
+                        },
+                        callback: {
+                            message: '用户名已经被占用',
+                            callback: function (value, validator) {
+                                var res = true;
+                                if (value.match(/^[a-zA-Z0-9_]+$/)) {
+                                    $.ajax({
+                                        url: '/user/isExistUsername',
+                                        type: 'post',
+                                        dataType: 'text',
+                                        async: false,
+                                        data: {username: value},
+                                        success: function (data) {
+                                            if (data && data == 'exist') {
+                                                res = false;
+                                            }
+                                        }
+                                    });
+                                }
+                                return res;
+                            }
+                        }
+                    }
+                },
+                password: {
+                    validators: {
+                        notEmpty: {
+                            message: '密码不能为空'
+                        },
+                        stringLength: {
+                            min: 3,
+                            max: 30,
+                            message: '长度必须长于3位，小于30位'
+                        }
+                    }
+                },
+                captcha: {
+                    validators: {
+                        notEmpty: {
+                            message: '验证码不能为空'
+                        },
+                        stringLength: {
+                            min: 4,
+                            max: 4,
+                            message: '长度必须不等于4位'
+                        },
+                        regexp: {
+                            regexp: /^[0-9]{4}$/,
+                            message: '只能为数字'
+                        }
+                    }
+                }
+            }
+        }).on('success.form.bv', function (e) {
+            e.preventDefault();
+            $.ajax({
+                type:"post",
+                dataType:"text",
+                url:"/user/signin",
+                data:$("#signin-form").serialize(),
+                async:false,
+                success:function(data) {
+                    if(data) {
+                        if(data == "success") {
+                            var comment = $(".txt-comment-content").val();
+                            commitComment(comment);
+                            $('#commentModal').modal('hide');
+                            $("#signin-form").bootstrapValidator('resetForm', true);
+                            $("#login-form").bootstrapValidator('resetForm', true);
+                        } else if(data == "captchaError") {
+                            $("#signin-error-message").removeClass("hidden");
+                        }
+                    }
+                }
+            });
+        });
+    }
+
+    //监听事件
+    function listenerEvent() {
+        //提交评论
+        $(".btn-submit-comment").click(function() {
+            //评论内容
+            var comment = $(".txt-comment-content").val();
+            if(comment) {
+                if(isLogin()) {
+                    commitComment(comment);
+                } else {
+                    //标记当前操作为评论
+                    commentOrReply = "comment";
+                    //打开模态框
+                    $('#commentModal').modal('show');
+                }
+            }
+        });
+
+        //取消按钮
+        $(".btn-cancel").click(function() {
+            //隐藏模态框
+            $('#commentModal').modal('hide');
+        });
+
+        listenerCommentEvent();
+    }
+
+    //监听评论事件
+    function listenerCommentEvent() {
+        //回复按钮
+        $(".btn-comment-reply").click(function() {
+            var $body =  $(this).parents(".list-group");
+            $body.find(".comment-reply-box").slideUp();
+            var $reply =$(this).parent().next();
+            if($reply.is(":visible")) {
+                $reply.slideUp();
+            } else {
+                $reply.slideDown();
+            }
+        });
+
+        //确定回复
+        $(".btn-reply-confirm").click(function() {
+            $reply = $(this);
+            var replyComment = $reply.parents(".comment-reply-box").find(".txt-comment-reply").val();
+            if(replyComment) {
+                var parentId = $reply.attr("data-id");
+                if(isLogin()) {
+                    commitReplyComment(parentId,replyComment);
+                } else {
+                    //当前操作为回复评论
+                    commentOrReply = "reply";
+                    //打开模态框
+                    $('#commentModal').modal('show');
+                }
+            }
+        });
+
+        //点击支持
+        $(".btn-comment-support").click(function() {
+            var _self = $(this);
+            var _id = _self.attr("data-id");
+            if(_id) {
+                $.ajax({
+                    type:"post",
+                    dataType:"text",
+                    data:{
+                        _id:_id
+                    },
+                    async:false,
+                    url:"/comment/submitSupport",
+                    success:function(data) {
+                        if(data&&data == "success") {
+                            var val = _self.children().text().replace(/[()]/g,"");
+                            _self.children().text("("+(parseInt(val)+1)+")");
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    //提交回复评论
+    function commitReplyComment(parentId,replyComment) {
+        $.ajax({
+            type:"post",
+            dataType:"text",
+            data:{
+                parentId:parentId,
+                replyComment:replyComment,
+                articleId:articleId
+            },
+            url:"/comment/submitReplyComment",
+            async:false,
+            success:function(data) {
+                if(data&&data=="success") {
+                    $reply.parents(".comment-reply-box").find(".txt-comment-reply").val("");
+                    loadComment();
+                    $('#commentModal').modal('hide');
+                }
+            }
+        });
+    }
+
+    //提交评论
+    function commitComment(comment) {
+        $.ajax({
+            type:"post",
+            dataType:"text",
+            data:{
+                comment:comment,
+                articleId:articleId
+            },
+            url:"/comment/submitComment",
+            success:function(data) {
+                if(data && data == "success") {
+                    $(".txt-comment-content").val("");
+                    loadComment();
+                    $('#commentModal').modal('hide');
+                }
+            }
+        });
+    }
+
+    //判断用户是否登录
+    function isLogin() {
+        var res = false;
+        $.ajax({
+            type:"post",
+            dataType:"text",
+            url:"/user/isLogin",
+            async:false,
+            success:function(data) {
+                if(data && data == "success") {
+                    res = true;
+                }
+            }
+        });
+        return res;
+    }
+
+    //加载评论
+    function loadComment() {
+        $.ajax({
+            type:"post",
+            dataType:"json",
+            url:"/comment/getComments",
+            data:{
+                articleId:articleId
+            },
+            success:function(data) {
+                if(data && data instanceof Array) {
+                    var $item = $(".comment .list-group .item").remove();
+                    var arr = [];
+                    arr.push($('<li class="list-group-item item">评论信息：</li>'));
+
+                    var parentItems = data.filter(function(item) {
+                        return item.parentId == "0";
+                    });
+                    var childrenItems = data.filter(function(item) {
+                        return item.parentId != "0";
+                    });
+
+                    if(parentItems && parentItems instanceof Array) {
+                        parentItems.forEach(function(item) {
+                            var $item = $($(".comment-template").html());
+                            $item.find(".comment-icon").attr("src","/images/face/m"+item.icon+".gif");
+                            $item.find(".comment-username").text(item.username);
+                            $item.find(".comment-content").text(item.content);
+                            $item.find(".btn-reply-confirm").attr("data-id",item._id);
+                            $item.find(".comment-operate .btn-comment-support span").text("("+item.supportCount+")").parent().attr("data-id",item._id);
+                            //查看是否有子评论
+                            var isExistChildren = childrenItems.some(function(children) {
+                                return item._id == children.parentId;
+                            })
+                            if(isExistChildren) {
+                                $item = loadReplyComment(item,childrenItems,$item);
+                            }
+                            arr.push($item);
+                        });
+                        $(".comment .list-group").prepend(arr);
+                        listenerCommentEvent();
+                    }
+                }
+            }
+        });
+    }
+
+    //加载回复评论
+    function loadReplyComment(parentItem,childrenItems,$listGroup) {
+        var items = childrenItems.filter(function(sonItem) {
+            return parentItem._id == sonItem.parentId;
+        });
+        $media = $($(".comment-template .list-group-item").html());
+        if(items && items.length>0) {
+            items.forEach(function(item) {
+                $media.find(".comment-icon").attr("src","/images/face/m"+item.icon+".gif");
+                $media.find(".comment-username").text(item.username);
+                $media.find(".comment-content").text(item.content);
+                $media.find(".btn-reply-confirm").attr("data-id",item._id);
+                $media.find(".comment-operate").remove().end().find(".comment-reply-box").remove();
+                $listGroup.find(".media-body:first").append($media);
+                loadReplyComment(item,items,$listGroup);
+            });
+            return $listGroup;
+        }
+    }
+
+
+</script>

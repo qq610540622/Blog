@@ -1,0 +1,257 @@
+<div class="wrap">
+    <!-- 模块 -->
+    <div id="forum-box">
+        <table id="forum"></table>
+        <div id="forum-toolbar">
+            <a id="btn-forum-create" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true">添加</a>
+            <a id="btn-forum-edit" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-edit',plain:true">修改</a>
+            <a id="btn-forum-remove" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:true">删除</a>
+        </div>
+        <div id="win-forum-operate">
+        </div>
+    </div>
+
+    <!-- 文章 -->
+    <div id="article-box">
+        <table id="article"></table>
+        <div id="article-toolbar">
+            <a id="btn-article-create" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true">添加</a>
+            <a id="btn-article-edit" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-edit',plain:true">修改</a>
+            <a id="btn-article-remove" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:true">删除</a>
+            <div id="search-box">
+                <input type="text" id="search-txt"/>
+                <a id="btn-article-search" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search',plain:true">搜索</a>
+            </div>
+        </div>
+        <div id="win-article-operate">
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(function(){
+        loadDataGrid();
+        loadDialog();
+        listenerClickEvent();
+    })
+
+    //监听点击事件
+    function listenerClickEvent() {
+
+
+        //***********************************************************
+        // ********* 模块CRUD操作代码
+        //***********************************************************
+
+        //添加
+        $("#btn-forum-create").click(function() {
+            $('#win-forum-operate').dialog({closed:false,href: '/forum/operate?operate=create'});
+        });
+        //修改
+        $("#btn-forum-edit").click(function() {
+            var selectedItem = $("#forum").datagrid("getSelected");
+            if(selectedItem) {
+                $('#win-forum-operate').dialog({closed:false,href: '/forum/operate?operate=edit&_id='+selectedItem._id});
+            }
+        });
+        //删除
+        $("#btn-forum-remove").click(function() {
+            var selectedItem = $("#forum").datagrid("getSelected");
+            if(selectedItem) {
+                $.messager.confirm("提示",'确定要删除吗?', function(r){
+                    if (r){
+                        $.ajax({
+                            type:"post",
+                            dataType:"text",
+                            data:{
+                                _id:selectedItem._id
+                            },
+                            url:"/forum/remove",
+                            async:false,
+                            success:function(data) {
+                                if(data!=undefined&&data!='') {
+                                    if(data=="success") {
+                                        $('#forum').datagrid("reload");
+                                    }
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+        });
+
+
+
+
+
+        //***********************************************************
+        // ********* 文章CRUD操作代码
+        //***********************************************************
+
+        //添加
+        $("#btn-article-create").click(function(){
+            var selectedItem = $("#forum").datagrid("getSelected");
+            if(selectedItem&&selectedItem._id) {
+                $('#win-article-operate').dialog({
+                    title: '模块操作',
+                    width: 900,
+                    height: 540,
+                    closed: false,
+                    cache: false,
+                    modal: true,
+                    content:"<iframe src='/article/operate?operate=create&forumId="+selectedItem._id+"' width='97%' height='97%'></iframe>"
+                });
+            }
+        });
+
+        //修改
+        $("#btn-article-edit").click(function(){
+            var selectedItem = $("#article").datagrid("getSelected");
+            if(selectedItem&&selectedItem._id) {
+                $('#win-article-operate').dialog({
+                    title: '模块操作',
+                    width: 900,
+                    height: 540,
+                    closed: false,
+                    cache: false,
+                    modal: true,
+                    content:"<iframe src='/article/operate?operate=edit&_id=" + selectedItem._id +"' width='97%' height='97%'></iframe>"
+                });
+            }
+
+        });
+
+        //删除
+        $("#btn-article-remove").click(function() {
+            var selectedItem = $("#article").datagrid("getSelected");
+            if(selectedItem) {
+                $.messager.confirm("提示",'确定要删除吗?', function(r){
+                    if (r){
+                        $.ajax({
+                            type:"post",
+                            dataType:"text",
+                            data:{
+                                _id:selectedItem._id
+                            },
+                            url:"/article/remove",
+                            async:false,
+                            success:function(data) {
+                                console.log(data);
+                                if(data!=undefined&&data!='') {
+                                    console.log(data);
+                                    if(data=="success") {
+                                        $('#article').datagrid("reload");
+                                    }
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+        });
+
+        //搜索
+        $("#btn-article-search").click(function() {
+            reloadArticles();
+        });
+    }
+
+    //加载文章
+    function reloadArticles() {
+        var selectedItem = $("#forum").datagrid("getSelected");
+        var searchTxt = $("#search-txt").val();
+        if(selectedItem&&selectedItem._id) {
+            console.log(searchTxt);
+            console.log(selectedItem._id);
+            $('#article').datagrid('load',{
+                keywords: searchTxt,
+                forumId: selectedItem._id
+            });
+        }
+    }
+
+    //关闭对话框并重新加载模块
+    function closeDialogAndReloadForum() {
+        $('#win-forum-operate').dialog({closed:true});
+        $('#forum').datagrid("reload");
+    }
+
+    //关闭对话框并重新加载文章
+    function closeDialogAndReloadArticle() {
+        $('#win-article-operate').dialog({closed:true});
+        $('#article').datagrid("reload");
+    }
+
+    //关闭对话框并重新加载文章
+    function closeDialog() {
+        $('#win-article-operate').dialog({closed:true});
+    }
+
+    //加载对话框
+    function loadDialog() {
+        $('#win-forum-operate').dialog({
+            title: '模块操作',
+            width: 400,
+            height: 200,
+            closed: true,
+            cache: false,
+            modal: true
+        });
+    }
+
+
+    //加载DataGrid
+    function loadDataGrid() {
+        $('#forum').datagrid({
+            width:260,
+            height:400,
+            url:'/forum/list',
+            toolbar:"#forum-toolbar",
+            singleSelect:true,
+            columns:[[
+                {field:'_id',checkbox:true},
+                {field:'name',title:'模块名',align:'center',width:100},
+                {field:'sortId',title:'内容',align:'center',width:50},
+                {field:'enabled',title:'是否显示',align:'center',width:70,formatter:function(value,row,index) {
+                    return value?"正常":"禁止";
+                }}
+            ]],
+            onClickRow:function(index,row) {
+                reloadArticles();
+            }
+        });
+        $('#article').datagrid({
+            width:650,
+            height:400,
+            url:'/article/list?keywords=&forumId=',
+            toolbar:"#article-toolbar",
+            pagination:true,
+            singleSelect:true,
+            pageSize:10,
+            pageList:[10,20,30,40,50],
+            columns:[[
+                {field:'_id',checkbox:true},
+                {field:'title',title:'标题',width:180,formatter:function(value,row,index) {
+                    if(value.length>20) {
+                        return value.substr(0,20)+"...";
+                    } else {
+                        return value;
+                    }
+                }},
+                {field:'content',title:'内容',width:220,formatter:function(value,row,index) {
+                    if(value.length > 50) {
+                        return $(value).text().substr(0,20)+"...";
+                    } else {
+                        return value;
+                    }
+                }},
+                {field:'createDate',title:'创建时间',width:120},
+                {field:'readCount',title:'点击次数',width:100}
+            ]]
+        });
+    }
+
+</script>
+
+

@@ -1,0 +1,68 @@
+<div class="win-box forum-operate">
+    <div class="hidden" id="operate"><%= operate %></div>
+    <form id="forum-operate-form">
+        <input type="hidden" name="_id" value="<%= data&&data._id?data._id:"" %>"/>
+        <ul>
+            <li>
+                <div class="label">模块名</div>
+                <div class="ipt">
+                    <input type="text" name="name" value="<%= data&&data.name?data.name:"" %>"/>
+                </div>
+            </li>
+            <li>
+                <div class="label">序号</div>
+                <div class="ipt">
+                    <input type="text" name="sortId" value="<%= data&&data.sortId?data.sortId:"" %>"/>
+                </div>
+            </li>
+            <li>
+                <div class="label">是否隐藏</div>
+                <div class="ipt">
+                    <input type="radio" name="enabled" value="true" <%= data&&data.enabled?"checked":"" %>/> <span>显示</span>
+                    <input type="radio" name="enabled" value="false" <%= data&&data.enabled?"":"checked" %>/><span>隐藏</span>
+                </div>
+            </li>
+            <li class="btn-box">
+                <a id="btn-forum-confirm" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-ok',plain:false">确定</a>
+                <a id="btn-forum-Cancel" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-cancel',plain:false">取消</a>
+            </li>
+        </ul>
+    </form>
+</div>
+<script type="text/javascript">
+
+    $(function() {
+        $("#btn-forum-confirm").click(function() {
+            var operate = $("#operate").text();
+            var url = "";
+            if(operate == "create") {
+                url = "/forum/create";
+            } else if(operate == "edit") {
+                url = "/forum/edit";
+            }
+            $.ajax({
+                type:"post",
+                dataType:"text",
+                data:$("#forum-operate-form").serialize(),
+                url:url,
+                success:function(data){
+                    if(data!=undefined&&data!="") {
+                        if(data=="success") {
+                            window.parent.closeDialogAndReloadForum();
+                            return;
+                        }
+                    }
+                    OpenMessageAlert("操作失败",null);
+                }
+            });
+        });
+
+        $("#btn-forum-Cancel").click(function() {
+            window.parent.closeDialogAndReloadForum();
+        });
+    });
+</script>
+
+
+
+

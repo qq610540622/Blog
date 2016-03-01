@@ -1,0 +1,5 @@
+db.forum.insert([
+{"name":"C#","sortId":1,"enabled":true},
+{"name":"nodejs","sortId":2,"enabled":true},
+{"name":"bootstrap","sortId":3,"enabled":true},
+]);

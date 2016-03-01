@@ -1,0 +1,211 @@
+<link rel="stylesheet" type="text/css" href="/build/css/admin.css">
+<link rel="stylesheet" type="text/css" href="/libs/jquery-easyui/themes/icon.css">
+<link rel="stylesheet" type="text/css" href="/libs/jquery-easyui/themes/gray/easyui.css">
+
+
+
+
+<div class="article-operate">
+    <div class="hidden" id="operate"><%= operate %></div>
+    <form id="article-operate-form">
+        <input type="hidden" name="_id" value="<%= data?data._id:"" %>"/>
+        <input type="hidden" name="forumId" value="<%= data?data.forumId:forumId %>"/>
+        <ul>
+            <li>
+                <div class="label">标题</div>
+                <div class="ipt">
+                    <input type="text" name="title" value="<%= data&&data.title?data.title:"" %>"/>
+                </div>
+            </li>
+            <li>
+                <div class="label">内容</div>
+                <div class="ipt">
+                    <textarea rows="20" cols="110" name="content" id="content">
+                        <%- data&&data.content?data.content:"" %>
+                    </textarea>
+                </div>
+            </li>
+            <li>
+                <div class="label">Tag</div>
+                <div class="ipt">
+                    <input type="text" name="tag" value="<%= data&&data.tag?data.tag.join():"" %>"/>
+                </div>
+                <a id="btn-choice-tag" class="choice-tag">选择标签</a>
+            </li>
+            <li class="btn-box">
+                <a id="btn-article-confirm" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-ok',plain:false">确定</a>
+                <a id="btn-article-cancel" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-cancel',plain:false">取消</a>
+            </li>
+        </ul>
+    </form>
+</div>
+
+<div id="win-choice-tag">
+    <ul>
+    </ul>
+    <div class="btn-tag-box">
+        <a id="btn-tag-confirm" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-ok',plain:false">确定</a>
+        <a id="btn-tag-cancel" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-cancel',plain:false">取消</a>
+    </div>
+</div>
+
+<script type="text/javascript" src="/libs/jquery/dist/jquery.min.js"></script>
+<script type="text/javascript" src="/libs/jquery-easyui/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="/libs/xhEditor/xheditor-1.2.2.min.js"></script>
+<script type="text/javascript" src="/libs/xhEditor/xheditor_lang/zh-cn.js"></script>
+<script type="text/javascript">
+    $(function(){
+        loadPlus();
+        loadDialog();
+        listenerEvent();
+    })
+
+    function listenerEvent() {
+        //确定按钮处理代码
+        $("#btn-article-confirm").click(function() {
+            var operate = $("#operate").text();
+            var url = "";
+            if(operate == "create") {
+                url = "/article/create";
+            } else if(operate == "edit") {
+                url = "/article/edit";
+            }
+            $.ajax({
+                type:"post",
+                dataType:"text",
+                data:$("#article-operate-form").serialize(),
+                url:url,
+                success:function(data){
+                    if(data!=undefined&&data!="") {
+                        if(data=="success") {
+                            window.parent.closeDialogAndReloadArticle();
+                            return;
+                        }
+                    }
+                    OpenMessageAlert("操作失败",null);
+                }
+            });
+        });
+
+        $("#btn-article-cancel").click(function() {
+            window.parent.closeDialog();
+        })
+
+        $("#btn-choice-tag").click(function() {
+            $.post("/article/getTag",function(data) {
+                $("#win-choice-tag ul").empty();
+                if(data && data instanceof Array) {
+                    var tagObj = {};
+                    data.forEach(function(item) {
+                        item.tag.forEach(function(i) {
+                            tagObj[i] = true;
+                        })
+                    })
+
+                    var arr = [];
+                    for(var key in tagObj) {
+                        arr.push($("<li>"+key+"</li>"));
+                    }
+
+                    //已选择的标签
+                    var existTag = $("#article-operate-form input[name='tag']").val();
+                    if(existTag && existTag.length>0) {
+                        var existTagArr = existTag.split(",");
+                        if(existTagArr && existTagArr.length>0) {
+                            existTagArr.forEach(function(item) {
+                                var findEle = arr.filter(function(ele) {
+                                    return ele.text() == item;
+                                })
+                                findEle.forEach(function(temp) {
+                                    temp.addClass("selected");
+                                })
+                            })
+                        }
+                    }
+
+                    $("#win-choice-tag ul").append(arr);
+                    listenerTagClickEvent();    //监听新添加标签元素的事件
+                    $('#win-choice-tag').dialog("open");
+                }
+            });
+        });
+
+        $("#btn-tag-confirm").click(function() {
+            var $elements = $("#win-choice-tag ul li.selected");
+            if($elements && $elements.length>0) {
+                var res = "";
+                $.each($elements,function(i,e) {
+                    res += $(e).text()+",";
+                })
+                if(res&&res.length>0) {
+                    res = res.substr(0,res.length-1);
+                    $("#article-operate-form input[name='tag']").val(res);
+                }
+            }
+            $("#win-choice-tag").dialog("close");
+        });
+        $("#btn-tag-cancel").click(function() {
+            $("#win-choice-tag").dialog("close");
+        });
+    }
+
+    function listenerTagClickEvent() {
+        $("#win-choice-tag ul li").click(function() {
+            $(this).toggleClass("selected");
+        });
+    }
+
+
+    /* 加载对话框 */
+    function loadDialog() {
+        $('#win-choice-tag').dialog({
+            title: '选择标签',
+            width: 400,
+            height: 200,
+            closed: true,
+            cache: false,
+            modal: true
+        });
+    }
+
+    /* 加载插件 */
+    function loadPlus() {
+        var plugins={
+            Code:{c:'btnCode',t:'插入代码',h:1,e:function(){
+                var _this=this;
+                var htmlCode="<div>编程语言<select id='xheCodeType'>";
+                htmlCode+="<option value='html'>HTML/XML</option>";
+                htmlCode+="<option value='js'>Javascript</option>";
+                htmlCode+="<option value='css'>CSS</option>";
+                htmlCode+="<option value='php'>PHP</option>";
+                htmlCode+="<option value='java'>Java</option>";
+                htmlCode+="<option value='py'>Python</option>";
+                htmlCode+="<option value='pl'>Perl</option>";
+                htmlCode+="<option value='rb'>Ruby</option>";
+                htmlCode+="<option value='cs'>C#</option>";
+                htmlCode+="<option value='c'>C++/C</option>";
+                htmlCode+="<option value='vb'>VB/ASP</option>";
+                htmlCode+="<option value=''>其它</option>";
+                htmlCode+="</select></div><div>";
+                htmlCode+="<textarea id='xheCodeValue' wrap='soft' spellcheck='false' style='width:300px;height:100px;' />";
+                htmlCode+="</div><div style='text-align:right;'><input type='button' id='xheSave' value='确定' /></div>";
+                var jCode=$(htmlCode),jType=$('#xheCodeType',jCode),jValue=$('#xheCodeValue',jCode),jSave=$('#xheSave',jCode);
+                jSave.click(function(){
+                    _this.loadBookmark();
+                    _this.pasteHTML('<pre class="brush: '+jType.val()+'">'+_this.domEncode(jValue.val())+'</pre>&nbsp;');
+                    _this.hidePanel();
+                    return false;
+                });
+                _this.saveBookmark();
+                _this.showDialog(jCode);
+            }},
+        };
+        $('#content').xheditor({
+            plugins:plugins,  //使用我们定义的插件
+            loadCSS:'<style>pre{margin-left:2em;border-left:3px solid #CCC;padding:0 1em;}</style>',
+        });
+    }
+
+</script>
+
+

@@ -1,0 +1,1 @@
+db.user.insert([{"username":"admin","password":"admin","status":0,"type":1}]);

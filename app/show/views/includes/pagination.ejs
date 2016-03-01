@@ -1,0 +1,26 @@
+<ul class="pagination">
+
+    <%
+        if(pageData && pageData.listsArticles.itemList.length>1) {
+    %>
+        <li class="<%= pageData.first.class %>"><a href="<%= pageData.first.url %>">&laquo;</a></li>
+        <%
+            pageData.listsArticles.itemList.forEach(function(e) {
+        %>
+                <li class="<%= e.class %>"><a href="<%= e.url %>"><%= e.index %></a></li>
+        <%
+            })
+        %>
+        <li class="<%= pageData.end.class %>"><a href="<%= pageData.end.url %>">&raquo;</a></li>
+    <%
+        }
+    %>
+
+    <!--<li class="disabled"><a href="#">&laquo;</a></li>
+    <li class="active"><a href="#">1</a></li>
+    <li><a href="#">2</a></li>
+    <li><a href="#">3</a></li>
+    <li><a href="#">4</a></li>
+    <li><a href="#">5</a></li>
+    <li><a href="#">&raquo;</a></li>-->
+</ul>
