@@ -1,15 +1,15 @@
 # blog
 
-
-如有那些地方需要修改，或写得不好的地方请联系我，小弟感激不尽。
-QQ:610540622(请备注一下：nodejs)
-
-
-视图引擎：ejs
-数据库：mongodb
-框架：express
-前台：bootstrap
-后台：easyui
+<br/>
+如有那些地方需要修改，或写得不好的地方请联系我，小弟感激不尽。<br/>
+QQ:610540622(请备注一下：nodejs)<br/>
+<br/>
+<br/>
+视图引擎：ejs<br/>
+数据库：mongodb<br/>
+框架：express<br/>
+前台：bootstrap<br/>
+后台：easyui<br/>
 
 
 项目目录结构
@@ -52,6 +52,11 @@ blog<br/>
 &nbsp;|&nbsp;|&nbsp;&nbsp;|&nbsp;&nbsp;|&nbsp;&nbsp;|--index.ejs<br/>
 &nbsp;|&nbsp;|&nbsp;&nbsp;|&nbsp;&nbsp;|&nbsp;&nbsp;|--lists.ejs<br/>
 &nbsp;|&nbsp;|&nbsp;&nbsp;|&nbsp;&nbsp;|--layout.ejs<br/>
+&nbsp;|&nbsp;|<br/>
+&nbsp;|&nbsp;|<br/>
+&nbsp;|--db						 	  //数据库<br/>
+&nbsp;|&nbsp;&nbsp;|--forum.db.txt<br/>
+&nbsp;|&nbsp;&nbsp;|--user.db.txt<br/>
 &nbsp;|&nbsp;|<br/>
 &nbsp;|&nbsp;|<br/>
 &nbsp;|--helper&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//辅助类<br/>
