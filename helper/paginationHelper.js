@@ -20,7 +20,6 @@ var pagination = function(forumId,keywords,page,size,redirectUrl,obj) {
 
     _self = this;
     _self.init();
-    console.log(_self);
 }
 
 

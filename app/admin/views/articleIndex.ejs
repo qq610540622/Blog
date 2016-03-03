@@ -1,3 +1,5 @@
+
+
 <div class="wrap">
     <!-- 模块 -->
     <div id="forum-box">
@@ -15,6 +17,7 @@
     <div id="article-box">
         <table id="article"></table>
         <div id="article-toolbar">
+            <a id="btn-article-spider" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:true">爬取文章</a>
             <a id="btn-article-create" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true">添加</a>
             <a id="btn-article-edit" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-edit',plain:true">修改</a>
             <a id="btn-article-remove" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:true">删除</a>
@@ -24,6 +27,14 @@
             </div>
         </div>
         <div id="win-article-operate">
+        </div>
+        <div id="win-article-spider">
+            <div class="spider-box">
+                <table id="spider"></table>
+            </div>
+            <div id="spider-toolbar">
+                <a id="btn-spider-confirm">确定添加</a><img id="loader" src="/images/loading.gif"/>
+            </div>
         </div>
     </div>
 </div>
@@ -89,6 +100,40 @@
         // ********* 文章CRUD操作代码
         //***********************************************************
 
+
+        //爬取文章
+        $("#btn-article-spider").click(function() {
+            var selectedItem = $("#forum").datagrid("getSelected");
+            if(selectedItem&&selectedItem._id) {
+                var name = encodeURI(selectedItem.name);
+                $('#spider').datagrid({url:'/article/spider?keywords='+name+"&forumId="+selectedItem._id});
+                $("#btn-spider-confirm").linkbutton({
+                    iconCls: 'icon-ok'
+                });
+                $('#win-article-spider').dialog("open");
+            }
+        });
+
+        $("#btn-spider-confirm").click(function() {
+            var arr = [];
+            if(articleList) {
+                for(var key in articleList) {
+                    arr.push(articleList[key]);
+                }
+                var jsonArray = JSON.stringify(arr);
+                $("#loader").show();
+                $.post("/article/submitSpider",{articleList:jsonArray},function(data) {
+                    if(data&&data == "success") {
+                        $("#loader").hide();
+                        articleList = {};
+                        reloadArticles();
+                        $("#win-article-spider").dialog("close");
+                    }
+                })
+            }
+        });
+
+
         //添加
         $("#btn-article-create").click(function(){
             var selectedItem = $("#forum").datagrid("getSelected");
@@ -119,7 +164,6 @@
                     content:"<iframe src='/article/operate?operate=edit&_id=" + selectedItem._id +"' width='97%' height='97%'></iframe>"
                 });
             }
-
         });
 
         //删除
@@ -137,7 +181,6 @@
                             url:"/article/remove",
                             async:false,
                             success:function(data) {
-                                console.log(data);
                                 if(data!=undefined&&data!='') {
                                     console.log(data);
                                     if(data=="success") {
@@ -162,8 +205,8 @@
         var selectedItem = $("#forum").datagrid("getSelected");
         var searchTxt = $("#search-txt").val();
         if(selectedItem&&selectedItem._id) {
-            console.log(searchTxt);
-            console.log(selectedItem._id);
+            console.log("reloadArticles");
+            console.log(selectedItem);
             $('#article').datagrid('load',{
                 keywords: searchTxt,
                 forumId: selectedItem._id
@@ -198,11 +241,64 @@
             cache: false,
             modal: true
         });
+        $('#win-article-spider').dialog({
+            title: '爬取文章',
+            width: 763,
+            height: 638,
+            closed: true,
+            cache: false,
+            modal: true
+        });
     }
 
 
+    var articleList = {};
     //加载DataGrid
     function loadDataGrid() {
+        $('#spider').datagrid({
+            width:735,
+            height:588,
+            pagination:true,
+            singleSelect:false,
+            selectOnCheck: true,
+            checkOnSelect: true,
+            toolbar:"#spider-toolbar",
+            pageSize:20,
+            pageList:[20],
+            columns:[[
+                {field:'id',checkbox:true},
+                {field:'title',title:'标题',align:'center',width:200},
+                {field:'content',title:'内容',align:'center',width:300},
+                {field:'author',title:'作者',align:'center',width:150},
+                {field:'redirectUrl',title:'查看',align:'center',width:50,formatter:function(value,row,index) {
+                    return "<a href='"+value+"' target='_blank'>查看</a>";
+                }}
+            ]],
+            onLoadSuccess:function(data) {
+                if(data){
+                    $.each(data.rows, function(index, item){
+                        if(articleList[item.id]) {
+                            $('#spider').datagrid('checkRow', index);
+                        }
+                    });
+                }
+            },
+            onClickRow:function(index,row) {
+                var temp = {};
+                var items = $('#spider').datagrid("getSelections");
+                console.log(items);
+                if(items && items.length>0) {
+                    items.forEach(function(item) {
+                        temp[item.id] = item;
+                    });
+                    for(var key in temp) {
+                        articleList[key] = temp[key];
+                    }
+                }
+            }
+        });
+
+
         $('#forum').datagrid({
             width:260,
             height:400,
@@ -222,7 +318,7 @@
             }
         });
         $('#article').datagrid({
-            width:650,
+            width:800,
             height:400,
             url:'/article/list?keywords=&forumId=',
             toolbar:"#article-toolbar",
@@ -232,24 +328,29 @@
             pageList:[10,20,30,40,50],
             columns:[[
                 {field:'_id',checkbox:true},
-                {field:'title',title:'标题',width:180,formatter:function(value,row,index) {
+                {field:'title',title:'标题',width:250,formatter:function(value,row,index) {
                     if(value.length>20) {
                         return value.substr(0,20)+"...";
                     } else {
                         return value;
                     }
                 }},
-                {field:'content',title:'内容',width:220,formatter:function(value,row,index) {
+                {field:'content',title:'内容',width:350,formatter:function(value,row,index) {
                     if(value.length > 50) {
                         return $(value).text().substr(0,20)+"...";
                     } else {
                         return value;
                     }
                 }},
-                {field:'createDate',title:'创建时间',width:120},
-                {field:'readCount',title:'点击次数',width:100}
+                {field:'createDate',title:'创建时间',width:90,align:"center",formatter:function(value,row,index) {
+                    return convertTime(value);
+                }},
+                {field:'readCount',title:'点击次数',align:"center",width:70}
             ]]
         });
+
+
+
     }
 
 </script>

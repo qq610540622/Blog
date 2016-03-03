@@ -10,6 +10,11 @@ var articleDao = new daoBase(articleModel);
 dao.base = articleDao;
 dao.model = articleModel;
 
+/**
+ * 获取所有文章并按时间来排序
+ * @param size
+ * @param callback
+ */
 dao.getArticles = function(size,callback) {
     var query = this.model.find().sort({createDate:1});
     query.limit(size);
@@ -20,6 +25,13 @@ dao.getArticles = function(size,callback) {
 }
 
 
+/**
+ * 按标签来获取文章(带分页的数据)
+ * @param page
+ * @param size
+ * @param tag
+ * @param callback
+ */
 dao.getListByTag = function(page,size,tag,callback) {
     //拼接where条件
     var where = {};
@@ -108,7 +120,11 @@ dao.getArticleAndUpdateReadCount = function(articleId,callback) {
 }
 
 
-
+/**
+ * 获取文章的字段
+ * @param fields
+ * @param callback
+ */
 dao.getArticleFields = function(fields,callback) {
     var query = this.model.find({},fields);
     query.exec(function(err,res) {

@@ -27,50 +27,55 @@ controller.lists = function(req,res) {
                 where.title = pattern;
             }
             if(forumId) where.forumId = forumId;
-            console.log(where);
-
-            articleDao.base.getList(page,size,where,function(status,data) {
-                console.log(data);
+            articleDao.base.getList(page,size,where,function(status,result) {
                 if(status) {
-                    var pagination = new paginationHelper(forumId,keywords,page,size,"/show/lists",data);
+                    var cheerio = require("cheerio");
+                    if(result.rows && result.rows.length>0) {
+                        for(var key in result.rows) {
+                            var content = "<div id='wrap'>"+result.rows[key].content+"</div>";
+                            var $ = cheerio.load(content,{decodeEntities: false});
+                            var txt = $("#wrap").text();
+                            result.rows[key].content = txt.substr(0,200);
+                        }
+                    }
+                    var pagination = new paginationHelper(forumId,keywords,page,size,"/show/lists",result);
                     callback(null,pagination);
                 }
             });
         },
         hotArticles: function(callback){    //热门文章
-            articleDao.getHotArticles(function(err,items) {
+            articleDao.getHotArticles(function(err,result) {
                 if(err) callback(err,null);
-                else callback(null,items);
+                else callback(null,result);
             });
         },
         newArticles: function(callback){
-            articleDao.getNewArticles(function(err,items) {
+            articleDao.getNewArticles(function(err,result) {
                 if(err) callback(err,null);
-                else callback(null,items);
+                else callback(null,result);
             });
         },
         tags: function(callback){   //tag标签
-            articleDao.getTagArticles(function(err,items) {
+            articleDao.getTagArticles(function(err,result) {
                 if(err) {
                     callback(err, null);
                 } else {
                     var distint = {};
-                    items.forEach(function(item) {
+                    result.forEach(function(item) {
                         item.tag.forEach(function(it) {
                             distint[it] = it;
                         })
                     })
-                    var result = [];
+                    var tempArray = [];
                     for(var key in distint) {
-                        result.push(key);
+                        tempArray.push(key);
                     }
-                    callback(null,result);
+                    callback(null,tempArray);
                 }
             })
         }
     },function(err, results) {
         if(!err){
-            console.log(results);
             res.render("lists",{pageData:results});
         }
     });
@@ -87,7 +92,6 @@ controller.tag = function(req,res) {
     var page = req.query.page === undefined ? 1 : parseInt(req.query.page);
     var size = 10;
     if(keywords) {
-
         async.series({
             listsArticles: function(callback){
                 articleDao.getListByTag(page,size,keywords,function(status,data) {
@@ -130,13 +134,9 @@ controller.tag = function(req,res) {
             }
         },function(err, results) {
             if(!err){
-                console.log(results);
                 res.render("lists",{pageData:results});
             }
         });
-
-
-
     }
 }
 

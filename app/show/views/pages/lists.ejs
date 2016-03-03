@@ -10,10 +10,10 @@
         </ol>
 
         <%
+
+            console.log(pageData);
+
             if(pageData) {
-                pageData.listsArticles.obj.rows.forEach(function(item) {
-                    console.log(item);
-                })
                 pageData.listsArticles.obj.rows.forEach(function(item) {%>
                     <div class="panel panel-default">
                         <div class="panel-body">
@@ -21,19 +21,11 @@
                                 <h3><%= item.title %></h3>
                             </a>
                             <div class="article-content-box">
-                                <%- item.content %>
+                                <%= item.content %>
                             </div>
                             <div class="article-info">
                                 <i class="icon-time"><span><script>document.write(convertTime(<%= item.createDate %>))</script></span></i>
-                                <i class="icon-tags"><script>
-                                        var tag = "<%= item.tag %>";
-                                        if(tag) {
-                                            var tags = tag.split(',');
-                                            for(var index in tags) {
-                                                document.write("<a href='/lists/tag?keywords="+tags[index]+"'>"+tags[index]+"</a>");
-                                            }
-                                        }
-                                    </script></i>
+                                <i class="icon-user"><span><%= item.author %></span></i>
                             </div>
                         </div>
                     </div>
@@ -113,9 +105,3 @@
         </div>
     </div>
 </div>
-
-<script type="text/javascript">
-    $(function() {
-        $(".article-content-box").html($(".article-content-box").text().substr(0,120));
-    })
-</script>

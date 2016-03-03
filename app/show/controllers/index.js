@@ -17,7 +17,16 @@ controller.index = function(req,res) {
         indexArticles: function(callback){
             articleDao.getArticles(10,function(err,items) {
                 if(err) callback(err,null);
-                else callback(null,items);
+                else {
+                    var cheerio = require("cheerio");
+                    for(var index in items) {
+                        var content = "<div id='wrap'>"+items[index].content+"</div>";
+                        var $ = cheerio.load(content,{decodeEntities: false});
+                        var txt = $("#wrap").text();
+                        items[index].content = txt.substr(0,200);
+                    }
+                    callback(null,items)
+                }
             });
         },
         hotArticles: function(callback){    //热门文章
@@ -65,9 +74,13 @@ controller.index = function(req,res) {
  * @param res
  */
 controller.header = function(req,res) {
-    forumDao.base.getListByQuery({enabled:true},function(err,result) {
+    forumDao.getAll(function(err,results) {
+        console.log(results);
+        res.send(err?"error":results);
+    })
+    /*forumDao.base.getListByQuery({enabled:true},function(err,result) {
         res.send(err==null?result:"error");
-    });
+    });*/
 }
 
 

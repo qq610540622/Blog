@@ -21,7 +21,7 @@ module.exports = function(app) {
     /* 拦截器 */
     app.use(function(req,res,next) {
         if(req.url.indexOf("/admin")==0) {
-            if(!req.session.admin_captcha) {
+            if(!req.session.adminCaptcha) {
                 res.redirect("/login");
             }
         }
@@ -62,6 +62,7 @@ module.exports = function(app) {
     app.get('/login',adminIndexController.login);
     app.post('/login/submit',adminIndexController.submit);
     app.get('/login/captcha',adminIndexController.captcha);
+    app.post('/login/isExistAdmin',adminIndexController.isExistAdmin);
 
     //用户
     app.get("/user/index",adminUserController.index);
@@ -78,6 +79,8 @@ module.exports = function(app) {
     app.post('/article/remove',adminArticleController.remove);
     app.post('/article/edit',adminArticleController.edit);
     app.post('/article/getTag',adminArticleController.getTag);
+    app.post('/article/spider',adminArticleController.spider);
+    app.post('/article/submitSpider',adminArticleController.submitSpider);
 
     //模块
     app.post('/forum/list',adminForumController.list);

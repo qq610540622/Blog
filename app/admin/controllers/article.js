@@ -6,6 +6,7 @@
 var articleDao = require("./../../../dao/article");
 var stringHelper = require("./../../../helper/stringHelper");
 var dateHelper = require("./../../../helper/dateHelper");
+var robotHelper = require("./../../../helper/robotHelper");
 var path = require('path');
 
 var controller = {};
@@ -41,7 +42,6 @@ controller.list = function(req,res) {
     var size = parseInt(req.body.rows);
     var keywords = req.body.keywords;
     var forumId = req.body.forumId;
-
     var where = {};
     if (keywords) {
         var pattern = new RegExp("^.*"+keywords+".*$");
@@ -56,10 +56,81 @@ controller.list = function(req,res) {
     })
 };
 
+var http = require("http");
+var cheerio  = require("cheerio");
+var async  = require("async");
+controller.spider = function(req,res) {
+    var keywords = decodeURI(req.query.keywords);
+    var forumId = req.query.forumId;
+    var page = req.body.page;
+    var url = "http://zzk.cnblogs.com/s?t=b&w="+keywords+"&p="+page;
+    async.waterfall([
+        function(callback) {
+            var data = "";
+            var req = http.request(url, function(res){
+                res.setEncoding("utf8");
+                res.on('data', function(chunk){
+                    data += chunk;
+                });
+                res.on('end', function(){
+                    callback(null,data);
+                });
+            });
+            req.on('error', function(e){
+                throw e;
+            });
+            req.end();
+        },
+        function(arg,callback) {
+            var $ = cheerio.load(arg,{decodeEntities: false});
+            var hasNext = $("#paging_block .pager a").filter(function(i,e) {
+                if(new RegExp("next","i").test($(e).text())) {
+                    return $(e);
+                }
+            })
+
+            var p = $("#paging_block .pager a").last().prev().text();
+            if(hasNext.length == 0) {
+                p = $("#paging_block .pager a").last().text();
+            }
+
+            //文章
+            var articleList = [];
+            $("#main").find('.searchItem').each(function(i,e) {
+                var articleInfo = {};
+                articleInfo.id = parseInt(page+i);
+                articleInfo.forumId = forumId;
+                articleInfo.title = $(e).find(".searchItemTitle a").text();
+                articleInfo.content = $(e).find(".searchCon").text().replace(/(^\s*)|(\s*$)/g, "");
+                articleInfo.author = $(e).find(".searchItemInfo-userName a").text();
+                articleInfo.redirectUrl = $(e).find(".searchItemTitle a").attr("href");
+                articleInfo.createDate = Date.now();
+                articleList.push(articleInfo);
+            });
+            var result = {rows:articleList,total:parseInt(p) * 20};
+            callback(null,result);
+        }
+    ],function(err,results) {
+        res.send(results);
+    });
+}
+
+
+
+controller.submitSpider = function(req,res) {
+    var arrayJson = req.body.articleList;
+    var articleList = JSON.parse(arrayJson);
+    var robot = new robotHelper(articleList,function() {
+        res.send("success");
+    });
+    robot.crawler();
+}
+
+
+
 //添加
 controller.create = function(req,res) {
     var title = req.body.title;
-    console.log(req.body.tag);
     if(title) {
         var model = {};
         model.title = title;
@@ -68,6 +139,7 @@ controller.create = function(req,res) {
         model.content = req.body.content;
         model.createDate= Date.now();
         model.readCount = 0;
+        model.author = req.session.adminName;
         articleDao.base.create(model,function(status,data) {
             res.send(status?"success":data);
         });

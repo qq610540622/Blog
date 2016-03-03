@@ -22,7 +22,6 @@ controller.operate = function(req,res) {
     var operate = req.query.operate;
     var _id = req.query._id;
     var result = {};
-    console.log(_id);
     if(operate == "create") {
         result.data = null;
         result.operate = "create";

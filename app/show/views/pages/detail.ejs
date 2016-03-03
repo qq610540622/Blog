@@ -50,11 +50,17 @@
                     <span class="article-title"><%= pageData?pageData.title:"" %></span>
                     <div class="article-info">
                         <span class="article-create-date">创建时间：<script>document.write(convertTime(<%= pageData?pageData.createDate:"" %>))</script></span>
+                        <span class="article-author">作者：<%= pageData?pageData.author:""%></span>
                         <span class="article-read-count">阅读量：<%= pageData?pageData.readCount:""%></span>
                     </div>
                 </h3>
             </div>
             <div class="panel-body">
+
+                <!--<div class="panel panel-success bg-success">
+                    <div class="panel-body">文章源地址：<a href="http://www.baidu.com">http://www.baidu.com</a></div>
+                </div>-->
+
                 <%- pageData?pageData.content:"" %>
 
                 <div class="article-tags">

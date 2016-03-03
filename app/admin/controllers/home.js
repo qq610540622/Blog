@@ -2,15 +2,39 @@
  * Created by Administrator on 2016-01-31.
  */
 
+var userDao = require("./../../../dao/user");
+var commonHelper = require("./../../../helper/commonHelper");
 var controller = {};
 
+/**
+ * 注册首页
+ * @param req
+ * @param res
+ */
 controller.index = function(req,res) {
     res.render("home",{"titlle":"注册"});
 }
 
+
+/**
+ * 登录页面
+ * @param req
+ * @param res
+ */
 controller.login = function(req,res) {
-    console.log("login page");
     res.render("login");
+}
+
+
+/**
+ * 检查是否存在超级管理员帐号
+ * @param req
+ * @param res
+ */
+controller.isExistAdmin = function(req,res) {
+    userDao.base.getSingleByQuery({type:1},function(err,result) {
+        res.send(result?"success":"error");
+    })
 }
 
 
@@ -20,17 +44,12 @@ controller.login = function(req,res) {
  * @param res
  */
 controller.captcha = function(req,res) {
-
-    console.log(req.cookies);
-
-    var commonHelper = require("./../../../helper/commonHelper");
     var width=!isNaN(parseInt(req.query.width))?parseInt(req.query.width):100;
     var height=!isNaN(parseInt(req.query.height))?parseInt(req.query.height):30;
     var code = parseInt(Math.random()*9000+1000);
     var imgbase64 = commonHelper.captcha(width,height,code);
 
-    req.session.admin_captcha = code;
-    console.log(req.session.admin_captcha);
+    req.session.adminCaptcha = code;
     res.writeHead(200, {
         'Content-Type': 'image/png'
     });
@@ -38,23 +57,52 @@ controller.captcha = function(req,res) {
 }
 
 
+
+
+
+/**
+ * 登录后台
+ * @param req
+ * @param res
+ */
 controller.submit = function(req,res) {
-    var userDao = require("./../../../dao/user");
     var username = req.body.username;
     var password = req.body.password;
     var captcha = req.body.captcha;
-    var session_captcha = req.session.admin_captcha;
+    var type = req.body.type;
 
-    console.log("submit");
-    console.log(captcha + " , "+session_captcha);
-
-    if(captcha == session_captcha) {
-        userDao.base.getSingleByQuery({username:username,password:password,type:1},function(err,result) {
-            if(result) res.send("success");
-            else res.send("error");
-        })
-    } else {
-        res.send("error");
+    if(type == 1) {     //注册管事员帐号
+        var async = require("async");
+        async.waterfall([
+            function(callback) {
+                //检查是否真的没有管理员帐事情
+                userDao.base.getSingleByQuery({type:1},function(err,result) {
+                    if(result) callback(null,false);
+                    else callback(null,true)
+                })
+            },
+            function(arg,callback) {
+                //检查没有管理员帐号就插入当前数据为管理员帐号
+                if(arg) {
+                    var model = {username:username,password:commonHelper.md5(password),type:type,status:0};
+                    userDao.base.create(model,function(status,data) {
+                        callback(null,true);
+                    })
+                }
+            }
+        ],function(err,result) {
+            res.send(result?"success":"error");
+        });
+    } else {    //登录
+        var session_captcha = req.session.adminCaptcha;
+        if(captcha == session_captcha) {
+            userDao.base.getSingleByQuery({username:username,password:commonHelper.md5(password),type:1},function(err,result) {
+                if(result) {req.session.adminName = username; res.send("success");}
+                else res.send("error");
+            })
+        } else {
+            res.send("error");
+        }
     }
 }
 

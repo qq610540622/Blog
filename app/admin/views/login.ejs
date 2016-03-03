@@ -18,7 +18,8 @@
         .container .rows {margin-top:10%;}
         .captcha-box > input {width:50%;display:inline-block;}
         .captcha-box > img {
-            position: relative;top:-1px;left:8px;}
+            position: relative;top:-1px;left:8px;
+        }
     </style>
 </head>
 <body>
@@ -40,8 +41,9 @@
                     </div>
                 </li>
                 <li class="list-group-item">
-                    <button type="submit" id="login-confirm" class="btn btn-danger">登录</button>
-                    <button type="reset" class="btn btn-success">重置</button>
+                    <button type="submit" id="login-confirm" class="btn btn-danger group1">登录</button>
+                    <button type="reset" class="btn btn-success group1">重置</button>
+                    <button type="submit" class="btn btn-primary group2">注册管理员帐号</button>
                 </li>
             </ul>
         </form>
@@ -62,7 +64,25 @@
 <script type="text/javascript" src="/libs/bootstrap/dist/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="/libs/bootstrapvalidator/dist/js/bootstrapValidator.min.js"></script>
 <script type="text/javascript">
+
+    var isExistAdmin = false;
+    function checkIsExistAdmin() {
+        $.post("/login/isExistAdmin",function(data) {
+            if(data && data == "success") {
+                $(".group1").show();
+                $(".group2").hide();
+                isExistAdmin = true;
+            } else {
+                $(".group1").hide();
+                $(".group2").show();
+                isExistAdmin = false;
+            }
+        });
+    }
     $(function() {
+
+        //查检是否有管事员帐号
+        checkIsExistAdmin();
 
         $("#login-form").bootstrapValidator({
             message: '不是有效的值',
@@ -122,14 +142,16 @@
         }).on('success.form.bv', function (e) {
             e.preventDefault();
 
+            var data = $("#login-form").serialize();
+            data += "&type="+(isExistAdmin ? 0 : 1);
+
             $.ajax({
                 type:"post",
                 dataType:"text",
                 url:"/login/submit",
-                data:$("#login-form").serialize(),
+                data:data,
                 async:false,
                 success:function(data) {
-                    console.log(data);
                     if(data && data == "success") {
                         window.location.href="/admin";
                     } else {
@@ -140,5 +162,7 @@
             });
         });
     })
+
+
 </script>
 </html>

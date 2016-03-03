@@ -3,6 +3,9 @@
 
 /* 文章详情页 */
 .article {
+  .panel-body {
+    overflow: hidden;
+  }
   .article-title {
     margin: 0 0 10px 0;
     font-size: 30px;
@@ -16,8 +19,8 @@
     span {
       font-size:12px;
     }
-    .article-create-date {
-      padding-right:12px;
+    span:nth-of-type(2) {
+      padding:0 15px;
     }
   }
   .article-tags {
@@ -45,7 +48,7 @@
       overflow: hidden;
       margin:8px 0 0 0;
       i {
-        margin: 0 10px 0 0;
+        margin: 0 18px 0 0;
         span,a {
           padding-left: 5px;
         }

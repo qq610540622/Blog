@@ -12,6 +12,9 @@ img{vertical-align: top;border:0;}
   line-height:0;
   clear:both;
 }
+.visibity {
+  visibility: hidden;
+}
 
 /* 导航css */
 #accordion-nav ul li {
@@ -186,5 +189,15 @@ img{vertical-align: top;border:0;}
     width:100%;
   }
 }
+
+.spider-box {
+  margin:7px;
+}
+
+#loader {
+  margin-left:10px;
+  display:none;
+}
+
 
 

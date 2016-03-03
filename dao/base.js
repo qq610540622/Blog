@@ -40,8 +40,6 @@ Base.prototype.getByQuery = function (query,fileds,opt,callback) {
 
 Base.prototype.getSingleByQuery = function (query,callback) {
     this.model.findOne(query, function(error,model){
-        console.log("getSingleByQuery-->");
-        console.log(model);
         if(error) return callback(error,null);
         return callback(null, model);
     });
@@ -106,6 +104,4 @@ Base.prototype.getList = function(page,size,where,callback) {
         }
     });
 };
-
-
 module.exports = Base;

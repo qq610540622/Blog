@@ -24,10 +24,8 @@ controller.detail = function(req,res) {
                     articleDao.getArticleFields({_id:1},function(err,result) {
                         if(err) callback(err,null);
                         else {
-                            console.log(result.length);
                             var data = {};
                             for(var index in result) {
-                                console.log(typeof index);
                                if(articleId == result[index]._id) {
                                    var tempIndex = parseInt(index);
                                    data.prev = index > 0 ? result[tempIndex-1]._id : null;

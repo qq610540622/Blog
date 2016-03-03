@@ -19,6 +19,9 @@ img {
   line-height: 0;
   clear: both; }
 
+.visibity {
+  visibility: hidden; }
+
 /* 导航css */
 #accordion-nav ul li {
   margin: 30px auto;
@@ -149,3 +152,10 @@ img {
     bottom: 5px;
     text-align: center;
     width: 100%; }
+
+.spider-box {
+  margin: 7px; }
+
+#loader {
+  margin-left: 10px;
+  display: none; }
