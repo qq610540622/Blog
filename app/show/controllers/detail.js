@@ -12,35 +12,34 @@ var controller = {};
 controller.detail = function(req,res) {
     var articleId = req.query.articleId;
     if(articleId) {
-
         async.series({
-                pageData:function(callback) {
-                    articleDao.getArticleAndUpdateReadCount(articleId,function(err,result) {
-                        if(err) callback(err,null);
-                        else callback(null,result);
-                    });
-                },
-                prevNext:function(callback) {
-                    articleDao.getArticleFields({_id:1},function(err,result) {
-                        if(err) callback(err,null);
-                        else {
-                            var data = {};
-                            for(var index in result) {
-                               if(articleId == result[index]._id) {
-                                   var tempIndex = parseInt(index);
-                                   data.prev = index > 0 ? result[tempIndex-1]._id : null;
-                                   data.next = index != (result.length -1) ? result[tempIndex+1]._id : null;
-                                   break;
-                               }
-                            }
-                            callback(null,data);
+            pageData:function(callback) {
+                articleDao.getArticleAndUpdateReadCount(articleId,function(err,result) {
+                    if(err) callback(err,null);
+                    else callback(null,result);
+                });
+            },
+            prevNext:function(callback) {
+                articleDao.getArticleFields({_id:1},function(err,result) {
+                    if(err) callback(err,null);
+                    else {
+                        var data = {};
+                        for(var index in result) {
+                           if(articleId == result[index]._id) {
+                               var tempIndex = parseInt(index);
+                               data.prev = index > 0 ? result[tempIndex-1]._id : null;
+                               data.next = index != (result.length -1) ? result[tempIndex+1]._id : null;
+                               break;
+                           }
                         }
-                    });
-                }
+                        callback(null,data);
+                    }
+                });
             }
-            ,function(err,results) {
-                if(!err) res.render("detail",results);
-            });
+        }
+        ,function(err,results) {
+            if(!err) res.render("detail",results);
+        });
     }
 }
 
@@ -71,6 +70,5 @@ controller.getForumByArticleId = function(req,res) {
         });
     }
 }
-
 
 module.exports = controller;

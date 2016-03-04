@@ -3,41 +3,17 @@
  */
 
 
-
 var guestbookDao = require("./../../../dao/guestbook");
-var commonHelper = require("./../../../helper/commonHelper");
-var paginationHelper = require("./../../../helper/paginationHelper");
-
 var async = require("async");
-
 var controller = {};
 
 /**
- * 文章详情
+ * 留言板首页
  * @param req
  * @param res
  */
 controller.index = function(req,res) {
-    /*var model = {content:"test",commitTime:Date.now(),parentId:0,username:"jack",supportCount:0,icon:"11",status:0};
-    guestbookDao.base.create(model,function(err,result) {
-        console.log(err);
-        console.log(result);
-    })
-
-    var page = req.query.page;
-    page = page?page:1;
-    var size = 5;
-    var redirectUrl = "/guestbook/getMessage";
-    guestbookDao.base.getList(page,size,{parentId:0},function(status,items) {
-        if(status) {
-            var p = new paginationHelper("","",page,size,redirectUrl,items);
-            console.log(p);
-            res.render("guestbook",{pageData:p});
-        }
-    })*/
-
     res.render("guestbook");
-
 }
 
 
@@ -48,7 +24,7 @@ controller.index = function(req,res) {
  */
 controller.getMessages = function(req,res) {
     var page = req.query.page;
-    page = page&&page>0?page:1;
+    page = page && page > 0 ? page : 1;
     var size = 10;
 
     async.series({
@@ -73,11 +49,6 @@ controller.getMessages = function(req,res) {
     },function(err,results) {
         res.send(results);
     })
-
-
-    /*guestbookDao.base.getAll(function(err,results) {
-        res.send(err?"":results);
-    })*/
 }
 
 
@@ -102,7 +73,7 @@ controller.submit = function(req,res) {
 
 
 /**
- * 保存留言信息
+ * 保存回复留言信息
  * @param req
  * @param res
  */

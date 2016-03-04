@@ -13,10 +13,9 @@ var showGuestbookController = require("../app/show/controllers/guestbook");
 var adminIndexController = require("../app/admin/controllers/home");
 var adminArticleController = require("../app/admin/controllers/article");
 var adminUserController = require("../app/admin/controllers/user");
-
 var adminForumController = require("../app/admin/controllers/forum");
-
 var adminCommentController = require("../app/admin/controllers/comment");
+
 
 module.exports = function(app) {
     /* 拦截器 */
@@ -26,8 +25,6 @@ module.exports = function(app) {
                 res.redirect("/login");
             }
         }
-
-        next();
     })
 
     //　**********************　　前台　********************
