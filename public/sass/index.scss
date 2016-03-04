@@ -53,19 +53,18 @@
           padding-left: 5px;
         }
       }
-
     }
   }
 }
 
 /* 评论 */
 .media-body {
-  .comment-reply-box {
+  .reply-box {
     display:none;
     margin-top:15px;
   }
 
-  .comment-operate {
+  .operate {
     i {
       :hover {
         cursor:pointer;
@@ -77,7 +76,6 @@
       }
     }
   }
-
 }
 
 
@@ -140,6 +138,15 @@
   color:#666;
 }
 
+
+/* 留言板分页 */
+.pagination {
+  li {
+    cursor:pointer;
+  }
+}
+
+.btn-support {cursor:pointer;}
 
 
 

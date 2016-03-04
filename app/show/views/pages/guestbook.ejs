@@ -1,25 +1,33 @@
-<!--  icon-thumbs-up --->
-<div class="comment">
-    <ul class="list-group">
+<% layout('./../layout') %>
 
+<div class="container">
+    <div class="panel panel-default">
+        <div class="panel-body bg-success">
+            如有技术上面需详谈的请加QQ：610540622(请备注一下：nodejs)
+        </div>
+    </div>
+    <div class="guestbook">
+        <ul class="list-group">
+            <li class="list-group-item">
+                <form role="form">
+                    <div class="form-group">
+                        <label for="name">留言</label>
+                        <textarea placeholder="有什么想对博主说的，请详细道来吧！~^_^~" class="form-control message" rows="5"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <button type="button" class="btn btn-submit-message btn-primary">留言</button>
+                    </div>
+                </form>
+            </li>
+            <li class="list-group-item">留言板信息：</li>
+        </ul>
+    </div>
 
-        <li class="list-group-item">
-            <form role="form">
-                <div class="form-group">
-                    <label for="name">评论</label>
-                    <textarea  placeholder="骚年既然来了，何不吐槽一翻呢？" class="form-control txt-content" rows="5"></textarea>
-                </div>
-                <div class="form-group">
-                    <button type="button" class="btn btn-submit-comment btn-primary">发表评论</button>
-                </div>
-            </form>
-        </li>
-    </ul>
+    <ul class="pagination"></ul>
 </div>
 
-
 <!-- Modal -->
-<div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal fade" id="guestbookModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -83,7 +91,7 @@
                                     <label for="lastname" class="col-sm-2 control-label">验证码：</label>
                                     <div class="col-sm-10" id="captcha-box">
                                         <input type="text" name="captcha" class="form-control" placeholder="请输入验证码">
-                                        <img id="captcha" src='/user/captcha?width=100&height=30' onclick="this.src='/user/captcha?width=100&height=30&timestamp='+new Date().getTime();"/>
+                                        <img id="captcha" src='/user/captcha?width=100&height=30' onclick="this.src='/user/captcha?width=100&height=30&timestamp='+Date.now();"/>
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -110,10 +118,8 @@
     </div>
 </div>
 
-
-
-<!-- 评论模板 -->
-<div class="comment-template hidden">
+<!-- 留言板模板 -->
+<div class="guestbook-template hidden">
     <li class="list-group-item item">
         <div class="media">
             <a class="pull-left">
@@ -146,14 +152,11 @@
 </div>
 
 
-
 <script type="text/javascript">
-    var articleId;
-    var commentOrReply;
+
     var $reply;
+    var messageOrReply = "";
     $(function() {
-        //显示第一屏
-        $('#myTab a:first').tab('show')
 
         //居中显示模态框
         $(".modal").on('show.bs.modal', function(e) {
@@ -161,14 +164,32 @@
         });
         $(window).on('resize', centerModals);
 
-
-        articleId = "<%= pageData._id %>";
-        loadComment();
-
+        //事件监听
         listenerEvent();
 
+        //验证
         validate();
-    });
+
+        //加载留言板信息
+        loadMessage();
+    })
+
+
+    //监听事件
+    function listenerEvent() {
+        $(".btn-submit-message").click(function() {
+            var message = $(".message").val();
+            if(message) {
+                if(isLogin()) {
+                    commitMessage(message);
+                } else {
+                    messageOrReply = "message";
+                    $("#guestbookModal").modal("show");
+                }
+            }
+        });
+    }
+
 
     //验证
     function validate() {
@@ -218,7 +239,6 @@
         }).on('success.form.bv', function (e) {
             e.preventDefault();
 
-
             $.ajax({
                 type:"post",
                 dataType:"text",
@@ -227,16 +247,15 @@
                 async:false,
                 success:function(data) {
                     if(data && data == "success") {
-                        if(commentOrReply == "comment") {
-                            var comment = $(".txt-content").val();
-                            commitComment(comment);
-                        } else if(commentOrReply == "reply") {
-                            var replyComment = $reply.parents(".comment-reply-box").find(".txt-reply").val();
+                        if(messageOrReply == "message") {
+                            var content = $(".message").val();
+                            commitMessage(content);
+                        } else if(messageOrReply == "reply") {
+                            var replyComment = $reply.parents(".reply-box").find(".txt-reply").val();
                             var parentId = $reply.attr("data-id");
-                            commitReplyComment(parentId,replyComment);
+                            commitReplyMessage(parentId,replyComment);
                         }
-
-                        $('#commentModal').modal('hide');
+                        $('#guestbookModal').modal('hide');
                         $("#login-form").bootstrapValidator('resetForm', true);
                         $("#signin-form").bootstrapValidator('resetForm', true);
                     } else {
@@ -244,6 +263,7 @@
                     }
                 }
             });
+
         });
 
 
@@ -337,16 +357,17 @@
                 success:function(data) {
                     if(data) {
                         if(data == "success") {
-                            if(commentOrReply == "comment") {
-                                var comment = $(".txt-content").val();
-                                commitComment(comment);
-                            } else if(commentOrReply == "reply") {
-                                var replyComment = $reply.parents(".comment-reply-box").find(".txt-reply").val();
+
+                            if(messageOrReply == "message") {
+                                var content = $(".message").val();
+                                commitMessage(content);
+                            } else if(messageOrReply == "reply") {
+                                var replyComment = $reply.parents(".reply-box").find(".txt-reply").val();
                                 var parentId = $reply.attr("data-id");
-                                commitReplyComment(parentId,replyComment);
+                                commitReplyMessage(parentId,replyComment);
                             }
 
-                            $('#commentModal').modal('hide');
+                            $('#guestbookModal').modal('hide');
                             $("#signin-form").bootstrapValidator('resetForm', true);
                             $("#login-form").bootstrapValidator('resetForm', true);
                         } else if(data == "captchaError") {
@@ -359,35 +380,9 @@
         });
     }
 
-    //监听事件
-    function listenerEvent() {
-        //提交评论
-        $(".btn-submit-comment").click(function() {
-            //评论内容
-            var comment = $(".txt-content").val();
-            if(comment) {
-                if(isLogin()) {
-                    commitComment(comment);
-                } else {
-                    //标记当前操作为评论
-                    commentOrReply = "comment";
-                    //打开模态框
-                    $('#commentModal').modal('show');
-                }
-            }
-        });
-
-        //取消按钮
-        $(".btn-cancel").click(function() {
-            //隐藏模态框
-            $('#commentModal').modal('hide');
-        });
-
-        listenerCommentEvent();
-    }
 
     //监听评论事件
-    function listenerCommentEvent() {
+    function listenerMessageEvent() {
         //回复按钮
         $(".btn-reply").click(function() {
             var $body =  $(this).parents(".list-group");
@@ -403,16 +398,16 @@
         //确定回复
         $(".btn-reply-confirm").click(function() {
             $reply = $(this);
-            var replyComment = $reply.parents(".reply-box").find(".txt-reply").val();
-            if(replyComment) {
+            var replyMessage = $reply.parents(".reply-box").find(".txt-reply").val();
+            if(replyMessage) {
                 var parentId = $reply.attr("data-id");
                 if(isLogin()) {
-                    commitReplyComment(parentId,replyComment);
+                    commitReplyMessage(parentId,replyMessage);
                 } else {
                     //当前操作为回复评论
-                    commentOrReply = "reply";
+                    messageOrReply = "reply";
                     //打开模态框
-                    $('#commentModal').modal('show');
+                    $('#guestbookModal').modal('show');
                 }
             }
         });
@@ -429,7 +424,7 @@
                         _id:_id
                     },
                     async:false,
-                    url:"/comment/submitSupport",
+                    url:"/guestbook/submitSupport",
                     success:function(data) {
                         if(data&&data == "success") {
                             var val = _self.children().text().replace(/[()]/g,"");
@@ -441,42 +436,42 @@
         });
     }
 
+
     //提交回复评论
-    function commitReplyComment(parentId,replyComment) {
+    function commitReplyMessage(parentId,replyMessage) {
         $.ajax({
             type:"post",
             dataType:"text",
             data:{
                 parentId:parentId,
-                replyComment:replyComment,
-                articleId:articleId
+                content:replyMessage
             },
-            url:"/comment/submitReplyComment",
+            url:"/guestbook/submitReply",
             async:false,
             success:function(data) {
                 if(data&&data=="success") {
-                    $reply.parents(".comment-reply-box").find(".txt-reply").val("");
-                    loadComment();
-                    $('#commentModal').modal('hide');
+                    $reply.parents(".reply-box").find(".txt-reply").val("");
+                    loadMessage();
+                    $('#guestbookModal').modal('hide');
                 }
             }
         });
     }
 
+
     //提交评论
-    function commitComment(comment) {
+    function commitMessage(content) {
         $.ajax({
             type:"post",
             dataType:"text",
             data:{
-                comment:comment,
-                articleId:articleId
+                content:content
             },
-            url:"/comment/submitComment",
+            url:"/guestbook/submit",
             success:function(data) {
                 if(data && data == "success") {
-                    $(".txt-content").val("");
-                    loadComment();
+                    $(".message").val("");
+                    loadMessage();
                     $('#commentModal').modal('hide');
                 }
             }
@@ -484,32 +479,30 @@
     }
 
 
-
-    //加载评论
-    function loadComment() {
+    //加载消息
+    function loadMessage(page) {
+        page = page ? page : 1;
         $.ajax({
-            type:"post",
+            type:"get",
             dataType:"json",
-            url:"/comment/getComments",
-            data:{
-                articleId:articleId
-            },
+            url:"/guestbook/getMessages?page="+page,
             success:function(data) {
-                if(data && data instanceof Array) {
-                    var $item = $(".comment .list-group .item").remove();
-                    var arr = [];
-                    arr.push($('<li class="list-group-item item">评论信息：</li>'));
+                console.log(data);
+                if(data) {
+                    loadPagination(data.total);
 
-                    var parentItems = data.filter(function(item) {
+                    var $item = $(".guestbook .list-group .item").remove();
+                    var arr = [];
+                    var parentItems = data.rows.filter(function(item) {
                         return item.parentId == "0";
                     });
-                    var childrenItems = data.filter(function(item) {
+                    var childrenItems = data.rows.filter(function(item) {
                         return item.parentId != "0";
                     });
 
                     if(parentItems && parentItems instanceof Array) {
                         parentItems.forEach(function(item) {
-                            var $item = $($(".comment-template").html());
+                            var $item = $($(".guestbook-template").html());
                             $item.find(".icon").attr("src","/images/face/m"+item.icon+".gif");
                             $item.find(".username").text(item.username);
                             $item.find(".content").text(item.content);
@@ -520,37 +513,82 @@
                                 return item._id == children.parentId;
                             })
                             if(isExistChildren) {
-                                $item = loadReplyComment(item,childrenItems,$item);
+                                $item = loadReplyMessage(item,childrenItems,$item);
                             }
                             arr.push($item);
                         });
-                        $(".comment .list-group").prepend(arr);
-                        listenerCommentEvent();
+
+                        $(".guestbook .list-group").append(arr);
+                        listenerMessageEvent();
                     }
                 }
             }
         });
     }
 
+
     //加载回复评论
-    function loadReplyComment(parentItem,childrenItems,$listGroup) {
+    function loadReplyMessage(parentItem,childrenItems,$listGroup) {
         var items = childrenItems.filter(function(sonItem) {
             return parentItem._id == sonItem.parentId;
         });
-        $media = $($(".comment-template .list-group-item").html());
+        $media = $($(".guestbook-template .list-group-item").html());
         if(items && items.length>0) {
             items.forEach(function(item) {
                 $media.find(".icon").attr("src","/images/face/m"+item.icon+".gif");
                 $media.find(".username").text(item.username);
                 $media.find(".content").text(item.content);
                 $media.find(".btn-reply-confirm").attr("data-id",item._id);
-                $media.find(".operate").remove().end().find(".comment-reply-box").remove();
+                $media.find(".operate").remove().end().find(".reply-box").remove();
                 $listGroup.find(".media-body:first").append($media);
-                loadReplyComment(item,items,$listGroup);
+                loadReplyMessage(item,items,$listGroup);
             });
             return $listGroup;
         }
     }
 
 
+    //当前页
+    var pageIndex = 1;
+    //加载分页
+    function loadPagination(total) {
+        if(total>0) {
+            $(".pagination").show().find("li").remove();
+            var list = [];
+            list.push("<li class='prev'><a>&laquo;</a></li>");
+            for(var i=1; i<=total; i++) {
+                var li = '<li><a>'+i+'</a></li>';
+                list.push(li);
+            }
+            list.push("<li class='next'><a>&raquo;</a></li>");
+            $(".pagination").append(list).find("li:eq("+pageIndex+")").addClass("active");
+
+            listenerPaginationClick(total);
+        } else {
+            $(".pagination").hide();
+        }
+    }
+
+
+    //监听分页点击事件
+    function listenerPaginationClick(total) {
+        $(".pagination li").click(function() {
+            var className = this.className;
+            if(className == "prev") {
+                if(pageIndex > 1) {
+                    pageIndex -= 1;
+                }
+            } else if(className == "next") {
+                if(pageIndex<total) {
+                    pageIndex += 1;
+                }
+            } else {
+                $(this).siblings(".active").removeClass("active");
+                pageIndex = $(this).children().text();
+            }
+            loadMessage(pageIndex);
+        });
+    }
+
 </script>
+

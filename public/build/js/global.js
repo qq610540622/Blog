@@ -56,9 +56,41 @@ function convertTime(timestramp) {
     return res;
 }
 
+//判断用户是否登录
+function isLogin() {
+    var res = false;
+    $.ajax({
+        type:"post",
+        dataType:"text",
+        url:"/user/isLogin",
+        async:false,
+        success:function(data) {
+            if(data && data == "success") {
+                res = true;
+            }
+        }
+    });
+    return res;
+}
 
 
 
+//模态框垂直居中
+function centerModals($element) {
+    var $modals;
+    if ($element.length) {
+        $modals = $element;
+    } else {
+        $modals = $(".modal" + ':visible');
+    }
+    $modals.each( function(i) {
+        var $clone = $(this).clone().css('display', 'block').appendTo('body');
+        var top = Math.round(($clone.height() - $clone.find('.modal-content').height()) / 2);
+        top = top > 0 ? top : 0;
+        $clone.remove();
+        $(this).find('.modal-content').css("margin-top", top);
+    });
+}
 
 
 

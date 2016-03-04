@@ -38,7 +38,7 @@ body {
 .comment {
   margin: 40px 0; }
 
-.comment .media img {
+.media img {
   width: 50px;
   height: 50px;
   border-radius: 50%; }
@@ -61,8 +61,11 @@ footer {
       font-weight: bold; }
 
 /* 评论 */
-.txt-comment-content {
+.txt-content {
   background: #fff url(/images/comment-bg.png) no-repeat right bottom !important; }
+
+.message {
+  background: #fff url(/images/message-bg.png) no-repeat right bottom !important; }
 
 #captcha-box input[type="text"] {
   width: 50% !important;
@@ -110,12 +113,12 @@ a.navbar-brand i {
       padding-left: 5px; }
 
 /* 评论 */
-.media-body .comment-reply-box {
+.media-body .reply-box {
   display: none;
   margin-top: 15px; }
-.media-body .comment-operate i :hover {
+.media-body .operate i :hover {
   cursor: pointer; }
-.media-body .comment-operate i span {
+.media-body .operate i span {
   font-size: 13px;
   padding-left: 2px;
   margin-right: 10px; }
@@ -159,3 +162,10 @@ a.navbar-brand i {
 /* 首页 列表 */
 .article-content-box {
   color: #666; }
+
+/* 留言板分页 */
+.pagination li {
+  cursor: pointer; }
+
+.btn-support {
+  cursor: pointer; }

@@ -38,7 +38,7 @@ controller.submitComment = function(req,res) {
         model.parentId = 0;
         model.username = req.session.username;
         model.commentTime  = Date.now();
-        model.icon = commonHelper.random(1,64);
+        model.icon = req.session.userModel.icon;
         commentDao.base.create(model,function(status,data) {
             if(status) {
                 res.send("success");
@@ -65,7 +65,7 @@ controller.submitReplyComment = function(req,res) {
         model.parentId = parentId;
         model.username = req.session.username;
         model.commentTime  = Date.now();
-        model.icon = commonHelper.random(1,64);
+        model.icon = req.session.userModel.icon;
         commentDao.base.create(model,function(status,data) {
             if(status) {
                 res.send("success");
@@ -84,9 +84,7 @@ controller.submitSupport = function(req,res) {
     var _id = req.body._id;
     if(_id) {
         commentDao.base.update({_id:_id},{$inc:{supportCount:1}},{upsert:false,multi:false},function(err) {
-            if(err == null) {
-                res.send("success");
-            }
+            res.send(err?"error":"success");
         });
     }
 }

@@ -75,7 +75,6 @@ controller.index = function(req,res) {
  */
 controller.header = function(req,res) {
     forumDao.getAll(function(err,results) {
-        console.log(results);
         res.send(err?"error":results);
     })
     /*forumDao.base.getListByQuery({enabled:true},function(err,result) {

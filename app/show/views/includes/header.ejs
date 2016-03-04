@@ -11,35 +11,16 @@
         </div>
 
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+
+            <!--<ul class="nav navbar-nav">
+                <li><a href="/show/lists?forumId=56d80165d1d93fe004f3fd2f">css</a></li>
+                <li><a href="/show/lists?forumId=56c57ce442e8e1c419b1778a">nodejs</a></li>
+                <li class="active"><a href="/show/lists?forumId=56c582e76d53253c27e92c6d">bootstrap</a></li>
+                <li><a href="/guestbook/index">留言板</a></li>
+            </ul>-->
+
             <ul class="nav navbar-nav">
-
-                <!--<li class="active"><a href="#">Link <span class="sr-only">(current)</span></a></li>
-                <li><a href="#">Link</a></li>
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="#">Action</a></li>
-                        <li><a href="#">Another action</a></li>
-                        <li><a href="#">Something else here</a></li>
-                        <li role="separator" class="divider"></li>
-                        <li><a href="#">Separated link</a></li>
-                        <li role="separator" class="divider"></li>
-                        <li><a href="#">One more separated link</a></li>
-                    </ul>
-                </li>
-
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Java <b class="caret"></b></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="#">jmeter</a></li>
-                        <li><a href="#">EJB</a></li>
-                        <li><a href="#">Jasper Report</a></li>
-                        <li class="divider"></li>
-                        <li><a href="#">分离的链接</a></li>
-                        <li class="divider"></li>
-                        <li><a href="#">另一个分离的链接</a></li>
-                    </ul>
-                </li>-->
+                <li><a href="/guestbook/index?item=999">留言板</a></li>
             </ul>
 
             <form class="navbar-form navbar-right search-form" role="search">
@@ -55,22 +36,35 @@
 
 <script type="text/javascript">
     $(function() {
+        var url = window.location.href;
+        var params = url.split("?")[1];
+
         $.ajax({
             type:"post",
             dataType:"json",
             url:"/index/header",
+            async:false,
             success:function(data) {
                 if(data && data instanceof Array) {
                     var arr = [];
-                    data.forEach(function(item) {
+                    for(var index in data) {
+                        var href = "/show/lists?forumId="+data[index]._id+"&item="+index;
                         var $element = $("<li><a href='#'>Link</a></li>");
-                        $element.children().attr("href","/show/lists?forumId="+item._id);
-                        $element.children().text(item.name);
+                        $element.children().attr("href",href);
+                        $element.children().text(data[index].name);
                         arr.push($element);
-                    })
+                    }
                     $("ul.navbar-nav").prepend(arr);
                 }
             }
         });
+
+        $("ul.navbar-nav li").each(function(i,e) {
+            var href = $(this).children().attr("href").split("?")[1];
+            if(params == href) {
+                $(this).addClass("active");
+            }
+        })
+
     })
 </script>

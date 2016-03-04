@@ -7,6 +7,7 @@ var showDetailController = require("../app/show/controllers/detail");
 var showListsController = require("../app/show/controllers/lists");
 var showCommentController = require("../app/show/controllers/comment");
 var showUserController = require("../app/show/controllers/user");
+var showGuestbookController = require("../app/show/controllers/guestbook");
 
 
 var adminIndexController = require("../app/admin/controllers/home");
@@ -20,11 +21,12 @@ var adminCommentController = require("../app/admin/controllers/comment");
 module.exports = function(app) {
     /* 拦截器 */
     app.use(function(req,res,next) {
-        if(req.url.indexOf("/admin")==0) {
+        if(new RegExp("/admin","i").test(req.url)) {
             if(!req.session.adminCaptcha) {
                 res.redirect("/login");
             }
         }
+
         next();
     })
 
@@ -50,6 +52,13 @@ module.exports = function(app) {
     app.post("/user/signin",showUserController.signin);
     app.post("/user/isExistUsername",showUserController.isExistUsername);
     app.get("/user/captcha",showUserController.captcha);
+
+    //留言板
+    app.get("/guestbook/index",showGuestbookController.index);
+    app.get("/guestbook/getMessages",showGuestbookController.getMessages);
+    app.post("/guestbook/submit",showGuestbookController.submit);
+    app.post("/guestbook/submitReply",showGuestbookController.submitReply);
+    app.post("/guestbook/submitSupport",showGuestbookController.submitSupport);
 
 
 

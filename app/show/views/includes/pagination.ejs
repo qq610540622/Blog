@@ -2,19 +2,40 @@
 
 
 
+    <%
+        var firstObj = {};
+        var endObj = {};
+        var itemObj;
+        if(pageData && pageData.listsArticles) {
+            if(pageData.listsArticles.itemList.length>1) {
+                firstObj = pageData.listsArticles.first;
+                itemObj = pageData.listsArticles.itemList;
+                endObj = pageData.listsArticles.end;
+            }
+        } else {
+            if(pageData.itemList.length>1) {
+                firstObj = pageData.first;
+                itemObj = pageData.itemList;
+                endObj = pageData.end;
+            }
+        }
+    %>
+
+
+
 
     <%
-    if(pageData && pageData.listsArticles.itemList.length>1) {
+    if(itemObj) {
     %>
-        <li class="<%= pageData.listsArticles.first.class %>"><a href="<%= pageData.listsArticles.first.url %>">&laquo;</a></li>
+        <li class="<%= firstObj.class %>"><a href="<%= firstObj.url %>">&laquo;</a></li>
         <%
-        pageData.listsArticles.itemList.forEach(function(e) {
+        itemObj.forEach(function(e) {
         %>
             <li class="<%= e.class %>"><a href="<%= e.url %>"><%= e.index %></a></li>
         <%
         });
         %>
-        <li class="<%= pageData.listsArticles.end.class %>"><a href="<%= pageData.listsArticles.end.url %>">&raquo;</a></li>
+        <li class="<%= endObj.class %>"><a href="<%= endObj.url %>">&raquo;</a></li>
     <%
     }
     %>

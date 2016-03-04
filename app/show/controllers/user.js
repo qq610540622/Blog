@@ -4,7 +4,7 @@
 
 var async = require("async");
 var userDao = require("./../../../dao/user");
-var commentHelper = require("./../../../helper/commonHelper");
+var commonHelper = require("./../../../helper/commonHelper");
 var controller = {};
 
 
@@ -14,8 +14,8 @@ var controller = {};
  * @param res
  */
 controller.isLogin = function(req,res) {
-    var username = req.session.username;
-    var result = username ? "success":"";
+    var userModel = req.session.userModel;
+    var result = userModel && typeof userModel == "object" ? "success":"";
     res.send(result);
 }
 
@@ -27,7 +27,7 @@ controller.isLogin = function(req,res) {
  */
 controller.isExistUsername = function(req,res) {
     var username = req.body.username;
-    if(username && username.length>0) {
+    if(username) {
         userDao.base.countByQuery({username:username},function(err,result) {
             if(result) {
                 res.send("exist");
@@ -48,12 +48,11 @@ controller.login = function(req,res) {
     var username = req.body.username;
     var password = req.body.password;
     if(username && password) {
-        var model = {username:username,password:commentHelper.md5(password)};
+        var model = {username:username,password:commonHelper.md5(password),icon:commonHelper.random(1,64)};
         userDao.base.countByQuery(model,function(status,result) {
             if(result && typeof result == "number") {
                 //如果登录成功就把它的存放cookie和session中
-                req.session.username = username;
-                res.cookie["username"] = username;
+                req.session.userModel = model;
                 res.send("success");
             } else {
                 res.send("error");
@@ -76,11 +75,11 @@ controller.signin = function(req,res) {
         var username = req.body.username;
         var password = req.body.password;
         if(username && password) {
-            var model = {username:username,password:commentHelper.md5(password)};
+            var model = {username:username,password:commonHelper.md5(password),icon:commonHelper.random(1,64)};
             userDao.base.create(model,function(status,result) {
                 if(result && typeof result == "object") {
                     //如果登录成功就把它的存放cookie和session中
-                    req.session.username = username;
+                    req.session.userModel = model;
                     res.cookie["username"] = username;
                     res.send("success");
                 } else {
