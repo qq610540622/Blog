@@ -25,6 +25,7 @@ module.exports = function(app) {
                 res.redirect("/login");
             }
         }
+        next();
     })
 
     //　**********************　　前台　********************
