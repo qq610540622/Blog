@@ -52,11 +52,6 @@ blog
 -|--|--|--|--|--index.ejs
 -|--|--|--|--|--lists.ejs
 -|--|--|--|--layout.ejs
--|--|
--|--|
--|--db						 	    //数据库
--|--|--forum.db.txt
--|--|--user.db.txt
 -|-|
 -|-|
 -|--helper                          //辅助类
@@ -74,7 +69,7 @@ blog
 -|--|--user.js
 -|
 -|
--|--models------//实体--
+-|--models                          //实体--
 -|--|--mapping
 -|--|--|--article.js
 -|--|--|--comment.js

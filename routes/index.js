@@ -101,7 +101,7 @@ module.exports = function(app) {
     app.post('/comment/getList',adminCommentController.getList);
     app.post('/comment/remove',adminCommentController.remove);
 
-　　
+　　　　
 }
 
 
