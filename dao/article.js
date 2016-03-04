@@ -4,7 +4,7 @@
 
 var daoBase = require('./base');
 var articleModel = require('./../models').article;
-
+　　　
 var dao = {};
 var articleDao = new daoBase(articleModel);
 dao.base = articleDao;
