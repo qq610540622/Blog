@@ -38,6 +38,7 @@ controller.detail = function(req,res) {
             }
         }
         ,function(err,results) {
+            results.title = "详情页";
             if(!err) res.render("detail",results);
         });
     }

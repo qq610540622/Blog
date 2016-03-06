@@ -179,7 +179,9 @@
     function listenerEvent() {
         $(".btn-submit-message").click(function() {
             var message = $(".message").val();
+            console.log(message);
             if(message) {
+                console.log(isLogin());
                 if(isLogin()) {
                     commitMessage(message);
                 } else {
@@ -449,6 +451,7 @@
             url:"/guestbook/submitReply",
             async:false,
             success:function(data) {
+                console.log(data);
                 if(data&&data=="success") {
                     $reply.parents(".reply-box").find(".txt-reply").val("");
                     loadMessage();

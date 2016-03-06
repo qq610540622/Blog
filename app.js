@@ -15,7 +15,6 @@ app.engine('ejs', engine);
 app.set('views',['./app/show/views/pages','./app/admin/views']);
 app.set('view engine', 'ejs');
 
-
 app.use(cookieParser());                      //cookie
 app.use(bodyParser.json());
 
@@ -31,8 +30,9 @@ app.use(bodyParser.json());
     })
 }));*/
 
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ limit: '50mb',extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
+
 
 var cookieSession = require('cookie-session');
 app.use(cookieSession({

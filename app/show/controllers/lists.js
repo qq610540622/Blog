@@ -76,7 +76,7 @@ controller.lists = function(req,res) {
         }
     },function(err, results) {
         if(!err){
-            res.render("lists",{pageData:results});
+            res.render("lists",{pageData:results,title:"列表页"});
         }
     });
 }
@@ -96,6 +96,14 @@ controller.tag = function(req,res) {
             listsArticles: function(callback){
                 articleDao.getListByTag(page,size,keywords,function(status,data) {
                     if(status) {
+                        var cheerio = require("cheerio");
+                        for(var index in data.rows) {
+                            var content = "<div id='wrap'>"+data.rows[index].content+"</div>";
+                            var $ = cheerio.load(content,{decodeEntities: false});
+                            var txt = $("#wrap").text();
+                            data.rows[index].content = txt.substr(0,200);
+                        }
+
                         var pagination = new paginationHelper("",keywords,page,size,"/show/lists",data);
                         callback(null,pagination);
                     }
@@ -133,8 +141,9 @@ controller.tag = function(req,res) {
                 })
             }
         },function(err, results) {
+            console.log(results);
             if(!err){
-                res.render("lists",{pageData:results});
+                res.render("lists",{pageData:results,title:"列表页"});
             }
         });
     }

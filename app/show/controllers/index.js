@@ -62,7 +62,7 @@ controller.index = function(req,res) {
         }
     },function(err, results) {
         if(!err){
-            res.render("index",{pageData:results});
+            res.render("index",{pageData:results,title:"首页"});
         }
     });
 }

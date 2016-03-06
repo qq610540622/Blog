@@ -21,8 +21,9 @@ module.exports = function(app) {
     /* 拦截器 */
     app.use(function(req,res,next) {
         if(new RegExp("/admin","i").test(req.url)) {
-            if(!req.session.adminCaptcha) {
+            if(!req.session.adminName) {
                 res.redirect("/login");
+                return;
             }
         }
         next();

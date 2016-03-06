@@ -13,7 +13,7 @@ var controller = {};
  * @param res
  */
 controller.index = function(req,res) {
-    res.render("guestbook");
+    res.render("guestbook",{title:"留言板"});
 }
 
 
@@ -59,7 +59,7 @@ controller.getMessages = function(req,res) {
  */
 controller.submit = function(req,res) {
     var content = req.body.content;
-    var username = req.session.username;
+    var username = req.session.userModel.username;
     var icon = req.session.userModel.icon;
     if(content && username) {
         var model = {content:content,commitTime:Date.now(),parentId:0,username:username,supportCount:0,icon:icon,status:0};
@@ -79,11 +79,13 @@ controller.submit = function(req,res) {
  */
 controller.submitReply = function(req,res) {
     var content = req.body.content;
-    var username = req.session.username;
+    var username = req.session.userModel.username;
     var icon = req.session.userModel.icon;
     var parentId = req.body.parentId;
+    console.log(content+username+parentId);
     if(content && username && parentId) {
         var model = {content:content,commitTime:Date.now(),parentId:parentId,username:username,supportCount:0,icon:icon,status:0};
+        console.log(model);
         guestbookDao.base.create(model,function(status,result) {
             res.send(status?"success":"error");
         })

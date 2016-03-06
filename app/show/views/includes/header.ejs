@@ -20,6 +20,7 @@
             </ul>-->
 
             <ul class="nav navbar-nav">
+
                 <li><a href="/guestbook/index?item=999">留言板</a></li>
             </ul>
 
@@ -47,6 +48,7 @@
             success:function(data) {
                 if(data && data instanceof Array) {
                     var arr = [];
+                    arr.push('<li class="active"><a href="/">首页</a></li>');
                     for(var index in data) {
                         var href = "/show/lists?forumId="+data[index]._id+"&item="+index;
                         var $element = $("<li><a href='#'>Link</a></li>");
@@ -62,7 +64,7 @@
         $("ul.navbar-nav li").each(function(i,e) {
             var href = $(this).children().attr("href").split("?")[1];
             if(params == href) {
-                $(this).addClass("active");
+                $(this).siblings(".active").removeClass().end().addClass("active");
             }
         })
 

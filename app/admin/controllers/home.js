@@ -97,8 +97,8 @@ controller.submit = function(req,res) {
         var session_captcha = req.session.adminCaptcha;
         if(captcha == session_captcha) {
             userDao.base.getSingleByQuery({username:username,password:commonHelper.md5(password),type:1},function(err,result) {
-                if(result) {req.session.adminName = username; res.send("success");}
-                else res.send("error");
+                if(err) res.send("error");
+                else {req.session.adminName = username; res.send("success");}
             })
         } else {
             res.send("error");
