@@ -47,12 +47,15 @@ controller.list = function(req,res) {
         var pattern = new RegExp("^.*"+keywords+".*$");
         where.title = pattern;
     }
-    if(forumId) where.forumId = forumId;
+    if(forumId) {
+        where.forumId = forumId
+    } else {
+        res.send("");
+        return;
+    }
 
     articleDao.base.getList(page,size,where,function(status,data) {
-        if(status) {
-            res.send(data);
-        }
+        res.send(status?data:"");
     })
 };
 

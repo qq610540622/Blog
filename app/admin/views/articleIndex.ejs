@@ -205,8 +205,6 @@
         var selectedItem = $("#forum").datagrid("getSelected");
         var searchTxt = $("#search-txt").val();
         if(selectedItem&&selectedItem._id) {
-            console.log("reloadArticles");
-            console.log(selectedItem);
             $('#article').datagrid('load',{
                 keywords: searchTxt,
                 forumId: selectedItem._id
