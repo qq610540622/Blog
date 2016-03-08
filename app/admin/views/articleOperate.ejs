@@ -1,8 +1,17 @@
+<html>
+
 <link rel="stylesheet" type="text/css" href="/build/css/admin.css">
 <link rel="stylesheet" type="text/css" href="/libs/jquery-easyui/themes/icon.css">
 <link rel="stylesheet" type="text/css" href="/libs/jquery-easyui/themes/gray/easyui.css">
 
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <title>Document</title>
+</head>
+<body>
 
+</body>
+</html>
 
 
 <div class="article-operate">
@@ -50,6 +59,7 @@
 </div>
 
 <script type="text/javascript" src="/libs/jquery/dist/jquery.min.js"></script>
+<script type="text/javascript" src="/build/js/jquery.form.js"></script>
 <script type="text/javascript" src="/libs/jquery-easyui/jquery.easyui.min.js"></script>
 <script type="text/javascript" src="/libs/xhEditor/xheditor-1.2.2.min.js"></script>
 <script type="text/javascript" src="/libs/xhEditor/xheditor_lang/zh-cn.js"></script>
@@ -168,40 +178,72 @@
         });
     }
 
+
     /* 加载插件 */
     function loadPlus() {
-        var plugins={
-            Code:{c:'btnCode',t:'插入代码',h:1,e:function(){
-                var _this=this;
-                var htmlCode="<div>编程语言<select id='xheCodeType'>";
-                htmlCode+="<option value='html'>HTML/XML</option>";
-                htmlCode+="<option value='js'>Javascript</option>";
-                htmlCode+="<option value='css'>CSS</option>";
-                htmlCode+="<option value='php'>PHP</option>";
-                htmlCode+="<option value='java'>Java</option>";
-                htmlCode+="<option value='py'>Python</option>";
-                htmlCode+="<option value='pl'>Perl</option>";
-                htmlCode+="<option value='rb'>Ruby</option>";
-                htmlCode+="<option value='cs'>C#</option>";
-                htmlCode+="<option value='c'>C++/C</option>";
-                htmlCode+="<option value='vb'>VB/ASP</option>";
-                htmlCode+="<option value=''>其它</option>";
-                htmlCode+="</select></div><div>";
-                htmlCode+="<textarea id='xheCodeValue' wrap='soft' spellcheck='false' style='width:300px;height:100px;' />";
-                htmlCode+="</div><div style='text-align:right;'><input type='button' id='xheSave' value='确定' /></div>";
-                var jCode=$(htmlCode),jType=$('#xheCodeType',jCode),jValue=$('#xheCodeValue',jCode),jSave=$('#xheSave',jCode);
-                jSave.click(function(){
-                    _this.loadBookmark();
-                    _this.pasteHTML('<pre class="brush: '+jType.val()+'">'+_this.domEncode(jValue.val())+'</pre>&nbsp;');
-                    _this.hidePanel();
-                    return false;
-                });
-                _this.saveBookmark();
-                _this.showDialog(jCode);
-            }},
-        };
         $('#content').xheditor({
-            plugins:plugins,  //使用我们定义的插件
+            plugins:{
+                test7:{c:'btnUploadImg',t:'上传图片',h:1,e:function(){
+                    var _this=this;
+                    var htmlCode="";
+                    htmlCode+='<form method="post" id="myForm" enctype="multipart/form-data"><input type="file" name="myfile"><input type="button" id="xheSave" value="确定"></form>';
+                    var jCode=$(htmlCode),jSave=$('#xheSave',jCode),jForm=$('#myForm',jCode);
+                    jSave.click(function() {
+                        var formData = new FormData(jForm.prevObject[0]);
+                        $.ajax({
+                            url: '/article/uploadImg',
+                            type: 'POST',
+                            data: formData,
+                            async: false,
+                            cache: false,
+                            contentType: false,
+                            processData: false,
+                            success: function(data){
+                                if(data) {
+                                    _this.loadBookmark();
+                                    _this.pasteHTML('<p><img src="'+data+'"/></p>');
+                                    _this.hidePanel();
+                                    return false;
+                                }
+                            },
+                            error: function(){
+                                $("#spanMessage").html("与服务器通信发生错误");
+                            }
+                        });
+                    })
+                    _this.saveBookmark();
+                    _this.showDialog(jCode);
+                }},
+                Code:{c:'btnCode',t:'插入代码',h:1,e:function(){
+                    var _this=this;
+                    var htmlCode="<div>编程语言<select id='xheCodeType'>";
+                    htmlCode+="<option value='html'>HTML/XML</option>";
+                    htmlCode+="<option value='js'>Javascript</option>";
+                    htmlCode+="<option value='css'>CSS</option>";
+                    htmlCode+="<option value='php'>PHP</option>";
+                    htmlCode+="<option value='java'>Java</option>";
+                    htmlCode+="<option value='py'>Python</option>";
+                    htmlCode+="<option value='pl'>Perl</option>";
+                    htmlCode+="<option value='rb'>Ruby</option>";
+                    htmlCode+="<option value='cs'>C#</option>";
+                    htmlCode+="<option value='c'>C++/C</option>";
+                    htmlCode+="<option value='vb'>VB/ASP</option>";
+                    htmlCode+="<option value=''>其它</option>";
+                    htmlCode+="</select></div><div>";
+                    htmlCode+="<textarea id='xheCodeValue' wrap='soft' spellcheck='false' style='width:300px;height:100px;' />";
+                    htmlCode+="</div><div style='text-align:right;'><input type='button' id='xheSave' value='确定' /></div>";
+                    var jCode=$(htmlCode),jType=$('#xheCodeType',jCode),jValue=$('#xheCodeValue',jCode),jSave=$('#xheSave',jCode);
+                    jSave.click(function(){
+                        _this.loadBookmark();
+                        _this.pasteHTML('<pre class="brush: '+jType.val()+'">'+_this.domEncode(jValue.val())+'</pre>&nbsp;');
+                        _this.hidePanel();
+                        return false;
+                    });
+                    _this.saveBookmark();
+                    _this.showDialog(jCode);
+                }}
+            },
+            upImgUrl:"/article/upload",
             loadCSS:'<style>pre{margin-left:2em;border-left:3px solid #CCC;padding:0 1em;}</style>',
         });
     }
@@ -209,3 +251,4 @@
 </script>
 
 
+</html>

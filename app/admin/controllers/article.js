@@ -186,4 +186,32 @@ controller.getTag = function(req,res) {
     })
 };
 
+
+//上传
+var formidable = require("formidable");
+var util = require("util");
+var fs = require("fs");
+controller.uploadImg = function(req,res) {
+    try {
+        var extName = '';  //后缀名
+        switch (req.files.myfile.type) {
+            case 'image/pjpeg':extName = 'jpg';break;
+            case 'image/jpeg':extName = 'jpg';break;
+            case 'image/png':extName = 'png';break;
+            case 'image/x-png':extName = 'png';break;
+        }
+        var avatarName = Date.now() + '.' + extName;
+        var uploadFolder = "/upload/";
+        var newPath = "public/" + uploadFolder + avatarName;
+        fs.createReadStream(req.files.myfile.path).pipe(fs.createWriteStream(newPath));
+        var showFolder = uploadFolder+avatarName;
+        res.send(showFolder);
+    }catch(e) {
+        console.log(e);
+    }
+};
+
+
+
+
 module.exports = controller;

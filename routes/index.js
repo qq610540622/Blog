@@ -90,6 +90,11 @@ module.exports = function(app) {
     app.post('/article/spider',adminArticleController.spider);
     app.post('/article/submitSpider',adminArticleController.submitSpider);
 
+
+    var multipart = require('connect-multiparty');
+    var multipartMiddleware = multipart();
+    app.post('/article/uploadImg',multipartMiddleware,adminArticleController.uploadImg);
+
     //模块
     app.post('/forum/list',adminForumController.list);
     app.post('/forum/create',adminForumController.create);
