@@ -47,7 +47,7 @@ controller.getMessages = function(req,res) {
             })
         }
     },function(err,results) {
-        res.send(results);
+        res.send(err?"error":results);
     })
 }
 
@@ -64,7 +64,7 @@ controller.submit = function(req,res) {
     if(content && username) {
         var model = {content:content,commitTime:Date.now(),parentId:0,username:username,supportCount:0,icon:icon,status:0};
         guestbookDao.base.create(model,function(status,result) {
-            res.send(status?"success":"error");
+            res.send(!status?"error":"success");
         })
     } else {
         res.send("error");
@@ -82,12 +82,10 @@ controller.submitReply = function(req,res) {
     var username = req.session.userModel.username;
     var icon = req.session.userModel.icon;
     var parentId = req.body.parentId;
-    console.log(content+username+parentId);
     if(content && username && parentId) {
         var model = {content:content,commitTime:Date.now(),parentId:parentId,username:username,supportCount:0,icon:icon,status:0};
-        console.log(model);
         guestbookDao.base.create(model,function(status,result) {
-            res.send(status?"success":"error");
+            res.send(!status?"error":"success");
         })
     } else {
         res.send("error");

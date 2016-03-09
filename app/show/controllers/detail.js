@@ -39,7 +39,8 @@ controller.detail = function(req,res) {
         }
         ,function(err,results) {
             results.title = "详情页";
-            if(!err) res.render("detail",results);
+            if(err) res.render("error");
+            else res.render("detail",results);
         });
     }
 }
@@ -67,7 +68,7 @@ controller.getForumByArticleId = function(req,res) {
                 }
             }
         ], function (err, result) {
-            if(!err) res.send(result);
+            res.send(err?"error":result);
         });
     }
 }

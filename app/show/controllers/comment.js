@@ -17,8 +17,7 @@ controller.getComments = function(req,res) {
     var articleId = req.body.articleId;
     if(articleId) {
         commentDao.base.getListByQuery({articleId:articleId,status:0},function(err,data) {
-            if(err) res.send(null);
-            else res.send(data);
+            res.send(err?"error":data);
         });
     }
 }
@@ -40,9 +39,7 @@ controller.submitComment = function(req,res) {
         model.commentTime  = Date.now();
         model.icon = req.session.userModel.icon;
         commentDao.base.create(model,function(status,data) {
-            if(status) {
-                res.send("success");
-            }
+            res.send(status?"error":"success");
         });
     }
 }
@@ -67,9 +64,7 @@ controller.submitReplyComment = function(req,res) {
         model.commentTime  = Date.now();
         model.icon = req.session.userModel.icon;
         commentDao.base.create(model,function(status,data) {
-            if(status) {
-                res.send("success");
-            }
+            res.send(status?"error":"success");
         });
     }
 }

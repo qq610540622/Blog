@@ -4,19 +4,26 @@
 
 
 var articleDao = require("./../../../dao/article");
-var stringHelper = require("./../../../helper/stringHelper");
-var dateHelper = require("./../../../helper/dateHelper");
 var robotHelper = require("./../../../helper/robotHelper");
 var path = require('path');
 
 var controller = {};
 
-//文章后台首页
+/**
+ * 文章后台首页
+ * @param req
+ * @param res
+ */
 controller.index = function(req,res) {
     res.render("articleIndex");
 }
 
 
+/**
+ * 添加与修改视图
+ * @param req
+ * @param res
+ */
 controller.operate = function(req,res) {
     var param = {};
     var operate = req.query.operate;
@@ -36,7 +43,11 @@ controller.operate = function(req,res) {
 }
 
 
-//集合
+/**
+ * 集合
+ * @param req
+ * @param res
+ */
 controller.list = function(req,res) {
     var page = parseInt(req.body.page);
     var size = parseInt(req.body.rows);
@@ -59,17 +70,22 @@ controller.list = function(req,res) {
     })
 };
 
-var http = require("http");
-var cheerio  = require("cheerio");
-var async  = require("async");
+
+/**
+ * 爬取文章
+ * @param req
+ * @param res
+ */
 controller.spider = function(req,res) {
     var keywords = decodeURI(req.query.keywords);
     var forumId = req.query.forumId;
     var page = req.body.page;
     var url = "http://zzk.cnblogs.com/s?t=b&w="+keywords+"&p="+page;
+    var async  = require("async");
     async.waterfall([
         function(callback) {
             var data = "";
+            var http = require("http");
             var req = http.request(url, function(res){
                 res.setEncoding("utf8");
                 res.on('data', function(chunk){
@@ -85,6 +101,7 @@ controller.spider = function(req,res) {
             req.end();
         },
         function(arg,callback) {
+            var cheerio  = require("cheerio");
             var $ = cheerio.load(arg,{decodeEntities: false});
             var hasNext = $("#paging_block .pager a").filter(function(i,e) {
                 if(new RegExp("next","i").test($(e).text())) {
@@ -119,7 +136,11 @@ controller.spider = function(req,res) {
 }
 
 
-
+/**
+ * 爬取文章
+ * @param req
+ * @param res
+ */
 controller.submitSpider = function(req,res) {
     var arrayJson = req.body.articleList;
     var articleList = JSON.parse(arrayJson);
@@ -130,8 +151,11 @@ controller.submitSpider = function(req,res) {
 }
 
 
-
-//添加
+/**
+ * 添加
+ * @param req
+ * @param res
+ */
 controller.create = function(req,res) {
     var title = req.body.title;
     if(title) {
@@ -151,7 +175,12 @@ controller.create = function(req,res) {
     }
 };
 
-//修改
+
+/**
+ * 修改
+ * @param req
+ * @param res
+ */
 controller.edit = function(req,res) {
     var _id = req.body._id;
     if(_id) {
@@ -169,7 +198,11 @@ controller.edit = function(req,res) {
 };
 
 
-//删除
+/**
+ * 删除
+ * @param req
+ * @param res
+ */
 controller.remove = function(req,res) {
     var _id = req.body._id;
     if(_id) {
@@ -179,7 +212,12 @@ controller.remove = function(req,res) {
     }
 };
 
-//查找
+
+/**
+ * 查找
+ * @param req
+ * @param res
+ */
 controller.getTag = function(req,res) {
     articleDao.base.getByQuery({},{_id:0,tag:1},{multi:true},function(err,result) {
         res.send(err?"error":result);
@@ -187,8 +225,11 @@ controller.getTag = function(req,res) {
 };
 
 
-//上传
-var fs = require("fs");
+/**
+ * 上传
+ * @param req
+ * @param res
+ */
 controller.uploadImg = function(req,res) {
     try {
         var extName = '';  //后缀名
@@ -201,6 +242,7 @@ controller.uploadImg = function(req,res) {
         var avatarName = Date.now() + '.' + extName;
         var uploadFolder = "/upload/";
         var newPath = "public/" + uploadFolder + avatarName;
+        var fs = require("fs");
         fs.createReadStream(req.files.myfile.path).pipe(fs.createWriteStream(newPath));
         var showFolder = uploadFolder+avatarName;
         res.send(showFolder);

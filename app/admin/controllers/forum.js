@@ -7,7 +7,11 @@ var forumDao = require("./../../../dao/forum");
 var path = require('path');
 var controller = {};
 
-//列表
+/**
+ * 列表
+ * @param req
+ * @param res
+ */
 controller.list = function(req,res) {
     forumDao.base.getListNotPagination(function(data) {
         if(data) {
@@ -17,7 +21,11 @@ controller.list = function(req,res) {
 };
 
 
-//添加
+/**
+ * 添加与更新视图
+ * @param req
+ * @param res
+ */
 controller.operate = function(req,res) {
     var operate = req.query.operate;
     var _id = req.query._id;
@@ -28,7 +36,8 @@ controller.operate = function(req,res) {
         res.render("forumOperate",result);
     } else if(operate == "edit") {
         forumDao.base.getById(_id,function(err,data) {
-            if(err === null) {
+            if(err) res.rend("error");
+            else {
                 result.data = data;
                 result.operate = "edit";
                 res.render("forumOperate",result);
@@ -38,7 +47,11 @@ controller.operate = function(req,res) {
 };
 
 
-//添加
+/**
+ * 添加
+ * @param req
+ * @param res
+ */
 controller.create = function(req,res) {
     var model = {};
     if(req.body.name) {
@@ -52,7 +65,11 @@ controller.create = function(req,res) {
 };
 
 
-//删除
+/**
+ * 删除
+ * @param req
+ * @param res
+ */
 controller.remove = function(req,res) {
     var _id = req.body._id;
     if(_id) {
@@ -63,7 +80,11 @@ controller.remove = function(req,res) {
 };
 
 
-//修改
+/**
+ * 修改
+ * @param req
+ * @param res
+ */
 controller.edit = function(req,res) {
     var model = {};
     if(req.body._id) {
@@ -79,12 +100,5 @@ controller.edit = function(req,res) {
         })
     }
 };
-
-
-
-//查找
-controller.find = function(req,res) {};
-//根据Id来查找
-controller.findById = function(req,res) {};
 
 module.exports = controller;

@@ -13,6 +13,7 @@ var controller = {};
  * @param res
  */
 controller.index = function(req,res) {
+    console.log("access index page");
     async.series({
         indexArticles: function(callback){
             articleDao.getArticles(10,function(err,items) {
@@ -61,9 +62,8 @@ controller.index = function(req,res) {
             })
         }
     },function(err, results) {
-        if(!err){
-            res.render("index",{pageData:results,title:"首页"});
-        }
+        if(err) res.render("error");
+        else res.render("index",{pageData:results,title:"首页"});
     });
 }
 
@@ -76,10 +76,7 @@ controller.index = function(req,res) {
 controller.header = function(req,res) {
     forumDao.getAll(function(err,results) {
         res.send(err?"error":results);
-    })
-    /*forumDao.base.getListByQuery({enabled:true},function(err,result) {
-        res.send(err==null?result:"error");
-    });*/
+    });
 }
 
 
@@ -111,15 +108,15 @@ controller.statistics = function(req,res) {
         commentCount:function(callback) {
             commentDao.getCommentCount(function(err,result) {
                 callback(err,result);
-            })
+            });
         },
         userCount:function(callback) {
             userDao.getUserCount(function(err,result) {
                 callback(err,result);
-            })
+            });
         }
     },function(err,results) {
-        res.send(results);
+        res.send(err?"error":results);
     });
 }
 

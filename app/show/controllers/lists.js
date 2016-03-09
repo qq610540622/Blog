@@ -18,7 +18,6 @@ controller.lists = function(req,res) {
     var size = 10;
     var keywords = req.query.keywords === undefined ? "" : req.query.keywords;
 
-
     async.series({
         listsArticles: function(callback){
             var where = {};
@@ -75,9 +74,8 @@ controller.lists = function(req,res) {
             })
         }
     },function(err, results) {
-        if(!err){
-            res.render("lists",{pageData:results,title:"列表页"});
-        }
+        if(err) res.render("error");
+        else res.render("lists",{pageData:results,title:"列表页"});
     });
 }
 
@@ -115,7 +113,7 @@ controller.tag = function(req,res) {
                     else callback(null,items);
                 });
             },
-            newArticles: function(callback){
+            newArticles: function(callback){    //最新文章
                 articleDao.getNewArticles(function(err,items) {
                     if(err) callback(err,null);
                     else callback(null,items);
@@ -141,10 +139,8 @@ controller.tag = function(req,res) {
                 })
             }
         },function(err, results) {
-            console.log(results);
-            if(!err){
-                res.render("lists",{pageData:results,title:"列表页"});
-            }
+            if(err) res.render("error");
+            else res.render("lists",{pageData:results,title:"列表页"});
         });
     }
 }

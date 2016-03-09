@@ -26,24 +26,20 @@ controller.index = function(req,res) {
  * @param res
  */
 controller.getList = function(req,res) {
-
     var where = {};
     var keywords = req.body.keywords;
-    console.log(keywords);
     if(keywords) {
         var reg = new RegExp("^.*"+keywords+".*$","i");
         where.username = reg;
     }
     where.type = 0;
-
-    console.log(where);
-
     userDao.base.getList(1,10,where,function(status,results) {
         if(status) {
             res.send(results);
         }
     });
 }
+
 
 /**
  * 用户操作视图
@@ -54,7 +50,8 @@ controller.userOperate = function(req,res) {
     var _id = req.query._id;
     if(_id) {
         userDao.base.getById(_id,function(err,result) {
-            if(!err) res.render("userOperate",{model:result});
+            if(err) res.render("error");
+            else res.render("userOperate",{model:result});
         });
     }
 }
