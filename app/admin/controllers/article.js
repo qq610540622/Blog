@@ -188,6 +188,8 @@ controller.getTag = function(req,res) {
 
 
 //上传
+var formidable = require("formidable");
+var util = require("util");
 var fs = require("fs");
 controller.uploadImg = function(req,res) {
     try {

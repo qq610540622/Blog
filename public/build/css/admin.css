@@ -71,7 +71,10 @@ img {
   background-color: transparent;
   background-image: url(/images/code.png);
   background-repeat: no-repeat;
-  background-position: 3px -2px; }
+  background-position: -1px -2px; }
+
+.btnUploadImg {
+  background: url(/images/uploadImg.png) no-repeat -1px 1px; }
 
 /***********************************
  *******  文章操作
