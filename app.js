@@ -62,9 +62,12 @@ log4js.configure({
 var logger = log4js.getLogger('normal');
 app.use(log4js.connectLogger(logger, {level: 'auto', format:':method :url'}));
 
-//路由
-require('./routes/index')(app);
+//网站路由
+require('./routes/index').webRoute(app);
+require('./routes/api')(app);
 app.listen(port);
 console.log("server listen to port:%s",port);
+
+
 
 

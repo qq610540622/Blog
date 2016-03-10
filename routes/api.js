@@ -1,0 +1,235 @@
+/**
+ * Created by Administrator on 2016-03-10.
+ */
+
+var config = {
+    // Authentication keys
+    keys: [
+        "article",
+        "user"
+    ],
+    /**
+     * Allowed IP's or ranges
+     * Can use * for wildcards, *.*.*.* for no restrictions
+     */
+    ips: [
+        "*.*.*.*"
+    ],
+    /**
+     * SSL Config
+     * Set key and cert to absolute path if SSL used, false if not
+     */
+    ssl: {
+        key: false,
+        cert: false
+    },
+    // Port designation
+    port: 8080,
+    // Base directory
+    base: "example/base",
+    // Default create mode
+    cmode: "0755"
+};
+
+// Regular Expressions
+var commandRegEx = /^\/(api)\/(v[1-9]\.[0-9])\/([a-zA-Z0-9_\.~-]+)\/(.*)/,  // /{key}/{command}/{path}
+    pathRegEx = /^\/([a-zA-Z0-9_\.~-]+)\/(.*)/;  // /{key}/{path}
+
+
+/**
+ * Check Key (Called by checkReq)
+ */
+var checkKey = function (config, req) {
+    // Loop through keys in config
+    for (var i = 0, z = config.keys.length; i < z; i++) {
+        if (config.keys[i] === req.params[2]) {
+            return true;
+        }
+    }
+    return false;
+};
+
+/**
+ * Check IP (Called by checkReq)
+ */
+var checkIP = function (config, req) {
+    console.log(req.connection.remoteAddress);
+    var ip = req.connection.remoteAddress.split("."),
+        curIP,
+        b,
+        block = [];
+    for (var i=0, z=config.ips.length-1; i<=z; i++) {
+        curIP = config.ips[i].split(".");
+        b = 0;
+        // Compare each block
+        while (b<=3) {
+            (curIP[b]===ip[b] || curIP[b]==="*") ? block[b] = true : block[b] = false;
+            b++;
+        }
+        // Check all blocks
+        if (block[0] && block[1] && block[2] && block[3]) {
+            return true;
+        }
+    }
+    return false;
+};
+
+/**
+ * Check Request
+ * Checks Key and IP Address
+ */
+var checkReq = function (config, req, res) {
+
+    // Set access control headers
+    res.header('Access-Control-Allow-Origin', '*');
+
+    // Check key and IP
+    if(!checkKey(config, req) || !checkIP(config, req)) {
+        resError(101,null,res);
+        return false;
+    }
+
+    return true;
+};
+
+
+/**
+ * Response Error
+ */
+var resError = function (code, raw, res) {
+    var codes = {
+        100: "unknown command",
+        101: "not found resource",
+        102: "id cant's null or empty",
+        103: "get by id not found",
+        104: "ids can't great than 15",
+        105: "get list is error",
+        106: "page must be great than zero",
+        107: "rows must be great than zero"
+    };
+    res.send({ "status": "error", "code": code, "message": codes[code], "raw": raw });
+    return false;
+};
+
+/**
+ * Response Success
+ */
+var resSuccess = function (data, res) {
+    res.send({ "status": "success", "data": data });
+};
+
+
+module.exports = function(server) {
+
+    /**
+     * GET
+     */
+    server.get(commandRegEx, function (req, res, next) {
+        // Check request
+        checkReq(config, req, res);
+
+        var controller = require("../api/controllers/"+req.params[2]);
+        switch (req.params[3]) {
+            case "get":
+                if(!req.params.id) resError(102,null,res);
+                var id = req.params.id;
+                if(id.indexOf(",") == -1) {    //单个id
+                    controller.getSingle(id,function(err,items) {
+                        if(err) resError(103,null,res);
+                        else resSuccess(items,res);
+                    });
+                } else {                        //多个id
+                    var ids = id.split(',');
+                    if(ids.length>15) resError(104,null,res);
+                    controller.getListById(ids,function(err,items) {
+                        if(err) resError(105,null,res);
+                        resSuccess(items,res);
+                    });
+                }
+                break;
+            case "list":
+                var page = req.params.page || 1;    //默认从第1页开查询
+                var rows = req.params.rows || 5;    //默认值为5条数据
+                if(page<0) resError(106,null,res);
+                if(rows<0) resError(107,null,res);
+                rows = rows > 15 ? 15 : rows;   //最多取出15条数据
+                controller.getList(page,rows,null,function(err,items) {
+                    if(err) resError(105,null,res);
+                    else resSuccess(items,res);
+                });
+                break;
+        }
+        return next();
+    });
+
+
+    /**
+     * POST
+     *
+     */
+    server.post(commandRegEx, function (req, res, next) {
+        // Check request
+        checkReq(config, req, res);
+        // Set path
+        var path = config.base + "/" + req.params[2];
+        switch (req.params[2]) {
+            case "article":
+                resSuccess("post article",res);
+                break;
+            case "user":
+                resSuccess("post user",res);
+                break;
+            default:
+                resError(100, null, res);
+        }
+        return next();
+    });
+
+
+    /**
+     * PUT
+     */
+    server.put(commandRegEx, function (req, res, next) {
+        // Check request
+        checkReq(config, req, res);
+        // Set path
+        var path = config.base + "/" + req.params[2];
+        switch (req.params[2]) {
+            case "article":
+                resSuccess("put article",res);
+                break;
+            case "user":
+                resSuccess("put user",res);
+                break;
+            default:
+                resError(100, null, res);
+        }
+        return next();
+    });
+
+
+    /**
+     * DELETE
+     */
+    server.del(commandRegEx, function (req, res, next) {
+        // Check request
+        checkReq(config, req, res);
+        // Set path
+        var path = config.base + "/" + req.params[2];
+        switch (req.params[2]) {
+            case "article":
+                resSuccess("DELETE article",res);
+                break;
+            case "user":
+                resSuccess("DELETE user",res);
+                break;
+            default:
+                resError(100, null, res);
+        }
+        return next();
+    });
+
+
+
+
+};

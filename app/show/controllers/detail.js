@@ -11,6 +11,7 @@ var controller = {};
  */
 controller.detail = function(req,res) {
     var articleId = req.query.articleId;
+    console.log(articleId);
     if(articleId) {
         async.series({
             pageData:function(callback) {

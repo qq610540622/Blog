@@ -48,6 +48,7 @@
     "limit": "0.0.1",
     "log4js": "^0.6.33",
     "mongoose": "^4.4.6",
-    "passport-local": "^1.0.0"
+    "passport-local": "^1.0.0",
+    "restify": "^4.0.4"
   }
 }

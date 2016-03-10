@@ -17,7 +17,8 @@ var adminForumController = require("../app/admin/controllers/forum");
 var adminCommentController = require("../app/admin/controllers/comment");
 
 
-module.exports = function(app) {
+var route = {};
+route.webRoute = function(app) {
     /* 拦截器 */
     app.use(function(req,res,next) {
         if(new RegExp("/admin","i").test(req.url)) {
@@ -27,7 +28,7 @@ module.exports = function(app) {
             }
         }
         next();
-    })
+    });
 
     //　**********************　　前台　********************
     app.get('/',showIndexController.index);
@@ -108,10 +109,7 @@ module.exports = function(app) {
     app.post('/comment/getList',adminCommentController.getList);
     app.post('/comment/remove',adminCommentController.remove);
 
-　　　　
-}
+};
 
-
-
-
+module.exports = route;
 
