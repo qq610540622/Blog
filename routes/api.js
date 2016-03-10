@@ -53,7 +53,6 @@ var checkKey = function (config, req) {
  * Check IP (Called by checkReq)
  */
 var checkIP = function (config, req) {
-    console.log(req.connection.remoteAddress);
     var ip = req.connection.remoteAddress.split("."),
         curIP,
         b,
@@ -105,7 +104,10 @@ var resError = function (code, raw, res) {
         104: "ids can't great than 15",
         105: "get list is error",
         106: "page must be great than zero",
-        107: "rows must be great than zero"
+        107: "rows must be great than zero",
+        108: "forumId and article title must be not null",
+        109: "create faild",
+        110: "data error"
     };
     res.send({ "status": "error", "code": code, "message": codes[code], "raw": raw });
     return false;
@@ -131,8 +133,8 @@ module.exports = function(server) {
         var controller = require("../api/controllers/"+req.params[2]);
         switch (req.params[3]) {
             case "get":
-                if(!req.params.id) resError(102,null,res);
-                var id = req.params.id;
+                if(!req.query.id) resError(102,null,res);
+                var id = req.query.id;
                 if(id.indexOf(",") == -1) {    //单个id
                     controller.getSingle(id,function(err,items) {
                         if(err) resError(103,null,res);
@@ -143,7 +145,7 @@ module.exports = function(server) {
                     if(ids.length>15) resError(104,null,res);
                     controller.getListById(ids,function(err,items) {
                         if(err) resError(105,null,res);
-                        resSuccess(items,res);
+                        else resSuccess(items,res);
                     });
                 }
                 break;
@@ -159,22 +161,39 @@ module.exports = function(server) {
                 });
                 break;
         }
-        return next();
     });
 
 
     /**
      * POST
-     *
      */
     server.post(commandRegEx, function (req, res, next) {
-        // Check request
+        // 检查请求是否合法
         checkReq(config, req, res);
-        // Set path
-        var path = config.base + "/" + req.params[2];
+        
+        console.log(req.body);
+        
+        var controller = require("../api/controllers/"+req.params[2]);
         switch (req.params[2]) {
             case "article":
-                resSuccess("post article",res);
+                if(req.body.list) {
+                    var list = req.body.list;
+                    var isOk = true;
+                    for(var i=0,len=list.length; i<len; i++) {
+                        if(!list[i].forumId||!list[i].title) {
+                            isOk = false;
+                            break;
+                        }
+                    }
+                    if(isOk) {
+                        controller.create(list,function(err,item) {
+                            if(err) resError(109,null,res);
+                            else resSuccess(item,res);
+                        });
+                    } else {
+                        resError(110,null,res);
+                    }
+                }
                 break;
             case "user":
                 resSuccess("post user",res);
@@ -182,7 +201,6 @@ module.exports = function(server) {
             default:
                 resError(100, null, res);
         }
-        return next();
     });
 
 
@@ -212,10 +230,7 @@ module.exports = function(server) {
      * DELETE
      */
     server.del(commandRegEx, function (req, res, next) {
-        // Check request
         checkReq(config, req, res);
-        // Set path
-        var path = config.base + "/" + req.params[2];
         switch (req.params[2]) {
             case "article":
                 resSuccess("DELETE article",res);

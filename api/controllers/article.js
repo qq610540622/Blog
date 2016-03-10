@@ -8,20 +8,31 @@ var path = require('path');
 var controller = {};
 
 controller.getSingle = function(id,callback) {
-    return articleDao.base.getById(id,callback);
+    articleDao.base.getById(id,callback);
 }
 
 controller.getListById = function(ids,callback) {
-    return articleDao.base.getListByQuery({_id:{$in:ids}},callback)
+    articleDao.base.getListByQuery({_id:{$in:ids}},callback)
 }
 
 
 controller.getList = function(page,rows,where,callback) {
-    return articleDao.base.getList(page,rows,where,function(status,items) {
+    articleDao.base.getList(page,rows,where,function(status,items) {
         if(!status) callback("error",null);
         else callback(null,items);
     });
 }
+
+/**
+ * 创建
+ */
+controller.create = function(model,callback) {
+    articleDao.base.create(model,function(status,item) {
+        if(!status) callback("error",null);
+        else callback(null,item);
+    });    
+}
+
 
 
 module.exports = controller;
