@@ -1,9 +1,17 @@
 # blog
 
 <pre>
-如有那些地方需要修改，或写得不好的地方请联系我，小弟感激不尽。
+如有那些地方需要修改，或写得不好的地方请联系我。
 QQ:610540622(请备注一下：nodejs)
 预览地址：<a href="http://120.24.81.38:3000/" target="_blank">http://120.24.81.38:3000</a>
+
+
+<h3>安装</h3>
+git clone https://github.com/qq610540622/blog.git
+cd blog
+npm install
+mkdir logs
+node app
 
 
 视图引擎：ejs

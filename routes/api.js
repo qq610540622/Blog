@@ -87,38 +87,10 @@ var checkReq = function (config, req, res) {
         resError(101,null,res);
         return false;
     }
-
+    
     return true;
 };
 
-
-/**
- * Response Error
- */
-var resError = function (code, raw, res) {
-    var codes = {
-        100: "unknown command",
-        101: "not found resource",
-        102: "id cant's null or empty",
-        103: "get by id not found",
-        104: "ids can't great than 15",
-        105: "get list is error",
-        106: "page must be great than zero",
-        107: "rows must be great than zero",
-        108: "forumId and article title must be not null",
-        109: "create faild",
-        110: "data error"
-    };
-    res.send({ "status": "error", "code": code, "message": codes[code], "raw": raw });
-    return false;
-};
-
-/**
- * Response Success
- */
-var resSuccess = function (data, res) {
-    res.send({ "status": "success", "data": data });
-};
 
 
 module.exports = function(server) {
