@@ -3,6 +3,8 @@
  */
 
 
+var settings = require("../settings");
+
 var commonHelper = {};
 
 
@@ -48,25 +50,25 @@ commonHelper.md5 = function(str) {
 
 
 
-
-commonHelper.apiConfig = {
-    keys: [
-        "article",
-        "user"
-    ],
-    ips: [
-        "*.*.*.*"
-    ]
+/**
+ * 检查controller是否包含配置项中
+ */
+commonHelper.checkVersion = function (req) {
+    for (var i = 0, z = settings.apiConfig.version.length; i < z; i++) {
+        if (settings.apiConfig.version[i] === req.params[1]) {
+            return true;
+        }
+    }
+    return false;
 };
-
 
 
 /**
  * 检查controller是否包含配置项中
  */
 commonHelper.checkKey = function (req) {
-    for (var i = 0, z = this.apiConfig.keys.length; i < z; i++) {
-        if (this.apiConfig.keys[i] === req.params[2]) {
+    for (var i = 0, z = settings.apiConfig.controller.length; i < z; i++) {
+        if (settings.apiConfig.controller[i] === req.params[2]) {
             return true;
         }
     }
@@ -82,8 +84,8 @@ commonHelper.checkIP = function (req) {
         curIP,
         b,
         block = [];
-    for (var i=0, z=this.apiConfig.ips.length-1; i<=z; i++) {
-        curIP = this.apiConfig.ips[i].split(".");
+    for (var i=0, z=settings.apiConfig.ips.length-1; i<=z; i++) {
+        curIP = settings.apiConfig.ips[i].split(".");
         b = 0;
         // Compare each block
         while (b<=3) {
@@ -108,8 +110,7 @@ commonHelper.checkReq = function (req, res) {
     res.header('Access-Control-Allow-Origin', '*');
     
     //不合法就直接返回100的错误码
-    if(!this.checkKey(req) || !this.checkIP(req)) {
-        this.resError(100,null,res);
+    if(!this.checkVersion(req) || !this.checkKey(req) || !this.checkIP(req)) {
         return false;
     }
     return true;
@@ -120,22 +121,7 @@ commonHelper.checkReq = function (req, res) {
  * 响应错误信息
  */
 commonHelper.resError = function (code, raw, res) {
-    var codes = {
-        99: "not found action method",
-        100: "unknown controller",
-        101: "not found resource",
-        102: "id cant's null or empty",
-        103: "get by id not found",
-        104: "ids can't great than 15",
-        105: "get list is error",
-        106: "page must be great than zero",
-        107: "rows must be great than zero",
-        108: "forumId and article title must be not null",
-        109: "create faild",
-        110: "data error",
-        111: "remove error"
-    };
-    res.send({ "status": "error", "code": code, "message": codes[code], "raw": raw });
+    res.send({ "status": "error", "code": code, "message": settings.apiConfig.errorCodes[code], "raw": raw });
     return false;
 };
 

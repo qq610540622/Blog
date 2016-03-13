@@ -3,7 +3,7 @@
  */
 
 
-var userDao = require("./../../dao/user");
+var articleDao = require("./../../dao/article");
 var common = require("./../../helper/commonHelper");
 var path = require('path');
 var controller = {};
@@ -11,7 +11,7 @@ var controller = {};
 
 /**
  * 获取当个或多个文章
- * ---------------------------▶
+ * ---------------------------
  * method：get
  * url:"http://localhost:3000/api/v1.0/article/get?id=id1"
  * 单个：　id='id1'
@@ -21,14 +21,14 @@ controller.get = function(req, res) {
     if (!req.query.id) common.resError(102, null, res);
     var id = req.query.id;
     if (id.indexOf(",") == -1) {    //单个id
-        userDao.base.getById(id, function(err, items) {
+        articleDao.base.getById(id, function(err, items) {
             if (err) common.resError(103, err, res);
             else common.resSuccess(items, res);
         });
     } else if(id.indexOf(",") > 1) {                        //多个id
         var ids = id.split(',');
         if(ids.length>15) resError(104,null,res);
-        userDao.base.getListByQuery({_id:{$in:ids}},function(err,items) {
+        articleDao.base.getListByQuery({_id:{$in:ids}},function(err,items) {
             if (err) common.resError(105, err, res);
             else common.resSuccess(items, res);
         });
@@ -48,11 +48,11 @@ controller.get = function(req, res) {
 controller.list = function(req, res) {
     var page = req.query.page || 1;    //默认从第1页开查询
     var rows = req.query.rows || 5;    //默认值为5条数据
-
+    
     if(page<0) common.resError(106,null,res);
     if(rows<0) common.resError(107,null,res);
     rows = rows > 15 ? 15 : rows;   //最多取出15条数据
-    userDao.base.getList(parseInt(page), parseInt(rows), null, function(status, items) {
+    articleDao.base.getList(parseInt(page), parseInt(rows), null, function(status, items) {
         if(!status) common.resError(105,null,res);
         else common.resSuccess(items,res);
     });
@@ -72,14 +72,14 @@ controller.remove = function(req,res) {
     if (!req.body.id) common.resError(102, null, res);
     var id = req.body.id;
     if (id.indexOf(",") == -1) {    //单个id
-        userDao.base.remove({_id:id}, function(err) {
+        articleDao.base.remove({_id:id}, function(err) {
             if (err) common.resError(103, null, res);
             else common.resSuccess(id, res);
         });
     } else if(id.indexOf(",") > 1) {                        //多个id
         var ids = id.split(',');
         if(ids.length>15) resError(104,null,res);
-        userDao.base.remove({_id:{$in:ids}},function(err) {
+        articleDao.base.remove({_id:{$in:ids}},function(err) {
             if (err) common.resError(111, err, res);
             else common.resSuccess("", res);
         });
@@ -107,7 +107,7 @@ controller.create = function(req,res) {
             createDate : req.body.createDate || Date.now(),
             readCount:req.body.readCount || 0
         };
-        userDao.base.create(model,function(status,item) {
+        articleDao.base.create(model,function(status,item) {
             if(!status) common.resError(109,null,res);
             else common.resSuccess(item,res);
         });
@@ -121,7 +121,7 @@ controller.create = function(req,res) {
             }
         }
         if(isOk) {
-            userDao.base.create(list,function(status,item) {
+            articleDao.base.create(list,function(status,item) {
                 if(!status) common.resError(109,null,res);
                 else common.resSuccess(item,res);
             });
@@ -156,7 +156,7 @@ controller.update = function(req,res) {
             createDate : req.body.createDate || Date.now(),
             readCount:req.body.readCount || 0
         };
-        userDao.base.update({_id:model._id}, model, {upsert:false, multi:false}, function(err) {
+        articleDao.base.update({_id:model._id}, model, {upsert:false, multi:false}, function(err) {
             if(err) common.resError(109,null,res);
             else common.resSuccess("",res);
         });
@@ -174,7 +174,7 @@ controller.update = function(req,res) {
 
         if(isOk) {
             list.forEach(function(item) {
-                userDao.base.update({_id:item._id}, item, {upsert:false, multi:false}, function(err) {});
+                articleDao.base.update({_id:item._id}, item, {upsert:false, multi:false}, function(err) {});
             })
             common.resSuccess("",res);
         } else {

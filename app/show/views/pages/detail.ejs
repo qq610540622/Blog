@@ -33,7 +33,6 @@
                     },
                     url:"/detail/getForumByArticleId",
                     success:function(data) {
-                        console.log(data);
                         if(data) {
                             $(".breadcrumb li:eq(2)").children().text(data.name).attr("href","/show/lists?forumId="+data._id);
                         }

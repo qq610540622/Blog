@@ -30,7 +30,7 @@ route.prototype = {
     constructor: route,
     run: function() {
       this.webRoute();
-      this.apiRoute();  
+      this.apiRoute();
     },
     webRoute: function() {
         /* 拦截器 */
@@ -73,8 +73,6 @@ route.prototype = {
         this.app.post("/guestbook/submit",showGuestbookController.submit);
         this.app.post("/guestbook/submitReply",showGuestbookController.submitReply);
         this.app.post("/guestbook/submitSupport",showGuestbookController.submitSupport);
-
-
 
 
 
@@ -129,40 +127,46 @@ route.prototype = {
         var apiRouteRegEx = /^\/(api)\/(v[1-9]\.[0-9])\/([a-zA-Z0-9_\.~-]+)\/([a-zA-Z0-9_-]+)(.*)/;
         this.app.get(apiRouteRegEx,function(req,res) {
             //检查请求是否合法
-            common.checkReq(req, res);
-            //根据请求url引用对应的控制器　/api/v1.0/{control}/action/{params}
-            var controller = require("../api/controllers/"+req.params[2]);
-            //根据请求url拿到action部分
-            var action = req.params[3];
-            //检查controller里面是否有此action
-            if(controller.hasOwnProperty(action)) {
-                //控制器处理请求
-                controller[action](req,res);
+            if(common.checkReq(req, res))
+            {
+                //根据请求url引用对应的控制器　/api/v1.0/{control}/action/{params}
+                var controller = require("../api/"+req.params[1]+"/"+req.params[2]);
+                //根据请求url拿到action部分
+                var action = req.params[3];
+                //检查controller里面是否有此action
+                if(controller.hasOwnProperty(action)) {
+                    //控制器处理请求
+                    controller[action](req,res);
+                } else {
+                    //如果没有直接返回错误信息
+                    common.resError(99,null,res);
+                }
             } else {
-                //如果没有直接返回错误信息
-                common.resError(99,null,res);
+                common.resError(100,null,res);
             }
         });
         this.app.post(apiRouteRegEx,function(req,res) {
             //检查请求是否合法
-            common.checkReq(req, res);
-            //根据请求url引用对应的控制器
-            var controller = require("../api/controllers/"+req.params[2]);
-            //根据请求url拿到action部分
-            var action = req.params[3];
-            //检查controller里面是否有此action
-            if(controller.hasOwnProperty(action)) {
-                //控制器处理请求
-                controller[action](req,res);
+            if(common.checkReq(req, res))
+            {
+                //根据请求url引用对应的控制器　/api/v1.0/{control}/action/{params}
+                var controller = require("../api/"+req.params[1]+"/"+req.params[2]);
+                //根据请求url拿到action部分
+                var action = req.params[3];
+                //检查controller里面是否有此action
+                if(controller.hasOwnProperty(action)) {
+                    //控制器处理请求
+                    controller[action](req,res);
+                } else {
+                    //如果没有直接返回错误信息
+                    common.resError(99,null,res);
+                }
             } else {
-                //如果没有直接返回错误信息
-                common.resError(99,null,res);
+                common.resError(100,null,res);
             }
         });
     }
 }
-
-
 
 module.exports = route;
 

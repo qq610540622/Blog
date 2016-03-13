@@ -39,7 +39,7 @@ controller.submitComment = function(req,res) {
         model.commentTime  = Date.now();
         model.icon = req.session.userModel.icon;
         commentDao.base.create(model,function(status,data) {
-            res.send(status?"error":"success");
+            res.send(!status?"error":"success");
         });
     }
 }
@@ -64,7 +64,7 @@ controller.submitReplyComment = function(req,res) {
         model.commentTime  = Date.now();
         model.icon = req.session.userModel.icon;
         commentDao.base.create(model,function(status,data) {
-            res.send(status?"error":"success");
+            res.send(!status?"error":"success");
         });
     }
 }

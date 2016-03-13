@@ -13,7 +13,6 @@ var controller = {};
  * @param res
  */
 controller.index = function(req,res) {
-    console.log("access index page");
     async.series({
         indexArticles: function(callback){
             articleDao.getArticles(10,function(err,items) {
