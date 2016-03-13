@@ -130,7 +130,7 @@ route.prototype = {
         this.app.get(apiRouteRegEx,function(req,res) {
             //检查请求是否合法
             common.checkReq(req, res);
-            //根据请求url引用的控制器　/api/v1.0/{control}/action/{params}
+            //根据请求url引用对应的控制器　/api/v1.0/{control}/action/{params}
             var controller = require("../api/controllers/"+req.params[2]);
             //根据请求url拿到action部分
             var action = req.params[3];
