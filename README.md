@@ -25,6 +25,12 @@ node app
 
 blog
 -|
+-|--api                             //api
+-|--|--v1.0                         //api版本1.0
+-|--|--|--article.js
+-|--|--v1.0                         //api版本1.1
+-|--|--|--article.js
+-|--|--|--comment.js
 -|--app
 -|--|--admin                        //后台
 -|--|--|--controllers
