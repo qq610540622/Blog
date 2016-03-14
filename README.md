@@ -6,7 +6,7 @@ QQ:610540622(请备注一下：nodejs)
 预览地址：<a href="http://120.24.81.38:3000/" target="_blank">http://120.24.81.38:3000</a>
 
 
-<h3>安装</h3>
+<strong>安装</strong>
 git clone https://github.com/qq610540622/blog.git
 cd blog
 npm install

@@ -35,9 +35,10 @@ controller.submitComment = function(req,res) {
         model.content = comment;
         model.articleId = articleId;
         model.parentId = 0;
-        model.username = req.session.username;
+        model.username = req.session.userModel.username;
         model.commentTime  = Date.now();
         model.icon = req.session.userModel.icon;
+        console.log(model);
         commentDao.base.create(model,function(status,data) {
             res.send(!status?"error":"success");
         });
@@ -60,7 +61,7 @@ controller.submitReplyComment = function(req,res) {
         model.content = replyComment;
         model.articleId = articleId;
         model.parentId = parentId;
-        model.username = req.session.username;
+        model.username = req.session.userModel.username;
         model.commentTime  = Date.now();
         model.icon = req.session.userModel.icon;
         commentDao.base.create(model,function(status,data) {

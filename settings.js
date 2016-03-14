@@ -23,11 +23,11 @@ module.exports={
             101: "not found resource",
             102: "id cant's null or empty",
             103: "get by id not found",
-            104: "ids can't great than 15",
+            104: "id can't great than 15",
             105: "get list is error",
             106: "page must be great than zero",
             107: "rows must be great than zero",
-            108: "forumId and article title must be not null",
+            108: "forumId and title must be not null",
             109: "create faild",
             110: "data error",
             111: "remove error"

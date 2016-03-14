@@ -11,7 +11,7 @@ dao.base = commentDao;
 dao.model = commentModel;
 
 dao.getCommentCount = function(callback) {
-    var query = this.model.find({},{_id:1}).count();
+    var query = this.model.find({parentId:"0"},{_id:1}).count();
     query.exec(function(err,data) {
         if(err) callback(err,null);
         else callback(null,data);

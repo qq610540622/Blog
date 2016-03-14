@@ -43,6 +43,7 @@ controller.getList = function(req,res) {
                         _ids.push(item.articleId);
                     });
                 }
+                console.log(arg);
                 var query = {_id:{$in:_ids}};
                 articleDao.base.getByQuery(query,{title:1},{upset:false,multi:false},function(err,lists) {
                     if(err) {
