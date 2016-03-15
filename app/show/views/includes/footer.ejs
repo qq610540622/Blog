@@ -1,4 +1,7 @@
 
+<div id="to-top" style="display:none;">
+    <i class="icon-double-angle-up icon-3x"></i>
+</div>
 
 <div class="container">
     <nav class="navbar navbar-default navbar-fixed-bottom">
@@ -9,3 +12,26 @@
         </div>
     </nav>
 </div>
+
+<script type="text/javascript">
+
+
+
+    $(function() {
+        $(window).scroll(function () {
+            if ($(window).scrollTop() > 200) {
+                $("#to-top").fadeIn(100);
+            }
+            else {
+                $("#to-top").fadeOut(100);
+            }
+        })
+
+        $("#to-top").click(function() {
+            $('html, body').animate({
+                scrollTop: 0
+            }, 200);
+        });
+    })
+
+</script>

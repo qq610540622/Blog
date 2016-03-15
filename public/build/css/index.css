@@ -35,6 +35,24 @@ ul {
 body {
   background: #f6f6f6 !important; }
 
+#main {
+  overflow: hidden;
+  padding-top: 75px; }
+
+#to-top {
+  display: none; }
+
+@media screen and (min-width: 1500px) {
+  #to-top {
+    display: block;
+    position: fixed;
+    right: 3%;
+    bottom: 10%;
+    z-index: 1000;
+    border: 2px solid #fff;
+    padding: 0 10px;
+    border-radius: 10px;
+    cursor: pointer; } }
 .comment {
   margin: 40px 0; }
 
@@ -81,7 +99,8 @@ a.navbar-brand i {
 
 /* 文章详情页 */
 .article .panel-body {
-  overflow: hidden; }
+  overflow: hidden;
+  word-wrap: break-word; }
 .article .article-title {
   margin: 0 0 10px 0;
   font-size: 30px;
@@ -102,15 +121,17 @@ a.navbar-brand i {
       padding-left: 5px; }
 
 /*文章显示*/
-.article-list-box .panel-body a h3 {
-  margin: 8px 0 15px 0; }
-.article-list-box .panel-body .article-info {
-  overflow: hidden;
-  margin: 8px 0 0 0; }
-  .article-list-box .panel-body .article-info i {
-    margin: 0 18px 0 0; }
-    .article-list-box .panel-body .article-info i span, .article-list-box .panel-body .article-info i a {
-      padding-left: 5px; }
+.article-list-box .panel-body {
+  word-wrap: break-word; }
+  .article-list-box .panel-body a h3 {
+    margin: 8px 0 15px 0; }
+  .article-list-box .panel-body .article-info {
+    overflow: hidden;
+    margin: 8px 0 0 0; }
+    .article-list-box .panel-body .article-info i {
+      margin: 0 18px 0 0; }
+      .article-list-box .panel-body .article-info i span, .article-list-box .panel-body .article-info i a {
+        padding-left: 5px; }
 
 /* 评论 */
 .media-body .reply-box {

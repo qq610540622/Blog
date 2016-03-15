@@ -5,6 +5,7 @@
 .article {
   .panel-body {
     overflow: hidden;
+    word-wrap: break-word;
   }
   .article-title {
     margin: 0 0 10px 0;
@@ -39,6 +40,7 @@
 /*文章显示*/
 .article-list-box {
   .panel-body {
+    word-wrap: break-word;
     a {
       h3 {
         margin:8px 0 15px 0;
