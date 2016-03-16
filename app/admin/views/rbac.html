@@ -1,0 +1,81 @@
+
+<style type="text/css">
+
+    #win-config {padding:15px;}
+    .config-tabs {width:100%;overflow: hidden;}
+    .tabs-nav {overflow: hidden;}
+    .tabs-nav li {float:left;width:50%; height:30px;background:#eee;text-align: center;line-height:30px;}
+    .tabs-nav li.active {background:#ddd;}
+
+    .tabs-content li {display:none;float:left;}
+    .tabs-content li.active {display:block;}
+</style>
+
+<div class="wrap">
+    <div id="rbac-toolbar">
+        <a id="btn-forum-create" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true">添加</a>
+        <a id="btn-forum-update" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:true">修改</a>
+        <a id="btn-forum-remove" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:true">删除</a>
+        <a id="btn-forum-edit" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-edit',plain:true">设置</a>
+    </div>
+    <table id="rbac"></table>
+
+    <div id="win-operate"></div>
+
+    <div id="win-config">
+        <div class="config-tabs">
+            <ul class="tabs-nav">
+                <li class="active" data-id="0">用户</li>
+                <li data-id="1">权限</li>
+            </ul>
+
+            <ul class="tabs-content">
+                <li class="active">aaaaaaaaaaa</li>
+                <li>bbbbbbbbb</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+
+    $(function() {
+        loadDialog();
+        loadDatagrid();
+        handleTabs();
+    });
+
+    function handleTabs() {
+        $(".config-tabs li").click(function() {
+            $(this).siblings().removeClass("active").end().addClass("active");
+            $(".tabs-content li").eq($(this).attr("data-id")).addClass("active").siblings().removeClass("active");
+        });
+    }
+
+    function loadDialog() {
+        $("#win-config").dialog({
+            title: 'My Dialog',
+            width: 500,
+            height: 400,
+            closed: false,
+            cache: false,
+            modal: true
+        });
+    }
+
+    function loadDatagrid() {
+        $('#rbac').datagrid({
+            width:250,
+            height:300,
+            url:'/rbac/list',
+            toolbar:"#rbac-toolbar",
+            singleSelect:true,
+            columns:[[
+                {field:'_id',checkbox:true},
+                {field:'roleName',title:"角色名",width:220,align:"center"}
+            ]]
+        });
+    }
+
+</script>

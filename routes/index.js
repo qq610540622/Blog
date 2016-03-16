@@ -15,6 +15,7 @@ var adminArticleController = require("../app/admin/controllers/article");
 var adminUserController = require("../app/admin/controllers/user");
 var adminForumController = require("../app/admin/controllers/forum");
 var adminCommentController = require("../app/admin/controllers/comment");
+var adminRbacController = require("../app/admin/controllers/rbac");
 
 
 var common = require("./../helper/commonHelper");
@@ -121,6 +122,10 @@ route.prototype = {
         this.app.post('/comment/getList',adminCommentController.getList);
         this.app.post('/comment/remove',adminCommentController.remove);
 
+        //权限
+        this.app.get('/rbac/index',adminRbacController.index);
+        this.app.get('/rbac/create',adminRbacController.create);
+        this.app.post('/rbac/list',adminRbacController.list);
     },
     apiRoute: function() {
         // api路由正则表达式   /api/v1.0/{control}/action/{params}
