@@ -22,6 +22,8 @@ controller.get = function(req, res) {
     var id = req.query.id;
     if (id.indexOf(",") == -1) {    //单个id
         commentDao.base.getById(id, function(err, items) {
+            console.log(err);
+            console.log(items);
             if (err) common.resError(103, err, res);
             else common.resSuccess(items, res);
         });

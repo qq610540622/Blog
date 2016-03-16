@@ -49,8 +49,8 @@ controller.operate = function(req,res) {
  * @param res
  */
 controller.list = function(req,res) {
-    var page = parseInt(req.body.page);
-    var size = parseInt(req.body.rows);
+    var page = parseInt(req.body.page || 1);
+    var size = parseInt(req.body.rows || 10);
     var keywords = req.body.keywords;
     var forumId = req.body.forumId;
     var where = {};
@@ -162,7 +162,7 @@ controller.create = function(req,res) {
         var model = {};
         model.title = title;
         model.forumId = req.body.forumId;
-        model.tag = req.body.tag?req.body.tag.split(","):"";
+        model.tag = req.body.tag&&req.body.tag.length>0 ? req.body.tag.split(",") : "";
         model.content = req.body.content;
         model.createDate= Date.now();
         model.readCount = 0;

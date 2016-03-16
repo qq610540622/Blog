@@ -3,6 +3,7 @@
  */
 
 var mongoose = require("mongoose");
+var mongoosePaginate = require('mongoose-paginate');
 var schema = new mongoose.Schema({
     content:String,
     commitTime:{type:Number,default:Date.now()},
@@ -12,5 +13,6 @@ var schema = new mongoose.Schema({
     icon:Number,
     status:{type:Number,default:0}
 }, {collection : 'guestbook'});
+schema.plugin(mongoosePaginate);
 var user = mongoose.model('guestbook', schema);
 exports = user;

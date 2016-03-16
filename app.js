@@ -70,4 +70,4 @@ console.log("server listen to port:%s",port);
 
 
 
-
+module.exports = app;
