@@ -88,19 +88,11 @@ Base.prototype.getListNotPagination = function(callback) {
 
 
 Base.prototype.getList = function(page,size,where,callback) {
-    //拼接where条件
-    var query = this.model.find(where);
-    query.skip(size*(page-1));
-    query.limit(size);
-    var _this = this.model;
-    query.exec(function(err,rs) {
-        if(err) {
-            return callback(false,err);
-        } else {
-            _this.find(where,function(err,res) {
-                obj = {total:res.length,rows:rs};
-                return callback(true,obj);
-            })
+    this.model.paginate(where, { page: page, limit: 10 }, function(err, result) {
+        if(err) return callback(false,err);
+        else {
+            obj = {total:result.total,rows:result.docs};
+            return callback(true,obj);
         }
     });
 };
