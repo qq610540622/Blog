@@ -16,12 +16,10 @@
     <script type="text/javascript" src="/build/js/global.js"></script>
     <title><%= title %></title>
     <link rel="shortcut icon" href="/images/favicon.ico">
-    <%-stylesheets%>
-    <%-scripts%>
 </head>
 <body>
 <header>
-    <% include includes/header %>
+    <% include includes/header.html %>
 </header>
 
 
@@ -29,7 +27,7 @@
     <%-body %>
 </section>
 <footer>
-    <% include includes/footer %>
+    <% include includes/footer.html %>
 </footer>
 </body>
 </html>

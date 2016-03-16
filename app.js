@@ -25,9 +25,16 @@ var port = process.env.PORT || 3000;
 var app = express();
 
 //视图引擎
-app.engine('ejs', engine);
-app.set('views',['./app/show/views/pages','./app/admin/views']);
-app.set('view engine', 'ejs');
+//app.engine('ejs', engine);
+//app.set('views',['./app/show/views/pages','./app/admin/views']);
+//app.set('view engine', 'ejs');
+
+
+app.set('views', ['./app/show/views/pages','./app/admin/views']);
+app.set('view engine', 'html');
+app.engine('html', require('ejs-mate'));
+app.enable('trust proxy');
+
 
 //指定静态资源
 app.use(express.static(path.join(__dirname, 'public')));
