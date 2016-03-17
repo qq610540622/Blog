@@ -126,6 +126,9 @@ route.prototype = {
         this.app.get('/rbac/index',adminRbacController.index);
         this.app.get('/rbac/create',adminRbacController.create);
         this.app.post('/rbac/list',adminRbacController.list);
+        this.app.post('/rbac/getUsers',adminRbacController.getUsers);
+        this.app.post('/rbac/submitUsers',adminRbacController.submitUsers);
+        this.app.post('/rbac/removeUsers',adminRbacController.removeUsers);
     },
     apiRoute: function() {
         // api路由正则表达式   /api/v1.0/{control}/action/{params}
