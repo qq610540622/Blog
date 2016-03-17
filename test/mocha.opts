@@ -1,4 +1,3 @@
 --reporter spec
 --recursive
---require test/support/support.js
 --growl

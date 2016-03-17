@@ -13,10 +13,8 @@ var controller = {};
  * @param res
  */
 controller.list = function(req,res) {
-    forumDao.base.getListNotPagination(function(data) {
-        if(data) {
-            res.send(data);
-        }
+    forumDao.base.getListNotPagination(function(err, data) {
+        res.send(err ? "error" : data);
     })
 };
 

@@ -8,6 +8,7 @@ var eventproxy = require('eventproxy');
 var ready = require('ready');
 var articleDao = require("../../dao/article");
 var commentDao = require("../../dao/comment");
+var forumDao = require("../../dao/forum");
 var userDao = require("../../dao/user");
 var proxy = new eventproxy();
 
@@ -18,11 +19,13 @@ proxy.fail(function(err) {
 });
 ready(exports);
 
-proxy.all('article','articles', 'comment','user', function(article,articles, comment,user) {
+proxy.all('article','articles', 'comment','user','forum', function(article,articles, comment,user,forum) {
+    console.log(comment);
 	exports.article = article;
 	exports.articles = articles;
 	exports.comment = comment;
     exports.user = user;
+    exports.forum = forum;
 	exports.ready(true);
 });
 
@@ -30,29 +33,33 @@ proxy.all('article','articles', 'comment','user', function(article,articles, com
  * 单个文章
  */
 createArticle(proxy.done("article"))
-/*createArticle(function(err,result) {
-    proxy.emit("article",result);
-});*/
 
+/**
+ * 多个文章
+ */
 createArticles(proxy.done("articles"))
-
 
 /**
  * 评论
  */
-createUser(proxy.done("comment"))
+createComment(proxy.done("comment"))
 
 /**
  * 用户
  */
 createUser(proxy.done("user"))
 
+/**
+ * 模块
+ */
+createForum(proxy.done("forum"));
 
 function createArticle(callback) {
     articleDao.base.getSingleByQuery({},callback);
 }
+
 function createArticles(callback) {
-    articleDao.getArticles(3,callback);
+    articleDao.getArticles(2,callback);
 }
 
 function createComment(callback) {
@@ -61,4 +68,8 @@ function createComment(callback) {
 
 function createUser(callback) {
     userDao.base.getSingleByQuery({},callback);
+}
+
+function createForum(callback) {
+    forumDao.base.getSingleByQuery({},callback);
 }

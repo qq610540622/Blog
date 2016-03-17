@@ -7,7 +7,6 @@
 var rbacDao = require("./../../../dao/rbac");
 var controller = {};
 
-
 controller.index = function(req,res) {
     res.render("rbac");
 }

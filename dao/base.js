@@ -77,11 +77,10 @@ Base.prototype.update = function( conditions, update ,options, callback) {
 
 Base.prototype.getListNotPagination = function(callback) {
     var query = this.model.find({},function(err,res) {
-        if(err) {
-            return callback(err);
-        } else {
+        if(err) return callback(err, null);
+        else {
             jsonArray = {total:res.length,rows:res};
-            return callback(jsonArray);
+            return callback(null, jsonArray);
         }
     });
 };
