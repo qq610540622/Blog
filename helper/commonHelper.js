@@ -135,5 +135,87 @@ commonHelper.resSuccess = function (data, res) {
 };
 
 
+var roleDao = require("./../dao/role");
+var permissionDao = require("./../dao/permission");
+var async = require("async");
+commonHelper.getUserOwnPermissions = function(username) {
+    async.waterfall([
+        function(callback) {
+
+        }
+    ],function(err,result) {
+        var t = err?{}:result;
+        return t;
+    })
+}
+commonHelper.getPermissions = function() {
+    permissionDao.base.getAll(function(err,results) {
+        return err ? [] : results;
+    })
+}
+
+commonHelper.checkIsAccess = function(username,url) {
+    async.series({
+        permissions:function(callback) {
+            permissionDao.base.getAll(function(err,results) {
+                if(err) callback(err,null);
+                else callback(null,results);
+            })
+        },
+        userOwnPermissions:function(callback) {
+            roleDao.base.getByQuery({users:username},{permissions:1},{multi:true,upset:false},function(err,results) {
+                var obj = {};
+                if(err) callback(err,null);
+                else {
+                    results.forEach(function(items) {
+                        if(items && items.permissions.length>0) {
+                            for(var i=0, len=items.permissions.length; i<len; i++) {
+                                obj[items.permissions[i]] = true;
+                            }
+                        }
+                    });
+                    callback(null,obj);
+                }
+            })
+        }
+    },function(err,data) {
+        if(data && data.permissions) {
+            data.permissions.forEach(function(item) {
+                if(url.indexOf(item.permissionCode) != -1) {
+                    if(data.userOwnPermissions[item.permissionCode]) {
+                        return true;
+                    }
+                }
+            })
+        }
+        return false;
+    })
+
+
+
+    /*async.waterfall([
+        function(callback) {
+            roleDao.base.getByQuery({users:username},{permissions:1},{multi:true,upset:false},function(err,results) {
+                var obj = {};
+                if(err) callback(err,null);
+                else {
+                    results.forEach(function(items) {
+                        if(items && items.permissions.length>0) {
+                            for(var i=0, len=items.permissions.length; i<len; i++) {
+                                obj[items.permissions[i]] = true;
+                            }
+                        }
+                    });
+                    callback(null,obj);
+                }
+            })
+        }
+    ],function(err,result) {
+        console.log(result);
+    })*/
+
+
+}
+
 
 module.exports = commonHelper;

@@ -9,8 +9,8 @@ function Base (Model){
 //create
 Base.prototype.create = function (doc,callback){
     this.model.create(doc, function (error) {
-        if(error) return callback(false,error);
-        return callback(true,doc);
+        if(error) return callback(error,null);
+        return callback(null,doc);
     });
 };
 

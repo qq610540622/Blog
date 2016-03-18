@@ -1,0 +1,128 @@
+
+<style type="text/css">
+    .permission-wrap {
+        margin:20px;
+    }
+</style>
+
+
+<div class="permission-wrap">
+    <table id="permission"></table>
+    <div id="permission-toolbar">
+        <!--<a id="btnpermissionCreate" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true">添加</a>-->
+        <a id="btn-permission-create" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true">添加</a>
+        <a id="btn-permission-edit" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-edit',plain:true">修改</a>
+        <a id="btn-permission-remove" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:true">删除</a>
+    </div>
+</div>
+
+<div id="win-permission-operate"></div>
+
+<script type="text/javascript">
+    $(function() {
+        //加载DataGrid
+        loadDataGrid();
+
+        //加载对话框
+        loadDialog();
+
+        //事件监听
+        listenerEvent();
+
+    })
+
+
+    /**
+     * 事件监听
+     */
+    function listenerEvent() {
+        $("#btn-permission-create").click(function() {
+            var url = "/permission/permissionOperate?operate=create";
+            $('#win-permission-operate').dialog({href:url,closed:false});
+        });
+
+
+        /*编辑事件*/
+        $("#btn-permission-edit").click(function() {
+            var selectedItem = $('#permission').datagrid("getSelected");
+            if(selectedItem && selectedItem._id) {
+                var url = "/permission/permissionOperate?operate=edit&_id="+selectedItem._id;
+                $('#win-permission-operate').dialog({href:url,closed:false});
+            }
+        });
+
+        /* 删除 */
+        $("#btn-permission-remove").click(function() {
+            var selectedItem = $('#permission').datagrid("getSelected");
+            if(selectedItem && selectedItem._id) {
+                $.messager.confirm('删除','确定要删除?',function(r){
+                    if (r){
+                        $.post("/permission/remove",{_id:selectedItem._id},function(data) {
+                            if(data && data == "success") {
+                                $("#permission").datagrid("reload");
+                            }
+                        })
+                    }
+                });
+            }
+        });
+
+        /*搜索*/
+        $("#btn-permission-search").click(function() {
+            var keywords = $("#permissionname-search-keywords").val();
+            console.log(keywords);
+            $("#permission").datagrid("load",{keywords:keywords});
+        });
+    }
+
+    /**
+     * 关闭窗口
+     */
+    function closeWindow() {
+        $('#win-permission-operate').dialog({closed:true});
+    }
+    /**
+     *  关闭窗口并重新加载
+     */
+    function closeWindowAndReload() {
+        $('#permission').datagrid("reload");
+        $('#win-permission-operate').dialog({closed:true});
+    }
+
+
+    /**
+     * 加载对话框
+     */
+    function loadDialog() {
+        $('#win-permission-operate').dialog({
+            title: '用户操作',
+            width: 400,
+            height: 200,
+            closed: true,
+            cache: false,
+            modal: true
+        });
+    }
+
+
+    /**
+     * 加载DataGrid
+     */
+    function loadDataGrid() {
+        $('#permission').datagrid({
+            width:330,
+            height:400,
+            url:'/permission/getList',
+            toolbar:"#permission-toolbar",
+            singleSelect:true,
+            columns:[[
+                {field:'_id',checkbox:true},
+                {field:'permissionName',title:'名称',align:"center",width:150},
+                {field:'permissionCode',title:'编码',align:"center",width:150}
+            ]]
+        });
+    }
+
+</script>
+
+

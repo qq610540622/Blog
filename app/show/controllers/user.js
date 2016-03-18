@@ -48,14 +48,13 @@ controller.login = function(req,res) {
     var username = req.body.username;
     var password = req.body.password;
     if(username && password) {
-        var model = {username:username,password:commonHelper.md5(password),icon:commonHelper.random(1,64)};
-        userDao.base.countByQuery(model,function(status,result) {
-            if(result && typeof result == "number") {
+        var model = {username:username,password:commonHelper.md5(password)};
+        userDao.base.getSingleByQuery(model,function(err,result) {
+            if(err) res.send("error");
+            else {
                 //如果登录成功就把它的存放cookie和session中
-                req.session.userModel = model;
+                req.session.userModel = result;
                 res.send("success");
-            } else {
-                res.send("error");
             }
         })
     }

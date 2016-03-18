@@ -1,0 +1,447 @@
+
+<style type="text/css">
+
+    #win-config {padding:15px;}
+    .config-tabs {width:100%;overflow: hidden;}
+    .tabs-nav {overflow: hidden;}
+    .tabs-nav li {float:left;width:50%; height:30px;background:#555;text-align: center;line-height:30px;color:#eee;cursor:pointer;}
+    .tabs-nav li:nth-of-type(1) {border-radius: 5px 0 0 0;}
+    .tabs-nav li:nth-of-type(2) {border-radius: 0 5px 0 0;}
+    .tabs-nav li.active {background: #337ab7;color: #fff;font-weight: bold;}
+
+    .tabs-content li {display:none;float:left;width:100%;overflow: hidden;height: 300px;}
+    .tabs-content li.active {display:block;}
+
+    .top-box {height: 270px;background-color: #f0f0f0;overflow: auto;}
+    .bottom-box {height: 30px;border-radius: 0 0 5px 5px;background:#ccc;text-align:center;}
+    .bottom-box a {padding: 3px 20px;border: 1px solid #666;cursor:pointer;border-radius: 8px;color: #333;margin: 4px 0;display: inline-block;background:#fff;}
+    .bottom-box a:hover {background:#f1f1f1;}
+
+    li .item {float:left;width:27%;margin:8px 0;padding:0 10px;}
+    li .item input[type="checkbox"] {position:relative;top:3px;margin-right:3px;width:14px;height:14px;}
+</style>
+
+<div class="wrap">
+    <div id="role-toolbar">
+        <a id="btn-role-create" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true">添加</a>
+        <a id="btn-role-update" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-edit',plain:true">修改</a>
+        <a id="btn-role-remove" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:true">删除</a>
+        <a id="btn-role-config" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-edit',plain:true">设置</a>
+    </div>
+    <table id="role"></table>
+    <div id="win-role-operate"></div>
+    <div id="win-role-user" style="padding:5px;">
+        <table id="role-user"></table>
+        <div id="role-user-toolbar">
+            <a id="btn-user-submit">确定</a>
+        </div>
+    </div>
+    <div id="win-role-permission" style="padding:5px;">
+        <table id="role-permission"></table>
+        <div id="role-permission-toolbar">
+            <a id="btn-permission-submit">确定</a>
+        </div>
+    </div>
+
+    <div id="win-config">
+        <div class="config-tabs">
+            <ul class="tabs-nav">
+                <li class="active" data-id="0">用户</li>
+                <li data-id="1">权限</li>
+            </ul>
+
+            <ul class="tabs-content">
+                <li class="active">
+                    <div class="top-box">
+                    </div>
+                    <div class="bottom-box">
+                        <a id="btn-user-add">添加</a>
+                        <a id="btn-user-remove">删除</a>
+                    </div>
+                </li>
+                <li>
+                    <div class="top-box">
+                        <div class="item"><input type="checkbox"><span>读文章</span></div>
+                        <div class="item"><input type="checkbox"><span>评论</span></div>
+                        <div class="item"><input type="checkbox"><span>回复</span></div>
+                        <div class="item"><input type="checkbox"><span>搜索</span></div>
+                        <div class="item"><input type="checkbox"><span>个人日记</span></div>
+                    </div>
+                    <div class="bottom-box">
+                        <a id="btn-permission-add">添加</a>
+                        <a id="btn-permission-remove">删除</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+
+    var currentRole = "";
+    $(function() {
+
+        //加载对话框
+        loadDialog();
+
+        //加载Datagird
+        loadDatagrid();
+
+        //处理tabs
+        handleTabs();
+
+        //事件监听
+        listenerEvent();
+
+
+        $("#btn-user-submit").linkbutton({
+            iconCls: 'icon-ok'
+        });
+        $("#btn-permission-submit").linkbutton({
+            iconCls: 'icon-ok'
+        });
+    });
+
+    /**
+     * 关闭对话框并重新加载角色
+     */
+    function closeWindowAndReload() {
+        $('#role').datagrid("reload");
+        $("#win-role-operate").dialog("close");
+    }
+
+
+    /**
+     * 加载角色下面的用户
+     */
+    function loadUsers() {
+        $.ajax({
+            type:"post",
+            dataType:"json",
+            data:{_id:currentRole._id},
+            url:"/role/getUsers",
+            async:false,
+            success:function(data) {
+                if(data) {
+                    var $box = $(".tabs-content li:eq(0) .top-box");
+                    $box.empty();
+                    var elems = [];
+                    data.forEach(function(item) {
+                        elems.push($('<div class="item"><input type="checkbox"><span>'+item+'</span></div>'))
+                    })
+                    $box.append(elems);
+                }
+            }
+        });
+    }
+
+
+    /**
+     * 提交添加用户
+     */
+    function submitUsers(users) {
+        $.ajax({
+            type:"post",
+            dataType:"text",
+            data:{users:users,_id:currentRole._id},
+            url:"/role/submitUsers",
+            async:false,
+            success:function(data) {
+                console.log(data);
+                if(data && data=="success") {
+                    loadUsers();
+                }
+            }
+        });
+    }
+
+    /**
+     * 提交添加权限
+     */
+    function submitPermissions(permissions) {
+        $.ajax({
+            type:"post",
+            dataType:"text",
+            data:{_id:currentRole._id,permissions:permissions},
+            url:"/role/submitPermissions",
+            async:false,
+            success:function(data) {
+                if(data && data == "success") {
+                    loadPermissions();
+                }
+            }
+        });
+    }
+
+
+    /**
+     * 加载权限
+     */
+    function loadPermissions() {
+        $.ajax({
+            type:"post",
+            dataType:"json",
+            data:{_id:currentRole._id},
+            url:"/role/getPermissions",
+            async:false,
+            success:function(data) {
+                if(data && data instanceof Array) {
+                    var $box = $(".tabs-content li:eq(1) .top-box");
+                    $box.empty();
+                    var elems = [];
+                    data.forEach(function(item) {
+                        elems.push($('<div class="item"><input type="checkbox"><span data-permission-code='+item.permissionCode+'>'+item.permissionName+'</span></div>'))
+                    })
+                    $box.append(elems);
+                }
+            }
+        });
+    }
+
+
+    /**
+     * 事件监听
+     */
+    function listenerEvent() {
+
+
+        /*********************************
+         *
+         * 角色CRUD操作
+         *
+         * *************
+         */
+
+        $("#btn-role-create").click(function() {
+            var url = "/role/roleOperate?operate=create";
+            $("#win-role-operate").dialog({closed:false,href:url});
+        });
+        $("#btn-role-update").click(function() {
+            var selectedItem = $("#role").datagrid("getSelected");
+            if(selectedItem && selectedItem._id) {
+                var url = "/role/roleOperate?operate=edit&_id="+selectedItem._id;
+                $("#win-role-operate").dialog({closed:false,href:url});
+            }
+        });
+        $("#btn-role-remove").click(function() {
+            var selectedItem = $("#role").datagrid("getSelected");
+            if(selectedItem && selectedItem._id) {
+                $.messager.confirm('删除','确定要删除?',function(r){
+                    if (r){
+                        $.post("/role/remove",{_id:selectedItem._id},function(data) {
+                            if(data && data == "success") {
+                                $("#role").datagrid("reload");
+                            }
+                        })
+                    }
+                });
+            }
+        });
+
+
+
+
+        //设置
+        $("#btn-role-config").click(function() {
+            var selectedItem = $("#role").datagrid("getSelected");
+            if(selectedItem && selectedItem._id) {
+                currentRole = selectedItem;
+                $("#win-config").dialog("open");
+                loadUsers();
+                loadPermissions();
+            }
+        });
+
+        //添加
+        $("#btn-user-add").click(function() {
+            $("#win-role-user").dialog("open");
+        });
+
+
+        //删除
+        $("#btn-user-remove").click(function() {
+            var users = [];
+            $(".tabs-content li.active .top-box .item").each(function(i,e) {
+                if($(this).find("input[type='checkbox']").is(":checked")){ //jQuery方式判断
+                    users.push($(this).find("span").text());
+                }
+            });
+
+            if(users && users.length>0) {
+                $.ajax({
+                    type:"post",
+                    dataType:"text",
+                    data:{users:users,_id:currentRole._id},
+                    url:"/role/removeUsers",
+                    async:false,
+                    success:function(data) {
+                        if(data && data=="success") {
+                            loadUsers();
+                        }
+                    }
+                });
+            }
+        });
+
+
+        //确定添加
+        $("#btn-user-submit").click(function() {
+            var selectedItems = $('#role-user').datagrid("getSelections");
+            if(selectedItems && selectedItems.length>0) {
+                var users = [];
+                selectedItems.forEach(function(item) {
+                    users.push(item.username);
+                })
+                submitUsers(users);
+            }
+            $("#win-role-user").dialog("close");
+        });
+
+
+        $("#btn-permission-add").click(function() {
+            $("#win-role-permission").dialog("open");
+        });
+
+
+        /**
+         * 添加权限 - 确定按钮
+         */
+        $("#btn-permission-submit").click(function() {
+            var selectedItems = $("#role-permission").datagrid("getSelections");
+            if(selectedItems && selectedItems.length>0) {
+                var permissions = [];
+                selectedItems.forEach(function(item) {
+                    permissions.push(item.permissionCode);
+                })
+                submitPermissions(permissions);
+            }
+            $("#win-role-permission").dialog("close");
+        });
+
+        $("#btn-permission-remove").click(function() {
+            var permissions = [];
+            $(".tabs-content li.active .top-box .item").each(function(i,e) {
+                if($(this).find("input[type='checkbox']").is(":checked")){ //jQuery方式判断
+                    permissions.push($(this).find("span").attr("data-permission-code"));
+                }
+            });
+
+            if(permissions && permissions.length>0) {
+                $.ajax({
+                    type:"post",
+                    dataType:"text",
+                    data:{permissions:permissions,_id:currentRole._id},
+                    url:"/role/removePermissions",
+                    async:false,
+                    success:function(data) {
+                        if(data && data=="success") {
+                            loadPermissions();
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+
+    /**
+     * 处理tabs
+     */
+    function handleTabs() {
+        $(".config-tabs li").click(function() {
+            $(this).siblings().removeClass("active").end().addClass("active");
+            $(".tabs-content li").eq($(this).attr("data-id")).addClass("active").siblings().removeClass("active");
+        });
+    }
+
+
+    /**
+     * 加载对话框
+     */
+    function loadDialog() {
+
+        $("#win-role-operate").dialog({
+            title: '角色操作',
+            width: 400,
+            height: 130,
+            closed: true,
+            cache: false,
+            modal: true
+        });
+        $("#win-config").dialog({
+            title: '配置权限',
+            width: 500,
+            height: 400,
+            closed: true,
+            cache: false,
+            modal: true
+        });
+        $("#win-role-user").dialog({
+            title: '选择用户',
+            width: 505,
+            height: 450,
+            closed: true,
+            cache: false,
+            modal: true
+        });
+        $("#win-role-permission").dialog({
+            title: '选择权限',
+            width: 360,
+            height: 420,
+            closed: true,
+            cache: false,
+            modal: true
+        });
+    }
+
+
+    /**
+     * 加载Datagrid
+     */
+    function loadDatagrid() {
+        $('#role').datagrid({
+            width:250,
+            height:300,
+            url:'/role/list',
+            toolbar:"#role-toolbar",
+            singleSelect:true,
+            columns:[[
+                {field:'_id',checkbox:true},
+                {field:'roleName',title:"角色名",width:220,align:"center"}
+            ]]
+        });
+        $('#role-user').datagrid({
+            width:480,
+            height:400,
+            url:'/user/getList',
+            toolbar:"#role-user-toolbar",
+            pagination:true,
+            singleSelect:false,
+            pageSize:10,
+            pageList:[10,20,30,40,50],
+            columns:[[
+                {field:'_id',checkbox:true},
+                {field:'username',title:'用户名',align:"center",width:150},
+                {field:'password',title:'密码',align:"center",width:220},
+                {field:'status',title:'状态',align:"center",width:70,formatter: function(value,row,index){
+                    return value == 0 ? "正常" : "禁用";
+                }}
+            ]]
+        });
+        $('#role-permission').datagrid({
+            width:330,
+            height:370,
+            url:'/permission/getList',
+            toolbar:"#role-permission-toolbar",
+            singleSelect:false,
+            columns:[[
+                {field:'_id',checkbox:true},
+                {field:'permissionName',title:'名称',align:"center",width:150},
+                {field:'permissionCode',title:'编码',align:"center",width:150}
+            ]]
+        });
+    }
+
+</script>

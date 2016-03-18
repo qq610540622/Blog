@@ -15,16 +15,22 @@ var adminArticleController = require("../app/admin/controllers/article");
 var adminUserController = require("../app/admin/controllers/user");
 var adminForumController = require("../app/admin/controllers/forum");
 var adminCommentController = require("../app/admin/controllers/comment");
-var adminRbacController = require("../app/admin/controllers/rbac");
+var adminRoleController = require("../app/admin/controllers/role");
+var adminPermissionController = require("../app/admin/controllers/permission");
 
 
 var common = require("./../helper/commonHelper");
-
+var EventProxy = require('eventproxy');
+var roleDao = require("./../dao/role");
+var permissionDao = require("./../dao/permission");
+var async = require("async");
 /**
  * 路由器类
  */
 var route = function(app) {
     this.app = app;
+    this.permissions = {};
+    _this = this;
 };
 
 route.prototype = {
@@ -36,13 +42,64 @@ route.prototype = {
     webRoute: function() {
         /* 拦截器 */
         this.app.use(function(req,res,next) {
-            if(new RegExp("/admin","i").test(req.url)) {
+            //后台登录
+            if(req.url.indexOf("/admin") > 0) {
                 if(!req.session.adminName) {
                     res.redirect("/login");
                     return;
                 }
             }
+
             next();
+            ////权限
+            //if(req.session.userModel) {
+            //    var username = req.session.userModel.username;
+            //    var url = req.url;
+            //
+            //    async.series({
+            //        permissions:function(callback) {
+            //            permissionDao.base.getAll(function(err,results) {
+            //                if(err) callback(err,null);
+            //                else callback(null,results);
+            //            })
+            //        },
+            //        userOwnPermissions:function(callback) {
+            //            roleDao.base.getByQuery({users:username},{permissions:1},{multi:true,upset:false},function(err,results) {
+            //                var obj = {};
+            //                if(err) callback(err,null);
+            //                else {
+            //                    results.forEach(function(items) {
+            //                        if(items && items.permissions.length>0) {
+            //                            for(var i=0, len=items.permissions.length; i<len; i++) {
+            //                                obj[items.permissions[i]] = true;
+            //                            }
+            //                        }
+            //                    });
+            //                    callback(null,obj);
+            //                }
+            //            })
+            //        }
+            //    },function(err,data) {
+            //        var isOk = false;
+            //        if(data && data.permissions) {
+            //            data.permissions.forEach(function(item) {
+            //                if(url.indexOf(item.permissionCode) != -1) {
+            //                    if(data.userOwnPermissions[item.permissionCode]) {
+            //                        isOk = true;
+            //                    }
+            //                }
+            //            })
+            //        }
+            //        console.log(isOk);
+            //        if(isOk) {
+            //            next();
+            //        } else {
+            //            res.send("error");
+            //        }
+            //    })
+            //} else {
+            //    next();
+            //}
         });
 
         //　**********************　　前台　********************
@@ -122,13 +179,27 @@ route.prototype = {
         this.app.post('/comment/getList',adminCommentController.getList);
         this.app.post('/comment/remove',adminCommentController.remove);
 
+        //角色
+        this.app.get('/role/index',adminRoleController.index);
+        this.app.get('/role/roleOperate',adminRoleController.roleOperate);
+        this.app.post('/role/create',adminRoleController.create);
+        this.app.post('/role/edit',adminRoleController.edit);
+        this.app.post('/role/list',adminRoleController.list);
+        this.app.post('/role/remove',adminRoleController.remove);
+        this.app.post('/role/getUsers',adminRoleController.getUsers);
+        this.app.post('/role/getPermissions',adminRoleController.getPermissions);
+        this.app.post('/role/submitUsers',adminRoleController.submitUsers);
+        this.app.post('/role/removeUsers',adminRoleController.removeUsers);
+        this.app.post('/role/submitPermissions',adminRoleController.submitPermissions);
+        this.app.post('/role/removePermissions',adminRoleController.removePermissions);
+
         //权限
-        this.app.get('/rbac/index',adminRbacController.index);
-        this.app.get('/rbac/create',adminRbacController.create);
-        this.app.post('/rbac/list',adminRbacController.list);
-        this.app.post('/rbac/getUsers',adminRbacController.getUsers);
-        this.app.post('/rbac/submitUsers',adminRbacController.submitUsers);
-        this.app.post('/rbac/removeUsers',adminRbacController.removeUsers);
+        this.app.get("/permission/index",adminPermissionController.index);
+        this.app.post("/permission/getList",adminPermissionController.getList);
+        this.app.get("/permission/permissionOperate",adminPermissionController.permissionOperate);
+        this.app.post("/permission/create",adminPermissionController.create);
+        this.app.post("/permission/edit",adminPermissionController.edit);
+        this.app.post("/permission/remove",adminPermissionController.remove);
     },
     apiRoute: function() {
         // api路由正则表达式   /api/v1.0/{control}/action/{params}

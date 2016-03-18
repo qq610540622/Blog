@@ -7,6 +7,6 @@ var schema = new mongoose.Schema({
     roleName:String,
     permissions:[],
     users:[]
-}, {collection : 'rbac'});
-var rbac = mongoose.model('rbac', schema);
-exports = rbac;
+}, {collection : 'role'});
+var role = mongoose.model('role', schema);
+exports = role;

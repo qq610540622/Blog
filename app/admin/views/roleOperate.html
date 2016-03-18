@@ -1,0 +1,58 @@
+
+
+<div class="win-box role-operate">
+    <div class="hidden" id="operate"><%= operate %></div>
+    <form id="role-operate-form">
+        <input type="hidden" name="_id" value="<%= model?model._id:"" %>"/>
+        <ul>
+            <li>
+                <div class="label">角色名：</div>
+                <div class="ipt">
+                    <input type="text" name="roleName" value="<%= model?model.roleName:"" %>"/>
+                </div>
+            </li>
+            <li class="btn-box">
+                <a id="btn-role-confirm" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-ok',plain:false">确定</a>
+                <a id="btn-role-cancel" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-cancel',plain:false">取消</a>
+            </li>
+        </ul>
+    </form>
+</div>
+
+
+<script type="text/javascript">
+    $(function() {
+        $("#btn-role-confirm").click(function() {
+            var operate = $("#operate").text();
+            var url = "/role/"+operate;
+            $.ajax({
+                type:"post",
+                dataType:"text",
+                data:$("#role-operate-form").serialize(),
+                async:false,
+                url:url,
+                success:function(data) {
+                    if(data && data == "success") {
+                        window.parent.closeWindowAndReload();
+                    }
+                }
+            });
+        });
+        $("#btn-role-cancel").click(function() {
+            window.parent.closeWindow();
+        });
+    })
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+

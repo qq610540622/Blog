@@ -4,13 +4,13 @@
 
 
 var daoBase = require('./base');
-var rbacModel = require('./../models').rbac;
+var roleModel = require('./../models').role;
 
 var dao = {};
-var userDao = new daoBase(rbacModel);
+var userDao = new daoBase(roleModel);
 
 dao.base = userDao;
-dao.model = rbacModel;
+dao.model = roleModel;
 
 module.exports = dao;
 
