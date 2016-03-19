@@ -63,8 +63,8 @@ controller.submitReplyComment = function(req,res) {
         model.username = req.session.userModel.username;
         model.commentTime  = Date.now();
         model.icon = req.session.userModel.icon;
-        commentDao.base.create(model,function(status,data) {
-            res.send(!status?"error":"success");
+        commentDao.base.create(model,function(err,data) {
+            res.send(err?"error":"success");
         });
     }
 }

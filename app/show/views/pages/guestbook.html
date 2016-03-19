@@ -19,7 +19,7 @@
                     </div>
                 </form>
             </li>
-            <li class="list-group-item">留言板信息：</li>
+            <li class="list-group-item guestbook-list">留言板列表：</li>
         </ul>
     </div>
 
@@ -254,8 +254,8 @@
                             commitMessage(content);
                         } else if(messageOrReply == "reply") {
                             var replyComment = $reply.parents(".reply-box").find(".txt-reply").val();
-                            var parentId = $reply.attr("data-id");
-                            commitReplyMessage(parentId,replyComment);
+                            var _id = $reply.attr("data-id");
+                            commitReplyMessage(_id,replyComment);
                         }
                         $('#guestbookModal').modal('hide');
                         $("#login-form").bootstrapValidator('resetForm', true);
@@ -365,8 +365,8 @@
                                 commitMessage(content);
                             } else if(messageOrReply == "reply") {
                                 var replyComment = $reply.parents(".reply-box").find(".txt-reply").val();
-                                var parentId = $reply.attr("data-id");
-                                commitReplyMessage(parentId,replyComment);
+                                var _id = $reply.attr("data-id");
+                                commitReplyMessage(_id,replyComment);
                             }
 
                             $('#guestbookModal').modal('hide');
@@ -402,9 +402,9 @@
             $reply = $(this);
             var replyMessage = $reply.parents(".reply-box").find(".txt-reply").val();
             if(replyMessage) {
-                var parentId = $reply.attr("data-id");
+                var _id = $reply.attr("data-id");
                 if(isLogin()) {
-                    commitReplyMessage(parentId,replyMessage);
+                    commitReplyMessage(_id,replyMessage);
                 } else {
                     //当前操作为回复评论
                     messageOrReply = "reply";
@@ -440,22 +440,23 @@
 
 
     //提交回复评论
-    function commitReplyMessage(parentId,replyMessage) {
+    function commitReplyMessage(_id,replyMessage) {
         $.ajax({
             type:"post",
             dataType:"text",
             data:{
-                parentId:parentId,
+                _id:_id,
                 content:replyMessage
             },
             url:"/guestbook/submitReply",
             async:false,
             success:function(data) {
-                console.log(data);
                 if(data&&data=="success") {
                     $reply.parents(".reply-box").find(".txt-reply").val("");
                     loadMessage();
                     $('#guestbookModal').modal('hide');
+                } else if(data && data=="notPermission") {
+                    alert("没有权限");
                 }
             }
         });
@@ -470,14 +471,17 @@
             data:{
                 content:content
             },
-            async:true,
+            async:false,
             url:"/guestbook/submit",
             success:function(data) {
+                console.log(data);
                 if(data && data == "success") {
                     pageIndex = 1;
                     $(".message").val("");
                     loadMessage();
                     $('#commentModal').modal('hide');
+                } else if(data && data == "notPermission") {
+                    alert("没权限");
                 }
             }
         });
@@ -486,72 +490,47 @@
 
     //加载消息
     function loadMessage(page) {
-        page = page ? page : 1;
         $.ajax({
             type:"get",
             dataType:"json",
-            url:"/guestbook/getMessages?page="+page,
-            async:true,
+            url:"/guestbook/getMessages?page="+pageIndex,
+            async:false,
             success:function(data) {
-                console.log("loadMessage");
-                console.log(data);
                 if(data) {
                     loadPagination(data.total);
-
-                    var $item = $(".guestbook .list-group .item").remove();
                     var arr = [];
-                    var parentItems = data.rows.filter(function(item) {
-                        return item.parentId == "0";
+                    data.rows.forEach(function(item) {
+                        var $item = $($(".guestbook-template").html());
+                        $item.find(".icon").attr("src","/images/face/m"+item.icon+".gif");
+                        $item.find(".username").text(item.username);
+                        $item.find(".content").text(item.content);
+                        $item.find(".btn-reply-confirm").attr("data-id",item._id);
+                        $item.find(".operate .btn-support span").text("("+item.supportCount+")").parent().attr("data-id",item._id);
+                        
+                        //留言回复
+                        if(item.reply && item.reply.length>0) {
+                            var children = [];
+                            item.reply.forEach(function(i) {
+                                $media = $($(".guestbook-template .list-group-item").html());
+                                $media.find(".icon").attr("src","/images/face/m"+i.icon+".gif");
+                                $media.find(".username").text(i.username);
+                                $media.find(".content").text(i.content);
+                                $media.find(".btn-reply-confirm").attr("data-id",i._id);
+                                $media.find(".operate").remove().end().find(".reply-box").remove();
+                                children.push($media);
+                            });
+                            $item.find(".media-body:first").append(children);
+                        }
+                        arr.push($item);
                     });
-                    var childrenItems = data.rows.filter(function(item) {
-                        return item.parentId != "0";
-                    });
-
-                    if(parentItems && parentItems instanceof Array) {
-                        parentItems.forEach(function(item) {
-                            var $item = $($(".guestbook-template").html());
-                            $item.find(".icon").attr("src","/images/face/m"+item.icon+".gif");
-                            $item.find(".username").text(item.username);
-                            $item.find(".content").text(item.content);
-                            $item.find(".btn-reply-confirm").attr("data-id",item._id);
-                            $item.find(".operate .btn-support span").text("("+item.supportCount+")").parent().attr("data-id",item._id);
-                            //查看是否有子评论
-                            var isExistChildren = childrenItems.some(function(children) {
-                                return item._id == children.parentId;
-                            })
-                            if(isExistChildren) {
-                                $item = loadReplyMessage(item,childrenItems,$item);
-                            }
-                            arr.push($item);
-                        });
-
-                        $(".guestbook .list-group").append(arr);
-                        listenerMessageEvent();
-                    }
+                    
+                    console.log(arr);
+                    
+                    $(".guestbook .list-group").find(".item").remove().end().append(arr);
+                    listenerMessageEvent();
                 }
             }
         });
-    }
-
-
-    //加载回复评论
-    function loadReplyMessage(parentItem,childrenItems,$listGroup) {
-        var items = childrenItems.filter(function(sonItem) {
-            return parentItem._id == sonItem.parentId;
-        });
-        $media = $($(".guestbook-template .list-group-item").html());
-        if(items && items.length>0) {
-            items.forEach(function(item) {
-                $media.find(".icon").attr("src","/images/face/m"+item.icon+".gif");
-                $media.find(".username").text(item.username);
-                $media.find(".content").text(item.content);
-                $media.find(".btn-reply-confirm").attr("data-id",item._id);
-                $media.find(".operate").remove().end().find(".reply-box").remove();
-                $listGroup.find(".media-body:first").append($media);
-                loadReplyMessage(item,items,$listGroup);
-            });
-            return $listGroup;
-        }
     }
 
 
@@ -559,7 +538,8 @@
     var pageIndex = 1;
     //加载分页
     function loadPagination(total) {
-        if(total > 10) {
+        if(total>10) {
+            var pageCount = Math.ceil(total/10);
             $(".pagination").show().find("li").remove();
             var list = [];
             list.push("<li class='prev'><a>&laquo;</a></li>");
@@ -570,7 +550,7 @@
             list.push("<li class='next'><a>&raquo;</a></li>");
             $(".pagination").append(list).find("li:eq("+pageIndex+")").addClass("active");
 
-            listenerPaginationClick(total);
+            listenerPaginationClick(pageCount);
         } else {
             $(".pagination").hide();
         }
@@ -593,7 +573,7 @@
                 $(this).siblings(".active").removeClass("active");
                 pageIndex = $(this).children().text();
             }
-            loadMessage(pageIndex);
+            loadMessage();
         });
     }
 

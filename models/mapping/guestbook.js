@@ -7,11 +7,11 @@ var mongoosePaginate = require('mongoose-paginate');
 var schema = new mongoose.Schema({
     content:String,
     commitTime:{type:Number,default:Date.now()},
-    parentId:String,
     username:String,
     supportCount:{type:Number,default:0},
     icon:Number,
-    status:{type:Number,default:0}
+    status:{type:Number,default:0},
+    reply:[]
 }, {collection : 'guestbook'});
 schema.plugin(mongoosePaginate);
 var user = mongoose.model('guestbook', schema);

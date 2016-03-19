@@ -438,7 +438,7 @@
             }
         });
     }
-
+    
     //提交回复评论
     function commitReplyComment(parentId,replyComment) {
         $.ajax({
@@ -456,6 +456,8 @@
                     $reply.parents(".comment-reply-box").find(".txt-reply").val("");
                     loadComment();
                     $('#commentModal').modal('hide');
+                } else if(data && data == "notPermission") {
+                    alert("没有权限");
                 }
             }
         });
@@ -479,6 +481,7 @@
                     $('#commentModal').modal('hide');
                 } else if(data && data == "notPermission") {
                     alert("没有权限");
+                    $('#commentModal').modal('hide');
                 }
             }
         });
@@ -496,13 +499,11 @@
                 articleId:articleId
             },
             success:function(data) {
-                console.log("ok");
-                console.log(data);
                 if(data && data instanceof Array) {
                     var $item = $(".comment .list-group .item").remove();
                     var arr = [];
                     arr.push($('<li class="list-group-item item">评论信息：</li>'));
-
+                    
                     var parentItems = data.filter(function(item) {
                         return item.parentId == "0";
                     });

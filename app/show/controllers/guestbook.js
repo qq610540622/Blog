@@ -16,6 +16,9 @@ controller.index = function(req,res) {
     res.render("guestbook",{title:"留言板"});
 }
 
+function descCommitTime(a,b) {
+    return a.commitTime < b.commitTime;
+}
 
 /**
  * 获取留言板消息
@@ -28,10 +31,12 @@ controller.getMessages = function(req,res) {
     var size = 10;
     
     guestbookDao.base.getList(page,size,{},function(err,result) {
-        
         if(err) res.send("error");
         else {
-            res.send(err?err:result);
+            if(result.rows && result.rows.length>0) {
+                result.rows = result.rows.sort(descCommitTime);
+            }
+            res.send(err?"error":result);
         }
     });
 }
@@ -47,7 +52,7 @@ controller.submit = function(req,res) {
     var username = req.session.userModel.username;
     var icon = req.session.userModel.icon;
     if(content && username) {
-        var model = {content:content,commitTime:Date.now(),parentId:0,username:username,supportCount:0,icon:icon,status:0};
+        var model = {content:content,commitTime:Date.now(),username:username,supportCount:0,icon:icon,status:0,replay:[]};
         guestbookDao.base.create(model,function(err,result) {
             res.send(err?"error":"success");
         })
@@ -66,11 +71,11 @@ controller.submitReply = function(req,res) {
     var content = req.body.content;
     var username = req.session.userModel.username;
     var icon = req.session.userModel.icon;
-    var parentId = req.body.parentId;
-    if(content && username && parentId) {
-        var model = {content:content,commitTime:Date.now(),parentId:parentId,username:username,supportCount:0,icon:icon,status:0};
-        guestbookDao.base.create(model,function(status,result) {
-            res.send(!status?"error":"success");
+    var _id = req.body._id;
+    if(content && username && _id) {
+        var replyModel = {content:content,username:username,icon:icon};
+        guestbookDao.base.update({_id:_id},{$addToSet:{reply:replyModel}},function(err,result) {
+            res.send(err?"error":"success");
         })
     } else {
         res.send("error");

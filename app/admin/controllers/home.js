@@ -91,7 +91,8 @@ controller.submit = function(req,res) {
                 }
             }
         ],function(err,result) {
-            res.send(result?"success":"error");
+            if(err) res.send("error");
+            else {req.session.adminName = username; res.send("success");}
         });
     } else {    //登录
         var session_captcha = req.session.adminCaptcha;
