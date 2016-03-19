@@ -462,7 +462,7 @@
     }
 
 
-    //提交评论
+    //提交留言
     function commitMessage(content) {
         $.ajax({
             type:"post",
@@ -470,9 +470,11 @@
             data:{
                 content:content
             },
+            async:true,
             url:"/guestbook/submit",
             success:function(data) {
                 if(data && data == "success") {
+                    pageIndex = 1;
                     $(".message").val("");
                     loadMessage();
                     $('#commentModal').modal('hide');
@@ -489,7 +491,9 @@
             type:"get",
             dataType:"json",
             url:"/guestbook/getMessages?page="+page,
+            async:true,
             success:function(data) {
+                console.log("loadMessage");
                 console.log(data);
                 if(data) {
                     loadPagination(data.total);
@@ -555,11 +559,11 @@
     var pageIndex = 1;
     //加载分页
     function loadPagination(total) {
-        if(total>0) {
+        if(total > 10) {
             $(".pagination").show().find("li").remove();
             var list = [];
             list.push("<li class='prev'><a>&laquo;</a></li>");
-            for(var i=1; i<=total; i++) {
+            for(var i=1; i<=Math.ceil(total/10); i++) {
                 var li = '<li><a>'+i+'</a></li>';
                 list.push(li);
             }

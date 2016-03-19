@@ -1,3 +1,6 @@
+<style type="text/css">
+    a {cursor:pointer;}
+</style>
 <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
         <div class="navbar-header">
@@ -21,7 +24,7 @@
 
             <ul class="nav navbar-nav">
 
-                <li><a href="/guestbook/index?item=999">留言板</a></li>
+                <li><a data-href="/guestbook/index?item=999">留言板</a></li>
             </ul>
 
             <form class="navbar-form navbar-right search-form" role="search">
@@ -49,11 +52,11 @@
             success:function(data) {
                 if(data && data instanceof Array) {
                     var arr = [];
-                    arr.push('<li class="active"><a href="/">首页</a></li>');
+                    arr.push('<li class="active"><a data-href="/">首页</a></li>');
                     for(var index in data) {
                         var href = "/show/lists?forumId="+data[index]._id+"&item="+index;
-                        var $element = $("<li><a href='#'>Link</a></li>");
-                        $element.children().attr("href",href);
+                        var $element = $("<li><a></a></li>");
+                        $element.children().attr("data-href",href);
                         $element.children().text(data[index].name);
                         arr.push($element);
                     }
@@ -63,11 +66,23 @@
         });
 
         $("ul.navbar-nav li").each(function(i,e) {
-            var href = $(this).children().attr("href").split("?")[1];
+            var href = $(this).children().attr("data-href").split("?")[1];
             if(params == href) {
                 $(this).siblings(".active").removeClass().end().addClass("active");
             }
-        })
+        });
+
+        $("ul.navbar-nav li").click(function() {
+            var url = $(this).children().attr("data-href");
+            $.post("/hasPermission",{url:url},function(data) {
+                if(data && data == "error") {
+                    alert("你没有访问权限");
+                } else {
+                    console.log(url);
+                    window.location.href = url;
+                }
+            })
+        });
 
     })
 </script>

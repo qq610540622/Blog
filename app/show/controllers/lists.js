@@ -26,8 +26,8 @@ controller.lists = function(req,res) {
                 where.title = pattern;
             }
             if(forumId) where.forumId = forumId;
-            articleDao.base.getList(page,size,where,function(status,result) {
-                if(status) {
+            articleDao.base.getList(page,size,where,function(err,result) {
+                if(!err) {
                     var cheerio = require("cheerio");
                     if(result.rows && result.rows.length>0) {
                         for(var key in result.rows) {
@@ -92,8 +92,8 @@ controller.tag = function(req,res) {
     if(keywords) {
         async.series({
             listsArticles: function(callback){
-                articleDao.getListByTag(page,size,keywords,function(status,data) {
-                    if(status) {
+                articleDao.getListByTag(page,size,keywords,function(err,data) {
+                    if(!err) {
                         var cheerio = require("cheerio");
                         for(var index in data.rows) {
                             var content = "<div id='wrap'>"+data.rows[index].content+"</div>";

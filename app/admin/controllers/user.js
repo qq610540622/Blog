@@ -33,10 +33,8 @@ controller.getList = function(req,res) {
         where.username = reg;
     }
     where.type = 0;
-    userDao.base.getList(1,10,where,function(status,results) {
-        if(status) {
-            res.send(results);
-        }
+    userDao.base.getList(1,10,where,function(err,results) {
+        res.send(err?err:results);
     });
 }
 

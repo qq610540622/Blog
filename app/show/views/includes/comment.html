@@ -472,10 +472,13 @@
             },
             url:"/comment/submitComment",
             success:function(data) {
+                console.log(data);
                 if(data && data == "success") {
                     $(".txt-content").val("");
                     loadComment();
                     $('#commentModal').modal('hide');
+                } else if(data && data == "notPermission") {
+                    alert("没有权限");
                 }
             }
         });
@@ -493,6 +496,8 @@
                 articleId:articleId
             },
             success:function(data) {
+                console.log("ok");
+                console.log(data);
                 if(data && data instanceof Array) {
                     var $item = $(".comment .list-group .item").remove();
                     var arr = [];

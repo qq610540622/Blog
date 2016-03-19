@@ -9,6 +9,8 @@ var showCommentController = require("../app/show/controllers/comment");
 var showUserController = require("../app/show/controllers/user");
 var showGuestbookController = require("../app/show/controllers/guestbook");
 
+//前端公共处理器
+var showCommonController = require("../app/show/controllers/common");
 
 var adminIndexController = require("../app/admin/controllers/home");
 var adminArticleController = require("../app/admin/controllers/article");
@@ -20,17 +22,11 @@ var adminPermissionController = require("../app/admin/controllers/permission");
 
 
 var common = require("./../helper/commonHelper");
-var EventProxy = require('eventproxy');
-var roleDao = require("./../dao/role");
-var permissionDao = require("./../dao/permission");
-var async = require("async");
 /**
  * 路由器类
  */
 var route = function(app) {
     this.app = app;
-    this.permissions = {};
-    _this = this;
 };
 
 route.prototype = {
@@ -51,55 +47,6 @@ route.prototype = {
             }
 
             next();
-            ////权限
-            //if(req.session.userModel) {
-            //    var username = req.session.userModel.username;
-            //    var url = req.url;
-            //
-            //    async.series({
-            //        permissions:function(callback) {
-            //            permissionDao.base.getAll(function(err,results) {
-            //                if(err) callback(err,null);
-            //                else callback(null,results);
-            //            })
-            //        },
-            //        userOwnPermissions:function(callback) {
-            //            roleDao.base.getByQuery({users:username},{permissions:1},{multi:true,upset:false},function(err,results) {
-            //                var obj = {};
-            //                if(err) callback(err,null);
-            //                else {
-            //                    results.forEach(function(items) {
-            //                        if(items && items.permissions.length>0) {
-            //                            for(var i=0, len=items.permissions.length; i<len; i++) {
-            //                                obj[items.permissions[i]] = true;
-            //                            }
-            //                        }
-            //                    });
-            //                    callback(null,obj);
-            //                }
-            //            })
-            //        }
-            //    },function(err,data) {
-            //        var isOk = false;
-            //        if(data && data.permissions) {
-            //            data.permissions.forEach(function(item) {
-            //                if(url.indexOf(item.permissionCode) != -1) {
-            //                    if(data.userOwnPermissions[item.permissionCode]) {
-            //                        isOk = true;
-            //                    }
-            //                }
-            //            })
-            //        }
-            //        console.log(isOk);
-            //        if(isOk) {
-            //            next();
-            //        } else {
-            //            res.send("error");
-            //        }
-            //    })
-            //} else {
-            //    next();
-            //}
         });
 
         //　**********************　　前台　********************
@@ -200,6 +147,8 @@ route.prototype = {
         this.app.post("/permission/create",adminPermissionController.create);
         this.app.post("/permission/edit",adminPermissionController.edit);
         this.app.post("/permission/remove",adminPermissionController.remove);
+
+        this.app.post("/hasPermission",showCommonController.hasPermission);
     },
     apiRoute: function() {
         // api路由正则表达式   /api/v1.0/{control}/action/{params}

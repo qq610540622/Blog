@@ -7,7 +7,7 @@ var permissionDao = require("./../../../dao/permission");
 var controller = {};
 
 /**
- * Ȩ����ҳ
+ * 权限首页
  * @param req
  * @param res
  */
@@ -17,7 +17,7 @@ controller.index = function(req,res) {
 
 
 /**
- * ��ȡ�б�
+ * 获取集合
  * @param req
  * @param res
  */

@@ -86,13 +86,11 @@
                 data:$("#article-operate-form").serialize(),
                 url:url,
                 success:function(data){
-                    if(data!=undefined&&data!="") {
-                        if(data=="success") {
-                            window.parent.closeDialogAndReloadArticle();
-                            return;
-                        }
+                    if(data && data=="success") {
+                        window.parent.closeDialogAndReloadArticle();
+                    } else {
+                        $.messager.alert('提示', "操作失败",null);
                     }
-                    OpenMessageAlert("操作失败",null);
                 }
             });
         });

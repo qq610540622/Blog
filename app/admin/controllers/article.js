@@ -65,8 +65,8 @@ controller.list = function(req,res) {
         return;
     }
 
-    articleDao.base.getList(page,size,where,function(status,data) {
-        res.send(status?data:"");
+    articleDao.base.getList(page,size,where,function(err,data) {
+        res.send(err?err:data);
     })
 };
 
@@ -131,6 +131,8 @@ controller.spider = function(req,res) {
             callback(null,result);
         }
     ],function(err,results) {
+        console.log(err);
+        console.log(results);
         res.send(results);
     });
 }
@@ -167,8 +169,8 @@ controller.create = function(req,res) {
         model.createDate= Date.now();
         model.readCount = 0;
         model.author = req.session.adminName;
-        articleDao.base.create(model,function(status,data) {
-            res.send(status?"success":data);
+        articleDao.base.create(model,function(err,data) {
+            res.send(err?err:"success");
         });
     } else {
         res.send("error");

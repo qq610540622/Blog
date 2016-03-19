@@ -31,8 +31,9 @@ controller.getList = function(req,res) {
 
     async.waterfall([
         function(callback) {
-            commentDao.base.getList(page,size,{status:0},function(status,result) {
-                callback(null,result);
+            commentDao.base.getList(page,size,{status:0},function(err,result) {
+                if(err) callback(err,null);
+                else callback(null,result);
             });
         },
         function(arg,callback) {

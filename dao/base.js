@@ -87,11 +87,11 @@ Base.prototype.getListNotPagination = function(callback) {
 
 
 Base.prototype.getList = function(page,size,where,callback) {
-    this.model.paginate(where, { page: page, limit: 10 }, function(err, result) {
-        if(err) return callback(false,err);
+    this.model.paginate(where, { page: page, limit: size }, function(err, result) {
+        if(err) return callback(err,null);
         else {
             obj = {total:result.total,rows:result.docs};
-            return callback(true,obj);
+            return callback(null,obj);
         }
     });
 };

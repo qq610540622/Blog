@@ -56,8 +56,8 @@ controller.create = function(req,res) {
         model.name = req.body.name;
         model.sortId = req.body.sortId;
         model.enabled = req.body.enabled;
-        forumDao.base.create(model,function(status,data) {
-            res.send(status ? "success" : data);
+        forumDao.base.create(model,function(err,data) {
+            res.send(err ? "err" : "success");
         })
     }
 };

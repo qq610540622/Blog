@@ -30,8 +30,11 @@ robot.prototype = {
     handlerSuccess:function(article) {
         $ = cheerio.load(article.content,{decodeEntities: false});
         article.content = $("#cnblogs_post_body").html();
-        articleDao.base.create(article,function(status,res) {
-            if(status) {
+        articleDao.base.create(article,function(err,res) {
+            console.log(err);
+            console.log(res);
+            if(err) return;
+            else {
                 self.crawler();
             }
         })
