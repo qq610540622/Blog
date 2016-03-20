@@ -1,5 +1,5 @@
 /**
- *
+ * 项目配置参数
  * @type {{cookieSecret: string, db: string, host: string}}
  */
 module.exports={
