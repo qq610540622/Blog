@@ -66,11 +66,16 @@
             }
         });
 
-        var url = window.location.href;
-        var pathname = window.location.pathname;
+
+        console.log(window.location.hostname);
+        console.log(window.location.port);
+        console.log(window.location.pathname);
+        console.log(window.location.search);
+
+        var url = window.location.pathname+window.location.search;
         $("ul.navbar-nav li").each(function(i,e) {
-            var href = $(this).children().attr("href").split("?")[0];
-            if(pathname == href) {
+            var href = $(this).children().attr("href");
+            if(url == href) {
                 $(this).siblings(".active").removeClass().end().addClass("active");
             }
         });
