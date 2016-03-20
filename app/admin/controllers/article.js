@@ -59,13 +59,13 @@ controller.list = function(req,res) {
         where.title = pattern;
     }
     if(forumId) {
-        where.forumId = forumId
+        where.forumId = forumId;
     } else {
         res.send("");
         return;
     }
 
-    articleDao.base.getList(page,size,where,function(err,data) {
+    articleDao.base.getListBySort(page,size,where,{createDate:-1},function(err,data) {
         res.send(err?err:data);
     })
 };

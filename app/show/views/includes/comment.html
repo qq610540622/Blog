@@ -230,8 +230,8 @@
                             commitComment(comment);
                         } else if(commentOrReply == "reply") {
                             var replyComment = $reply.parents(".comment-reply-box").find(".txt-reply").val();
-                            var parentId = $reply.attr("data-id");
-                            commitReplyComment(parentId,replyComment);
+                            var _id = $reply.attr("data-id");
+                            commitReplyComment(_id,replyComment);
                         }
 
                         $('#commentModal').modal('hide');
@@ -340,8 +340,8 @@
                                 commitComment(comment);
                             } else if(commentOrReply == "reply") {
                                 var replyComment = $reply.parents(".comment-reply-box").find(".txt-reply").val();
-                                var parentId = $reply.attr("data-id");
-                                commitReplyComment(parentId,replyComment);
+                                var _id = $reply.attr("data-id");
+                                commitReplyComment(_id,replyComment);
                             }
 
                             $('#commentModal').modal('hide');
@@ -403,9 +403,9 @@
             $reply = $(this);
             var replyComment = $reply.parents(".reply-box").find(".txt-reply").val();
             if(replyComment) {
-                var parentId = $reply.attr("data-id");
+                var _id = $reply.attr("data-id");
                 if(isLogin()) {
-                    commitReplyComment(parentId,replyComment);
+                    commitReplyComment(_id,replyComment);
                 } else {
                     //当前操作为回复评论
                     commentOrReply = "reply";
@@ -440,12 +440,12 @@
     }
     
     //提交回复评论
-    function commitReplyComment(parentId,replyComment) {
+    function commitReplyComment(_id,replyComment) {
         $.ajax({
             type:"post",
             dataType:"text",
             data:{
-                parentId:parentId,
+                _id:_id,
                 replyComment:replyComment,
                 articleId:articleId
             },
@@ -507,62 +507,40 @@
                 articleId:articleId
             },
             success:function(data) {
-                if(data && data instanceof Array) {
+                console.log(data);
+                if(data && data.length > 0) {
                     var $item = $(".comment .list-group .item").remove();
                     var arr = [];
                     arr.push($('<li class="list-group-item item">评论信息：</li>'));
                     
-                    var parentItems = data.filter(function(item) {
-                        return item.parentId == "0";
-                    });
-                    var childrenItems = data.filter(function(item) {
-                        return item.parentId != "0";
-                    });
-
-                    if(parentItems && parentItems instanceof Array) {
-                        parentItems.forEach(function(item) {
-                            var $item = $($(".comment-template").html());
-                            $item.find(".icon").attr("src","/images/face/m"+item.icon+".gif");
-                            $item.find(".username").text(item.username);
-                            $item.find(".content").text(item.content);
-                            $item.find(".btn-reply-confirm").attr("data-id",item._id);
-                            $item.find(".operate .btn-support span").text("("+item.supportCount+")").parent().attr("data-id",item._id);
-                            //查看是否有子评论
-                            var isExistChildren = childrenItems.some(function(children) {
-                                return item._id == children.parentId;
+                    
+                    data.forEach(function(item) {
+                        var $item = $($(".comment-template").html());
+                        $item.find(".icon").attr("src","/images/face/m"+item.icon+".gif");
+                        $item.find(".username").text(item.username);
+                        $item.find(".content").text(item.content);
+                        $item.find(".btn-reply-confirm").attr("data-id",item._id);
+                        $item.find(".operate .btn-support span").text("("+item.supportCount+")").parent().attr("data-id",item._id);
+                        
+                        if(item.reply && item.reply.length>0) {
+                            var son = [];
+                            item.reply.forEach(function(i) {
+                                $media = $($(".comment-template .list-group-item").html());
+                                $media.find(".icon").attr("src","/images/face/m"+i.icon+".gif");
+                                $media.find(".username").text(i.username);
+                                $media.find(".content").text(i.content);
+                                $media.find(".btn-reply-confirm").attr("data-id",item._id);
+                                $media.find(".operate").remove().end().find(".comment-reply-box").remove();
+                                son.push($media);
                             })
-                            if(isExistChildren) {
-                                $item = loadReplyComment(item,childrenItems,$item);
-                            }
-                            arr.push($item);
-                        });
-                        $(".comment .list-group").prepend(arr);
-                        listenerCommentEvent();
-                    }
+                            $item.find(".media-body:first").append(son);
+                        }
+                        arr.push($item);
+                    })
+                    $(".comment .list-group").prepend(arr);
+                    listenerCommentEvent();
                 }
             }
         });
     }
-
-    //加载回复评论
-    function loadReplyComment(parentItem,childrenItems,$listGroup) {
-        var items = childrenItems.filter(function(sonItem) {
-            return parentItem._id == sonItem.parentId;
-        });
-        $media = $($(".comment-template .list-group-item").html());
-        if(items && items.length>0) {
-            items.forEach(function(item) {
-                $media.find(".icon").attr("src","/images/face/m"+item.icon+".gif");
-                $media.find(".username").text(item.username);
-                $media.find(".content").text(item.content);
-                $media.find(".btn-reply-confirm").attr("data-id",item._id);
-                $media.find(".operate").remove().end().find(".comment-reply-box").remove();
-                $listGroup.find(".media-body:first").append($media);
-                loadReplyComment(item,items,$listGroup);
-            });
-            return $listGroup;
-        }
-    }
-
-
 </script>

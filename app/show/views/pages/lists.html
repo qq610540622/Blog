@@ -65,8 +65,6 @@
             </div>
             <div class="panel-body">
                 <ul class="hot-article-box right-article-box">
-
-
                     <% if(pageData) {
                             pageData.newArticles.forEach(function(item) {
                     %>
@@ -93,7 +91,7 @@
                     if(pageData) {
                             pageData.tags.forEach(function(item) {
                     %>
-                    <li class="shake shake-slow"><a href="/lists/tag?keywords=<%= item %>"><%= item %></a></li>
+                    <li class="shake shake-rotate"><a href="/lists/tag?keywords=<%= item %>"><%= item %></a></li>
                     <%      })
                     }
                     %>

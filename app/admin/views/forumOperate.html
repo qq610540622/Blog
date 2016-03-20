@@ -6,13 +6,13 @@
             <li>
                 <div class="label">模块名</div>
                 <div class="ipt">
-                    <input type="text" name="name" value="<%= data&&data.name?data.name:"" %>"/>
+                    <input type="text" class="name" name="name" value="<%= data&&data.name?data.name:"" %>"/>
                 </div>
             </li>
             <li>
                 <div class="label">序号</div>
                 <div class="ipt">
-                    <input type="text" name="sortId" value="<%= data&&data.sortId?data.sortId:"" %>"/>
+                    <input type="text" class="sortId" name="sortId" value="<%= data&&data.sortId?data.sortId:"" %>"/>
                 </div>
             </li>
             <li>
@@ -35,6 +35,14 @@
         $("#btn-forum-confirm").click(function() {
             var operate = $("#operate").text();
             var url = "";
+            
+            var name = $(".name").val();
+            var sortId = $(".sortId").val();
+            if(!name || !sortId) {
+                OpenMessageAlert("请填写完整数据");
+                return;
+            }
+            
             if(operate == "create") {
                 url = "/forum/create";
             } else if(operate == "edit") {

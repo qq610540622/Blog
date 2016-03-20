@@ -60,7 +60,7 @@ route.prototype = {
 
                 async.series({
                     permissions:function(callback) {
-                        permissionDao.base.getAll(function(err,results) {
+                        permissionDao.base.getList(function(err,results) {
                             if(err) callback(err,null);
                             else {
                                 var obj = {};

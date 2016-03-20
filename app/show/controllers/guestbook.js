@@ -26,16 +26,13 @@ function descCommitTime(a,b) {
  * @param res
  */
 controller.getMessages = function(req,res) {
-    var page = req.query.page;
-    page = page && page > 0 ? page : 1;
+    var page = req.query.page ? parseInt(req.query.page) : 1;
+    page = page > 0 ? page : 1;
     var size = 10;
     
-    guestbookDao.base.getList(page,size,{},function(err,result) {
+    guestbookDao.base.getList(page,size,{},{commitTime:-1},function(err,result) {
         if(err) res.send("error");
         else {
-            if(result.rows && result.rows.length>0) {
-                result.rows = result.rows.sort(descCommitTime);
-            }
             res.send(err?"error":result);
         }
     });

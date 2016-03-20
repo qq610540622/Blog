@@ -16,14 +16,12 @@ dao.model = articleModel;
  * @param callback
  */
 dao.getArticles = function(size,callback) {
-    var query = this.model.find().sort({createDate:1});
-    query.limit(size);
-    query.exec(function(err,rs) {
+    this.model.find().sort({createDate:-1}).limit(size).exec(function(err,rs) {
         if(err) callback(err,null);
         else callback(null,rs);
     });
 }
-
+ 
 
 /**
  * 按标签来获取文章(带分页的数据)
@@ -38,19 +36,12 @@ dao.getListByTag = function(page,size,tag,callback) {
     if (tag) {
         where.tag = {$in:[tag]};
     }
-    var query = this.model.find(where);
-    query.skip(size*(page-1));
-    query.limit(size);
-    var _this = this.model;
-
-    query.exec(function(err,rs) {
-        if(err) {
-            return callback(false,err);
-        } else {
-            _this.find(where,function(err,res) {
-                jsonArray = {total:res.length,rows:rs};
-                return callback(true,jsonArray);
-            })
+    
+    this.model.paginate(where, { page: page, limit: size,sort:{createDate:-1}}, function(err, result) {
+        if(err) return callback(err,null);
+        else {
+            obj = {total:result.total,rows:result.docs};
+            return callback(null,obj);
         }
     });
 }
@@ -60,7 +51,7 @@ dao.getListByTag = function(page,size,tag,callback) {
  * @param callback
  */
 dao.getHotArticles = function(callback) {
-    var query = this.model.find({},{title:1,_id:1}).limit(8).sort({readCount:1});
+    var query = this.model.find({},{title:1,_id:1}).limit(8).sort({readCount:-1});
     query.exec(function(err,items) {
         if(err) callback(err,null);
         else callback(null,items);
@@ -72,7 +63,7 @@ dao.getHotArticles = function(callback) {
  * @param callback
  */
 dao.getNewArticles = function(callback) {
-    var query = this.model.find({},{title:1,_id:1}).limit(8).sort({createDate:1});
+    var query = this.model.find({},{title:1,_id:1}).limit(8).sort({createDate:-1});
     query.exec(function(err,items) {
         if(err) callback(err,null);
         else callback(null,items);

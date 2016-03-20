@@ -23,7 +23,7 @@
             <li>
                 <div class="label">标题</div>
                 <div class="ipt">
-                    <input type="text" name="title" value="<%= data&&data.title?data.title:"" %>"/>
+                    <input type="text" class="title" name="title" value="<%= data&&data.title?data.title:"" %>"/>
                 </div>
             </li>
             <li>
@@ -64,7 +64,7 @@
 <script type="text/javascript" src="/libs/xhEditor/xheditor-1.2.2.min.js"></script>
 <script type="text/javascript" src="/libs/xhEditor/xheditor_lang/zh-cn.js"></script>
 <script type="text/javascript">
-    $(function(){
+    $(function() {
         loadPlus();
         loadDialog();
         listenerEvent();
@@ -75,6 +75,16 @@
         $("#btn-article-confirm").click(function() {
             var operate = $("#operate").text();
             var url = "";
+            
+            var title = $(".title").val();
+            var content = $("#content").val();
+            console.log(title);
+            console.log(content);
+            if(!title || !content) {
+                $.messager.alert('提示', "请填写完整数据。", null);
+                return;
+            }
+            
             if(operate == "create") {
                 url = "/article/create";
             } else if(operate == "edit") {
@@ -142,13 +152,16 @@
             var $elements = $("#win-choice-tag ul li.selected");
             if($elements && $elements.length>0) {
                 var res = "";
+                var items = [];
                 $.each($elements,function(i,e) {
-                    res += $(e).text()+",";
+                    items.push($(e).text());
                 })
-                if(res&&res.length>0) {
-                    res = res.substr(0,res.length-1);
-                    $("#article-operate-form input[name='tag']").val(res);
+                var $tag = $("#article-operate-form input[name='tag']");
+                if($tag.val()) {
+                    res = $tag.val()+",";
                 }
+                res += items.join(",");
+                $tag.val(res);
             }
             $("#win-choice-tag").dialog("close");
         });

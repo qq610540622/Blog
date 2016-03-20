@@ -4,7 +4,6 @@ var schema = new mongoose.Schema({
     content:String,
     articleId:String,
     commitTime:Number,
-    parentId:String,
     username:String,
     supportCount:{type:Number,default:0},
     icon:Number,

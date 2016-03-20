@@ -16,7 +16,7 @@ var controller = {};
 controller.getComments = function(req,res) {
     var articleId = req.body.articleId;
     if(articleId) {
-        commentDao.base.getListByQuery({articleId:articleId,status:0},function(err,data) {
+        commentDao.base.getList({articleId:articleId,status:0},{commitTime:-1},function(err,data) {
             res.send(err?"error":data);
         });
     }
@@ -34,10 +34,11 @@ controller.submitComment = function(req,res) {
         var model = {};
         model.content = comment;
         model.articleId = articleId;
-        model.parentId = 0;
+        model.commitTime  = Date.now();
         model.username = req.session.userModel.username;
-        model.commentTime  = Date.now();
+        model.supportCount = 0;
         model.icon = req.session.userModel.icon;
+        model.status = 0;
         commentDao.base.create(model,function(err,data) {
             res.send(err?"error":"success");
         });
@@ -52,20 +53,17 @@ controller.submitComment = function(req,res) {
  */
 controller.submitReplyComment = function(req,res) {
     var replyComment = req.body.replyComment;
-    var parentId = req.body.parentId;
+    var _id = req.body._id;
     var articleId = req.body.articleId;
 
     if(replyComment&&articleId) {
         var model = {};
         model.content = replyComment;
-        model.articleId = articleId;
-        model.parentId = parentId;
         model.username = req.session.userModel.username;
-        model.commentTime  = Date.now();
         model.icon = req.session.userModel.icon;
-        commentDao.base.create(model,function(err,data) {
-            res.send(err?"error":"success");
-        });
+        commentDao.base.update({_id:_id},{$addToSet:{reply:model}},{multi:false,upset:false},function(err) {
+            res.send(err?err:"success");
+        })
     }
 }
 
