@@ -32,7 +32,7 @@ controller.getList = function(req,res) {
 
 
 /**
- * ����(�������޸�)
+ * 权限操作(添加和修改)
  * @param req
  * @param res
  */
@@ -57,7 +57,7 @@ controller.permissionOperate = function(req,res) {
 
 
 /**
- * ����
+ * 创建
  * @param req
  * @param res
  */
@@ -78,7 +78,7 @@ controller.create = function(req,res) {
 
 
 /**
- * �޸�
+ * 修改
  * @param req
  * @param res
  */
@@ -97,14 +97,14 @@ controller.edit = function(req,res) {
 
 
 /**
- * ɾ��
+ * 删除
  * @param req
  * @param res
  */
 controller.remove = function(req,res) {
-    var _id = req.body._id;
-    if(_id) {
-        permissionDao.base.remove({_id:_id},function(err) {
+    var _ids = req.body._ids;
+    if(_ids) {
+        permissionDao.base.remove({_id:{$in:_ids}},function(err) {
             res.send(err ? "error" : "success");
         });
     } else {

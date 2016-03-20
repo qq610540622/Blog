@@ -5,7 +5,7 @@
     <div class="container">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-                <span class="sr-only">Toggle navigation</span>
+                <span class="sr-only">nodejs nodejs博客</span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
@@ -14,16 +14,8 @@
         </div>
 
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-
-            <!--<ul class="nav navbar-nav">
-                <li><a href="/show/lists?forumId=56d80165d1d93fe004f3fd2f">css</a></li>
-                <li><a href="/show/lists?forumId=56c57ce442e8e1c419b1778a">nodejs</a></li>
-                <li class="active"><a href="/show/lists?forumId=56c582e76d53253c27e92c6d">bootstrap</a></li>
-                <li><a href="/guestbook/index">留言板</a></li>
-            </ul>-->
-
             <ul class="nav navbar-nav">
-                <li><a href="/guestbook/index?item=999">留言板</a></li>
+                <li><a href="/guestbook/index">留言板</a></li>
             </ul>
 
             <form class="navbar-form navbar-right search-form" role="search">
@@ -37,11 +29,21 @@
 </nav>
 
 
+<!-- 模态框（Modal） -->
+<div class="modal fade" id="not-permission-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <span style="font-size:24px;color:#666;">对不起，你没有权限。</span>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
+
 
 <script type="text/javascript">
     $(function() {
-        var url = window.location.href;
-        var params = url.split("?")[1];
 
         $.ajax({
             type:"post",
@@ -53,7 +55,7 @@
                     var arr = [];
                     arr.push('<li class="active"><a href="/">首页</a></li>');
                     for(var index in data) {
-                        var href = "/show/lists?forumId="+data[index]._id+"&item="+index;
+                        var href = "/show/lists?forumId="+data[index]._id;
                         var $element = $("<li><a></a></li>");
                         $element.children().attr("href",href);
                         $element.children().text(data[index].name);
@@ -64,11 +66,14 @@
             }
         });
 
+        var url = window.location.href;
+        var pathname = window.location.pathname;
         $("ul.navbar-nav li").each(function(i,e) {
-            var href = $(this).children().attr("href").split("?")[1];
-            if(params == href) {
+            var href = $(this).children().attr("href").split("?")[0];
+            if(pathname == href) {
                 $(this).siblings(".active").removeClass().end().addClass("active");
             }
         });
     })
 </script>
+

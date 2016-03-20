@@ -75,14 +75,18 @@ controller.signin = function(req,res) {
         var password = req.body.password;
         if(username && password) {
             var model = {username:username,password:commonHelper.md5(password),icon:commonHelper.random(1,64)};
-            userDao.base.create(model,function(status,result) {
-                if(result && typeof result == "object") {
+            userDao.base.create(model,function(err,result) {
+                if(err) res.send("error");
+                else {
                     //如果登录成功就把它的存放cookie和session中
                     req.session.userModel = model;
                     res.cookie["username"] = username;
-                    res.send("success");
-                } else {
-                    res.send("error");
+
+                    var roleDao = require("./../../../dao/role");
+                    roleDao.base.update({roleCode:"default"},{$addToSet:{users:username}},{multi:false,upset:false},function(err) {
+                        if(err) res.send("error");
+                        else res.send("success");
+                    })
                 }
             })
         }

@@ -62,7 +62,6 @@ controller.roleOperate = function(req,res) {
  */
 controller.getUsers = function(req,res) {
     var _id = req.body._id;
-    console.log(_id);
     if(_id) {
         roleDao.base.getSingleByQuery({_id:_id},function(err,result) {
             if(err) res.send("error");
@@ -253,6 +252,24 @@ controller.removePermissions = function(req,res) {
     }
 }
 
+/**
+ * 检查是否有重复roleCode
+ * @param req
+ * @param res
+ */
+controller.isRepeatRoleCode = function(req,res) {
+    var roleCode = req.body.roleCode;
+    if(roleCode) {
+        roleDao.base.getSingleByQuery({roleCode:roleCode},function(err,model) {
+            console.log(model);
+            if(err) res.send("error");
+            else {
+                if(model && model._id) res.send("success");
+                else res.send("error");
+            }
+        })
+    }
+}
 
 
 /**
@@ -262,9 +279,11 @@ controller.removePermissions = function(req,res) {
  */
 controller.create = function(req,res) {
     var roleName = req.body.roleName;
-    if(roleName) {
+    var roleCode = req.body.roleCode;
+    if(roleName && roleCode) {
         var model = {
             roleName:roleName,
+            roleCode:roleCode,
             users:[],
             permissions:[]
         }
@@ -277,13 +296,14 @@ controller.create = function(req,res) {
 controller.edit = function(req,res) {
     var _id = req.body._id;
     var roleName = req.body.roleName;
+    var roleCode = req.body.roleCode;
     if(_id&&roleName) {
         var model = {
             roleName:roleName,
             users:[],
             permissions:[]
         };
-        roleDao.base.update({_id:_id},{$set:{roleName:roleName}},{multi:false,upset:false},function(err) {
+        roleDao.base.update({_id:_id},{$set:{roleName:roleName,roleCode:roleCode}},{multi:false,upset:false},function(err) {
             res.send(err?"error":"success");
         })
     }

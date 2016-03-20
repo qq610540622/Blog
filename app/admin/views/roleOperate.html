@@ -6,9 +6,15 @@
         <input type="hidden" name="_id" value="<%= model?model._id:"" %>"/>
         <ul>
             <li>
-                <div class="label">角色名：</div>
+                <div class="label">角色名称：</div>
                 <div class="ipt">
-                    <input type="text" name="roleName" value="<%= model?model.roleName:"" %>"/>
+                    <input type="text" class="roleName" name="roleName" value="<%= model?model.roleName:"" %>"/>
+                </div>
+            </li>
+            <li>
+                <div class="label">角色编码：</div>
+                <div class="ipt">
+                    <input type="text" class="roleCode" name="roleCode" value="<%= model?model.roleCode:"" %>"/>
                 </div>
             </li>
             <li class="btn-box">
@@ -22,9 +28,29 @@
 
 <script type="text/javascript">
     $(function() {
+        var $roleCode = $(".roleCode");
+        var roleCode = $roleCode.val();
+        if(roleCode && roleCode == "default") {
+            $roleCode.attr("readonly",true);
+        }
+
         $("#btn-role-confirm").click(function() {
+
             var operate = $("#operate").text();
             var url = "/role/"+operate;
+            var roleName = $(".roleName").val();
+            var roleCode = $(".roleCode").val();
+
+            if(!roleName || !roleCode) {
+                OpenMessageAlert("请填写完整数据");
+                return;
+            }
+
+            if(operate=="create" && checkIsRepeatRoleCode(roleCode)) {
+                OpenMessageAlert("角色编码有重复，请重新填写。");
+                return;
+            }
+
             $.ajax({
                 type:"post",
                 dataType:"text",
@@ -42,6 +68,26 @@
             window.parent.closeWindow();
         });
     })
+
+    //检查是否有重复的roleCode
+    function checkIsRepeatRoleCode(roleCode) {
+        var isRepeat = false;
+        $.ajax({
+            type:"post",
+            dataType:"text",
+            data:{roleCode:roleCode},
+            async:false,
+            url:"/role/isRepeatRoleCode",
+            cache:true,
+            success:function(data) {
+                if(data && data=="success") {
+                    isRepeat = true;
+                }
+            }
+        });
+        return isRepeat;
+    }
+
 </script>
 
 

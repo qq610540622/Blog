@@ -5,6 +5,7 @@
 var mongoose = require("mongoose");
 var schema = new mongoose.Schema({
     roleName:String,
+    roleCode:String,
     permissions:[],
     users:[]
 }, {collection : 'role'});

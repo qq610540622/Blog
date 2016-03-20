@@ -454,10 +454,10 @@
                 if(data&&data=="success") {
                     $reply.parents(".reply-box").find(".txt-reply").val("");
                     loadMessage();
-                    $('#guestbookModal').modal('hide');
                 } else if(data && data=="notPermission") {
-                    alert("没有权限");
+                    $("#not-permission-modal").modal("show");
                 }
+                $('#guestbookModal').modal('hide');
             }
         });
     }
@@ -479,10 +479,10 @@
                     pageIndex = 1;
                     $(".message").val("");
                     loadMessage();
-                    $('#commentModal').modal('hide');
                 } else if(data && data == "notPermission") {
-                    alert("没权限");
+                    $("#not-permission-modal").modal("show");
                 }
+                $('#commentModal').modal('hide');
             }
         });
     }

@@ -228,6 +228,10 @@
         $("#btn-role-remove").click(function() {
             var selectedItem = $("#role").datagrid("getSelected");
             if(selectedItem && selectedItem._id) {
+                if(selectedItem.roleCode == "default") {
+                    OpenMessageAlert("默认角色不能删除");
+                    return;
+                }
                 $.messager.confirm('删除','确定要删除?',function(r){
                     if (r){
                         $.post("/role/remove",{_id:selectedItem._id},function(data) {
@@ -361,11 +365,10 @@
      * 加载对话框
      */
     function loadDialog() {
-
         $("#win-role-operate").dialog({
             title: '角色操作',
             width: 400,
-            height: 130,
+            height: 170,
             closed: true,
             cache: false,
             modal: true
@@ -402,14 +405,15 @@
      */
     function loadDatagrid() {
         $('#role').datagrid({
-            width:250,
+            width:270,
             height:300,
             url:'/role/list',
             toolbar:"#role-toolbar",
             singleSelect:true,
             columns:[[
                 {field:'_id',checkbox:true},
-                {field:'roleName',title:"角色名",width:220,align:"center"}
+                {field:'roleName',title:"角色名称",width:120,align:"center"},
+                {field:'roleCode',title:"角色编码",width:120,align:"center"}
             ]]
         });
         $('#role-user').datagrid({

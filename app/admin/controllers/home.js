@@ -92,7 +92,19 @@ controller.submit = function(req,res) {
             }
         ],function(err,result) {
             if(err) res.send("error");
-            else {req.session.adminName = username; res.send("success");}
+            else {
+                var roleDao = require("../../../dao/role");
+                var permissionDao = require("../../../dao/permission");
+                var permissions = [{permissionName : "评论",permissionCode : "/comment/submitComment"},{permissionName : "回复评论",permissionCode : "/comment/submitReplyComment"},{permissionName :"留言",permissionCode : "/guestbook/submit"},{permissionName : "回复留言",permissionCode : "/guestbook/submitReply"}];
+                permissionDao.base.create(permissions,function(err,model) {});
+                var temp = [];
+                permissions.forEach(function(item) {
+                    temp.push(item.permissionCode);
+                })
+                roleDao.base.create({roleName:"默认用户",roleCode:"default",users:[],permissions:temp},function(err,model) {});
+                req.session.adminName = username;
+                res.send("success");
+            }
         });
     } else {    //登录
         var session_captcha = req.session.adminCaptcha;

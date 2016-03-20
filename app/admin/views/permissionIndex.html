@@ -53,11 +53,17 @@
 
         /* 删除 */
         $("#btn-permission-remove").click(function() {
-            var selectedItem = $('#permission').datagrid("getSelected");
-            if(selectedItem && selectedItem._id) {
+            var selectedItems = $('#permission').datagrid("getSelections");
+            if(selectedItems && selectedItems.length>0) {
                 $.messager.confirm('删除','确定要删除?',function(r){
                     if (r){
-                        $.post("/permission/remove",{_id:selectedItem._id},function(data) {
+                        var _ids = [];
+                        selectedItems.forEach(function(item) {
+                            _ids.push(item._id);
+                        })
+                        console.log(_ids);
+                        $.post("/permission/remove",{_ids:_ids},function(data) {
+                            console.log(data);
                             if(data && data == "success") {
                                 $("#permission").datagrid("reload");
                             }

@@ -9,8 +9,6 @@ var showCommentController = require("../app/show/controllers/comment");
 var showUserController = require("../app/show/controllers/user");
 var showGuestbookController = require("../app/show/controllers/guestbook");
 
-//前端公共处理器
-var showCommonController = require("../app/show/controllers/common");
 
 var adminIndexController = require("../app/admin/controllers/home");
 var adminArticleController = require("../app/admin/controllers/article");
@@ -42,16 +40,19 @@ route.prototype = {
         /* 拦截器 */
         this.app.use(function(req,res,next) {
             //后台登录
-            if(new RegExp(req.url,"i").test("/admin")) {
+            if(new RegExp("/admin","i").test(req.url)) {
                 if(!req.session.adminName) {
                     res.redirect("/login");
                     return;
                 }
-            } 
+            }
             next();
         });
-        
-        
+
+
+        /**
+         * 权限
+         */
         this.app.use(function(req,res,next) {
             if(req.session.userModel) {
                 var url = req.url;
@@ -109,8 +110,7 @@ route.prototype = {
                 next();
             }
         })
-        
-        
+
 
         //　**********************　　前台　********************
         this.app.get('/',showIndexController.index);
@@ -174,7 +174,7 @@ route.prototype = {
 
         var multipart = require('connect-multiparty');
         var multipartMiddleware = multipart();
-        this.app.post('/article/uploadImg',multipartMiddleware,adminArticleController.uploadImg);
+        this.app.post('/article/uploadImg',multipartMiddleware, adminArticleController.uploadImg);
 
         //模块
         this.app.post('/forum/list',adminForumController.list);
@@ -202,6 +202,7 @@ route.prototype = {
         this.app.post('/role/removeUsers',adminRoleController.removeUsers);
         this.app.post('/role/submitPermissions',adminRoleController.submitPermissions);
         this.app.post('/role/removePermissions',adminRoleController.removePermissions);
+        this.app.post('/role/isRepeatRoleCode',adminRoleController.isRepeatRoleCode);
 
         //权限
         this.app.get("/permission/index",adminPermissionController.index);
@@ -211,7 +212,6 @@ route.prototype = {
         this.app.post("/permission/edit",adminPermissionController.edit);
         this.app.post("/permission/remove",adminPermissionController.remove);
 
-        this.app.post("/hasPermission",showCommonController.hasPermission);
     },
     apiRoute: function() {
         // api路由正则表达式   /api/v1.0/{control}/action/{params}
