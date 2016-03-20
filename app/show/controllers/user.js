@@ -47,14 +47,20 @@ controller.isExistUsername = function(req,res) {
 controller.login = function(req,res) {
     var username = req.body.username;
     var password = req.body.password;
+    console.log(username);
+    console.log(password);
     if(username && password) {
         var model = {username:username,password:commonHelper.md5(password)};
         userDao.base.getSingleByQuery(model,function(err,result) {
             if(err) res.send("error");
             else {
-                //如果登录成功就把它的存放cookie和session中
-                req.session.userModel = result;
-                res.send("success");
+                if(result && result._id) {
+                    //如果登录成功就把它的存放cookie和session中
+                    req.session.userModel = result;
+                    res.send("success");
+                } else {
+                    res.send("error");
+                }
             }
         })
     }
