@@ -8,6 +8,9 @@ var showListsController = require("../app/show/controllers/lists");
 var showCommentController = require("../app/show/controllers/comment");
 var showUserController = require("../app/show/controllers/user");
 var showGuestbookController = require("../app/show/controllers/guestbook");
+var showChatController = require("../app/show/controllers/chat");
+
+
 
 
 var adminIndexController = require("../app/admin/controllers/home");
@@ -50,8 +53,8 @@ route.prototype = {
                 next();
             }
         });
-
-
+        
+        
         /**
          * 权限
          */
@@ -213,6 +216,11 @@ route.prototype = {
         this.app.post("/permission/create",adminPermissionController.create);
         this.app.post("/permission/edit",adminPermissionController.edit);
         this.app.post("/permission/remove",adminPermissionController.remove);
+        
+        
+        //聊天
+        this.app.get("/chat/index",showChatController.index);
+        
 
     },
     apiRoute: function() {

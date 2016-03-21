@@ -72,8 +72,26 @@ app.use(cookieSession({
 //路由
 var route = require('./routes/index');
 new route(app).run();
-app.listen(port);
+
+
+//app.listen(port);
 console.log("server listen to port:%s",port);
+
+
+var server = require('http').createServer(app);
+var io = require('socket.io').listen(server);
+
+io.on('connection', function (socket) {
+    socket.emit('news', { hello: 'world' });
+    socket.on('my other event', function (data) {
+        console.log(data);
+    });
+    socket.on("jack",function(data) {
+        console.log(data);
+    })
+});
+
+server.listen(process.env.PORT || 3000);//publish to heroku
 
 
 

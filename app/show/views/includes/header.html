@@ -15,6 +15,7 @@
 
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
+                <li><a href="/chat/index">聊天室</a></li>
                 <li><a href="/guestbook/index">留言板</a></li>
             </ul>
 
@@ -44,7 +45,6 @@
 
 <script type="text/javascript">
     $(function() {
-
         $.ajax({
             type:"post",
             dataType:"json",
@@ -65,12 +65,25 @@
                 }
             }
         });
-
+        
+        
         var url = window.location.pathname + window.location.search;
         $("ul.navbar-nav li").each(function(i,e) {
             var href = $(this).children().attr("href");
             if(url == href) {
                 $(this).siblings(".active").removeClass().end().addClass("active");
+            }
+        });
+        
+        
+        //点击事件
+        $(".navbar-nav > li > a").click(function(e) {
+            var text = $(this).text();
+            if(text == "聊天室") {
+                if(!isLogin()) {
+                    $("#not-permission-modal").modal("show");
+                    e.preventDefault();
+                }
             }
         });
     })
