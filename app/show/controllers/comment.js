@@ -61,6 +61,8 @@ controller.submitReplyComment = function(req,res) {
         model.content = replyComment;
         model.username = req.session.userModel.username;
         model.icon = req.session.userModel.icon;
+        model.commitTime = Date.now();
+        model.supportCount = 0;
         commentDao.base.update({_id:_id},{$addToSet:{reply:model}},{multi:false,upset:false},function(err) {
             res.send(err?err:"success");
         })

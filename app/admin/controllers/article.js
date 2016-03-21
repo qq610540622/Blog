@@ -65,7 +65,7 @@ controller.list = function(req,res) {
         return;
     }
 
-    articleDao.base.getListBySort(page,size,where,{createDate:-1},function(err,data) {
+    articleDao.base.getList(page,size,where,{createDate:-1},function(err,data) {
         res.send(err?err:data);
     })
 };

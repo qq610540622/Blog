@@ -33,7 +33,7 @@ controller.getList = function(req,res) {
         where.username = reg;
     }
     where.type = 0;
-    userDao.base.getList(1,10,where,function(err,results) {
+    userDao.base.getList(1,10,where,{createDate:-1},function(err,results) {
         res.send(err?err:results);
     });
 }

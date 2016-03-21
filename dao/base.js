@@ -112,6 +112,7 @@ Base.prototype.getByQuery = function (query,fileds,opt,callback) {
 getList(callback)
 getList(sort,callback);
 getList(where,sort,callback);
+getList(where,fields,sort,callback);
 getList(page,size,where,sort,callback);
 */
 Base.prototype.getList = function() {
@@ -156,14 +157,14 @@ Base.prototype.getList = function() {
 			}
 			break;
         case 4: 
-            //query,fileds,opt,callback
+            //query,fileds,sort,callback
 			if(arguments[0].constructor === Object && 
             arguments[1].constructor === Object && 
             arguments[2].constructor === Object && 
             arguments[3].constructor === Function) {
                 var query = arguments[0];
                 var fileds = arguments[1];
-                var opt = arguments[2];
+                var sort = arguments[2];
                 var callback = arguments[3];
                 
                 this.model.find(query, fileds).sort(sort).exec(function(err,result){

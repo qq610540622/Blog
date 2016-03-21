@@ -24,10 +24,10 @@ controller.remove = function(req,res) {
 }
 
 controller.list = function(req,res) {
-    roleDao.base.getAll(function(err,items) {
+    roleDao.base.getList(function(err,items) {
         if(err) res.send("");
         else {
-            res.json(items);
+            res.send(items);
         };
     });
 }

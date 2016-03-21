@@ -22,7 +22,7 @@ controller.index = function(req,res) {
  * @param res
  */
 controller.getList = function(req,res) {
-    permissionDao.base.getListNotPagination(function(err,result) {
+    permissionDao.base.getList(function(err,result) {
         if(err) res.send("error");
         else {
             res.json(result);

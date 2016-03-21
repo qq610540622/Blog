@@ -25,50 +25,18 @@ controller.index = function(req,res) {
  * @param req
  * @param res
  */
-controller.getList = function(req,res) {
+controller.getCommentList = function(req,res) {
+    
     var page = parseInt(req.body.page);
     var size = parseInt(req.body.rows);
-
-    async.waterfall([
-        function(callback) {
-            commentDao.base.getList(page,size,{status:0},function(err,result) {
-                if(err) callback(err,null);
-                else callback(null,result);
-            });
-        },
-        function(arg,callback) {
-            if(arg) {
-                var _ids = [];
-                if(arg.rows && arg.rows.length>0) {
-                    arg.rows.forEach(function(item){
-                        _ids.push(item.articleId);
-                    });
-                }
-                var query = {_id:{$in:_ids}};
-                articleDao.base.getByQuery(query,{title:1},{upset:false,multi:false},function(err,lists) {
-                    if(err) {
-                        callback(err,null);
-                    } else {
-                        var resultObj = {};
-                        if(lists) {
-                            for(var key in arg.rows) {
-                                lists.forEach(function(i) {
-                                    if(arg.rows[key].articleId == i._id) {
-                                        arg.rows[key].articleId = i.title;
-                                    }
-                                });
-                            }
-                        }
-                        callback(null,arg);
-                    }
-                });
-            }
+    commentDao.base.getList(page,size,{status:0},{commitTime:-1},function(err,result) {
+        if(err) res.send("error");
+        else {
+            res.send(result);
         }
-    ],function(err,results) {
-        res.send(err ? "error" : results);
     });
-}
-
+} 
+ 
 
 /**
  * 删除

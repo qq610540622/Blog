@@ -43,10 +43,12 @@ route.prototype = {
             if(new RegExp("/admin","i").test(req.url)) {
                 if(!req.session.adminName) {
                     res.redirect("/login");
-                    return;
+                } else {
+                    next();
                 }
+            } else {
+                next();
             }
-            next();
         });
 
 
@@ -186,7 +188,7 @@ route.prototype = {
 
         //评论
         this.app.get('/comment/index',adminCommentController.index);
-        this.app.post('/comment/getList',adminCommentController.getList);
+        this.app.post('/comment/getCommentList', adminCommentController.getCommentList);
         this.app.post('/comment/remove',adminCommentController.remove);
 
         //角色
