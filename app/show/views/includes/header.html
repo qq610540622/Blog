@@ -59,7 +59,7 @@
                         $element.children().text(data[index].name);
                         arr.push($element);
                     }
-                    arr.push($('<li><a href="/chat/index">聊天室</a></li>'))
+                    arr.push($('<li><a target="_blank" href="/chat/index">聊天室</a></li>'))
                     arr.push($('<li><a href="/guestbook/index">留言板</a></li>'))
                     $("ul.navbar-nav").prepend(arr);
                 }

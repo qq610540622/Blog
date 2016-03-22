@@ -3,9 +3,9 @@
  */
 
 
-var settings = require("../settings");
+var config = require("../config");
 
-var commonHelper = {};
+var tools = {};
 
 
 /**
@@ -14,7 +14,7 @@ var commonHelper = {};
  * @param max
  * @returns {*}
  */
-commonHelper.random = function(min,max) {
+tools.random = function(min,max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
@@ -25,7 +25,7 @@ commonHelper.random = function(min,max) {
  * @param height
  * @returns {Buffer}
  */
-commonHelper.captcha = function(width,height,code) {
+tools.captcha = function(width,height,code) {
     var captchapng = require('captchapng');
     var p = new captchapng(width,height, code);
     p.color(0, 0, 0, 80);
@@ -42,7 +42,7 @@ commonHelper.captcha = function(width,height,code) {
  * @param str
  * @returns {*}
  */
-commonHelper.md5 = function(str) {
+tools.md5 = function(str) {
     var crypto = require('crypto');
     return crypto.createHash('md5').update(str).digest('hex');
 }
@@ -53,9 +53,9 @@ commonHelper.md5 = function(str) {
 /**
  * 检查controller是否包含配置项中
  */
-commonHelper.checkVersion = function (req) {
-    for (var i = 0, z = settings.apiConfig.version.length; i < z; i++) {
-        if (settings.apiConfig.version[i] === req.params[1]) {
+tools.checkVersion = function (req) {
+    for (var i = 0, z = config.apiConfig.version.length; i < z; i++) {
+        if (config.apiConfig.version[i] === req.params[1]) {
             return true;
         }
     }
@@ -66,9 +66,9 @@ commonHelper.checkVersion = function (req) {
 /**
  * 检查controller是否包含配置项中
  */
-commonHelper.checkKey = function (req) {
-    for (var i = 0, z = settings.apiConfig.controller.length; i < z; i++) {
-        if (settings.apiConfig.controller[i] === req.params[2]) {
+tools.checkKey = function (req) {
+    for (var i = 0, z = config.apiConfig.controller.length; i < z; i++) {
+        if (config.apiConfig.controller[i] === req.params[2]) {
             return true;
         }
     }
@@ -79,13 +79,13 @@ commonHelper.checkKey = function (req) {
 /**
  * 检查Ip是否合法
  */
-commonHelper.checkIP = function (req) {
+tools.checkIP = function (req) {
     var ip = req.connection.remoteAddress.split("."),
         curIP,
         b,
         block = [];
-    for (var i=0, z=settings.apiConfig.ips.length-1; i<=z; i++) {
-        curIP = settings.apiConfig.ips[i].split(".");
+    for (var i=0, z=config.apiConfig.ips.length-1; i<=z; i++) {
+        curIP = config.apiConfig.ips[i].split(".");
         b = 0;
         // Compare each block
         while (b<=3) {
@@ -105,7 +105,7 @@ commonHelper.checkIP = function (req) {
  * 检查http请求
  * 主要是检查controller是在配置项中和ip是否合法
  */
-commonHelper.checkReq = function (req, res) {
+tools.checkReq = function (req, res) {
     // Set access control headers
     res.header('Access-Control-Allow-Origin', '*');
     
@@ -120,8 +120,8 @@ commonHelper.checkReq = function (req, res) {
 /**
  * 响应错误信息
  */
-commonHelper.resError = function (code, raw, res) {
-    res.send({ "status": "error", "code": code, "message": settings.apiConfig.errorCodes[code], "raw": raw });
+tools.resError = function (code, raw, res) {
+    res.send({ "status": "error", "code": code, "message": config.apiConfig.errorCodes[code], "raw": raw });
     return false;
 };
 
@@ -129,7 +129,7 @@ commonHelper.resError = function (code, raw, res) {
 /**
  * 响应成功数据
  */
-commonHelper.resSuccess = function (data, res) {
+tools.resSuccess = function (data, res) {
     res.send({ "status": "success", "data": data });
     return false;
 };
@@ -138,7 +138,7 @@ commonHelper.resSuccess = function (data, res) {
 var roleDao = require("./../dao/role");
 var permissionDao = require("./../dao/permission");
 var async = require("async");
-commonHelper.getUserOwnPermissions = function(username) {
+tools.getUserOwnPermissions = function(username) {
     async.waterfall([
         function(callback) {
 
@@ -148,13 +148,13 @@ commonHelper.getUserOwnPermissions = function(username) {
         return t;
     })
 }
-commonHelper.getPermissions = function() {
+tools.getPermissions = function() {
     permissionDao.base.getAll(function(err,results) {
         return err ? [] : results;
     })
 }
 
-commonHelper.checkIsAccess = function(username,url) {
+tools.checkIsAccess = function(username,url) {
     async.series({
         permissions:function(callback) {
             permissionDao.base.getAll(function(err,results) {
@@ -190,32 +190,76 @@ commonHelper.checkIsAccess = function(username,url) {
         }
         return false;
     })
-
-
-
-    /*async.waterfall([
-        function(callback) {
-            roleDao.base.getByQuery({users:username},{permissions:1},{multi:true,upset:false},function(err,results) {
-                var obj = {};
-                if(err) callback(err,null);
-                else {
-                    results.forEach(function(items) {
-                        if(items && items.permissions.length>0) {
-                            for(var i=0, len=items.permissions.length; i<len; i++) {
-                                obj[items.permissions[i]] = true;
-                            }
-                        }
-                    });
-                    callback(null,obj);
-                }
-            })
-        }
-    ],function(err,result) {
-        console.log(result);
-    })*/
-
-
 }
 
 
-module.exports = commonHelper;
+
+/**
+ * html编码
+ * @param str html代码
+ * @returns {string}
+ */
+tools.htmlEncode = function(str)
+{
+    if(str) return "";
+    var s = "";
+    if(str.length == 0) return "";
+    s = str.replace(/&/g, "&gt;");
+    s = s.replace(/ </g, "&lt;");
+    s = s.replace(/>/g, "&gt;");
+    s = s.replace(/    /g,"&nbsp;");
+    s = s.replace(/\'/g,"'");
+    s = s.replace(/\"/g,"&quot;");
+    s = s.replace(/\n/g," <br>");
+    return s;
+}
+
+/**
+ * html解码
+ * @param str 要解码的html代码
+ * @returns {string}
+ */
+tools.htmlDecode = function(str)
+{
+    if(str) return "";
+    var s = "";
+    if(str.length    == 0)    return    "";
+    s = str.replace(/&gt;/g,"&");
+    s = s.replace(/&lt;/g, " <");
+    s = s.replace(/&gt;/g, ">");
+    s = s.replace(/&nbsp;/g," ");
+    s = s.replace(/'/g,"\'");
+    s = s.replace(/&quot;/g,"\"");
+    s = s.replace(/ <br>/g,"\n");
+    return s;
+}
+
+
+/**
+ * 编码base64
+ * @param str
+ * @returns {string}
+ */
+tools.encode2Base64 = function(str) {
+    if(str) return "";
+    var buf = new Buffer(content);
+    return buf.toString("base64");
+}
+
+
+/**
+ * 解码base64
+ * @param str
+ * @returns {string}
+ */
+tools.decode2Base64 = function(str) {
+    if(str) return "";
+    var buf = new Buffer(str,"base64");
+    return buf.toString();
+}
+
+
+
+
+
+module.exports = tools;

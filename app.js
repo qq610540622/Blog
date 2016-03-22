@@ -1,35 +1,19 @@
 var express = require('express');
+var session = require('express-session');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var http = require('http');
 var bodyParser = require('body-parser');
-var ejs = require('ejs');
-var engine = require('ejs-locals');
-var settings = require('./settings');
-/*
-//session存入mongoDB中(存在bug)
-var MongoStore = require('connect-mongo')(session);
-app.use(session({
- secret: settings.cookieSecret,
- expires:0,
- key: settings.db,//cookie name
- store: new MongoStore({
- db: settings.db,
- host: settings.host,
- port: settings.port,
- url : settings.url
- })
- }));*/
-
-var port = process.env.PORT || 3000;
+var logger = require('./common/logger');
+var config = require('./config');
+var redisStore = require('connect-redis')(session);
 var app = express();
 
+
+
+
+
 //视图引擎
-//app.engine('ejs', engine);
-//app.set('views',['./app/show/views/pages','./app/admin/views']);
-//app.set('view engine', 'ejs');
-
-
 app.set('views', ['./app/show/views/pages','./app/admin/views']);
 app.set('view engine', 'html');
 app.engine('html', require('ejs-mate'));
@@ -44,55 +28,36 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ limit: '50mb',extended: true }));
 
 //cookie,session中间件
-app.use(cookieParser());
-var cookieSession = require('cookie-session');
-app.use(cookieSession({
-    name: 'session',
-    keys: ['key1', 'key2']
-}))
+app.use(cookieParser(config.session_secret));
+app.use(session({
+    secret: config.session_secret,
+    store: new redisStore({
+        port: config.redis_port,
+        host: config.redis_host,
+    }),
+    resave: true,
+    saveUninitialized: true,
+}));
 
-//日志
- var log4js = require('log4js');
- log4js.configure({
-     appenders: [
-         { type: 'console' }, //控制台输出
-         {
-             type: 'file', //文件输出
-             filename: 'logs/access.log',
-             maxLogSize: 1024,
-             backups:3,
-             category: 'normal'
-         }
-     ],
-     replaceConsole: true
- });
- var logger = log4js.getLogger('normal');
- app.use(log4js.connectLogger(logger, {level: 'auto', format:':method :url'}));
 
 //路由
 var route = require('./routes/index');
-new route(app).run();
+new route(app);
 
-
-//app.listen(port);
-console.log("server listen to port:%s",port);
-
-
-var server = require('http').createServer(app);
+var server = http.createServer(app);
 var io = require('socket.io').listen(server);
-
-io.on('connection', function (socket) {
-    socket.emit('news', { hello: 'world' });
-    socket.on('my other event', function (data) {
-        console.log(data);
+io.sockets.on('connection', function(socket){
+    socket.on('chat', function(msg){
+        var data = JSON.parse(msg);
+        var responese = {
+            icon:15,
+            msg:data.msg
+        };
+        io.emit('message', data);
     });
-    socket.on("jack",function(data) {
-        console.log(data);
-    })
 });
 
-server.listen(process.env.PORT || 3000);//publish to heroku
-
-
+server.listen(config.port);
+console.log("server listen to port:%s",config.port);
 
 module.exports = app;

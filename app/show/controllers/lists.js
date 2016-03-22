@@ -3,7 +3,7 @@
  */
 
 var articleDao = require("./../../../dao/article");
-var paginationHelper = require("./../../../helper/paginationHelper");
+var pagination = require("./../../../common/pagination");
 var async = require("async");
 var controller = {};
 
@@ -37,8 +37,8 @@ controller.lists = function(req,res) {
                             result.rows[key].content = txt.substr(0,200);
                         }
                     }
-                    var pagination = new paginationHelper(forumId,keywords,page,size,"/show/lists",result);
-                    callback(null,pagination);
+                    var p = new pagination(forumId,keywords,page,size,"/show/lists",result);
+                    callback(null,p);
                 }
             });
         },
@@ -103,8 +103,8 @@ controller.tag = function(req,res) {
                             data.rows[index].content = txt.substr(0,200);
                         }
 
-                        var pagination = new paginationHelper("",keywords,page,size,"/show/lists",data);
-                        callback(null,pagination);
+                        var p = new pagination("",keywords,page,size,"/show/lists",data);
+                        callback(null,p);
                     }
                 });
             },
@@ -140,8 +140,6 @@ controller.tag = function(req,res) {
                 })
             }
         },function(err, results) {
-            console.log(err);
-            console.log(results);
             if(err) res.render("error");
             else res.render("lists",{pageData:results,title:"列表页"});
         });

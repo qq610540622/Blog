@@ -1,129 +1,87 @@
 <% layout('./../layout') %>
 
-<script src="/socket.io/socket.io.js"></script>
-<script>
-    var socket = io.connect('http://localhost:3000');
-    socket.on('news', function (data) {
-        console.log(data);
-        socket.emit('my other event', { my: 'data' });
-    });
-
-    function btn() {
-        socket.emit('jack', { jack: 'jack' });
-    }
-
-</script>
 <style type="text/css">
-    .media-body {border:3px solid #666;border-radius:10px;padding:10px 6px;}
+    .media-body > span {border:3px solid #666;border-radius:10px;padding:10px 6px;display:inline-block;}
     .message-wrap {position:relative;height:395px;;overflow: auto;}
     .item {clear:both;margin:20px 0;overflow: hidden;}
-    textarea {width:100%;height:80px;border:2px solid #999;border-radius:5px;background:#fff;color:#000;font-size:20px;padding:5px;}
     .message-content {width:100%;height:130px;padding:10px 10px 30px 10px;border-top:3px solid #333;}
+    textarea {width:100%;height:80px;border:2px solid #999;border-radius:5px;background:#fff;color:#000;font-size:20px;padding:5px;}
 
 </style>
 
-<div class="container-full">
-<div class="message-wrap">
-    <div class="item">
-        <div class="media col-sm-4 pull-left">
-            <a class="pull-left" href="#">
-                <img class="media-object" src="/images/face/m19.gif" alt="媒体对象">
-            </a>
-            <div class="media-body">
-                这是一些示例文本。这是一些示例文本。
+<div class="container-fluid">
+    <div class="message-wrap">
+        <div class="item">
+            <div class="media col-sm-4 pull-left">
+                <a class="pull-left" href="#">
+                    <img class="media-object" src="/images/face/m19.gif" alt="媒体对象">
+                </a>
+                <div class="media-body">
+                    <span>这是一些示例文本。这是一些示例文本。</span>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="item">
-        <div class="media col-sm-4 pull-right">
-            <img class="media-object pull-right" src="/images/face/m19.gif" alt="媒体对象">
-            <div class="media-body">
-                这是一些示例文本。这是一些示例文本。
+        <div class="item">
+            <div class="media col-sm-4 pull-right">
+                <img class="media-object pull-right" src="/images/face/m19.gif" alt="媒体对象">
+                <div class="media-body">
+                    <span>这是一些示例文本。这是一些示例文本。这是一些示例文本。这是一些示例文本。这是一些示例文本。这是一些示例文本。</span>
+                </div>
             </div>
         </div>
     </div>
+    <div class="message-content">
+        <textarea id="msg" placeholder="按enter回车发送消息"></textarea>
+        <a class="btn btn-primary">确定</a>
+    </div>
+</div>
 
+<div id="tpl">
     <div class="item">
         <div class="media col-sm-4 pull-left">
             <a class="pull-left" href="#">
-                <img class="media-object" src="/images/face/m19.gif" alt="媒体对象">
+                <img class="media-object icon" src="/images/face/m19.gif" alt="媒体对象">
             </a>
             <div class="media-body">
-                这是一些示例文本。这是一些示例文本。
-            </div>
-        </div>
-    </div>
-
-    <div class="item">
-        <div class="media col-sm-4 pull-left">
-            <a class="pull-left" href="#">
-                <img class="media-object" src="/images/face/m19.gif" alt="媒体对象">
-            </a>
-            <div class="media-body">
-                这是一些示例文本。这是一些示例文本。
-            </div>
-        </div>
-    </div>
-    <div class="item">
-        <div class="media col-sm-4 pull-left">
-            <a class="pull-left" href="#">
-                <img class="media-object" src="/images/face/m19.gif" alt="媒体对象">
-            </a>
-            <div class="media-body">
-                这是一些示例文本。这是一些示例文本。
-            </div>
-        </div>
-    </div>
-    <div class="item">
-        <div class="media col-sm-4 pull-left">
-            <a class="pull-left" href="#">
-                <img class="media-object" src="/images/face/m19.gif" alt="媒体对象">
-            </a>
-            <div class="media-body">
-                这是一些示例文本。这是一些示例文本。
-            </div>
-        </div>
-    </div>
-    <div class="item">
-        <div class="media col-sm-4 pull-left">
-            <a class="pull-left" href="#">
-                <img class="media-object" src="/images/face/m19.gif" alt="媒体对象">
-            </a>
-            <div class="media-body">
-                这是一些示例文本。这是一些示例文本。
-            </div>
-        </div>
-    </div>
-    <div class="item">
-        <div class="media col-sm-4 pull-left">
-            <a class="pull-left" href="#">
-                <img class="media-object" src="/images/face/m19.gif" alt="媒体对象">
-            </a>
-            <div class="media-body">
-                这是一些示例文本。这是一些示例文本。
+                <span class="msg-body">这是一些示例文本。这是一些示例文本。</span>
             </div>
         </div>
     </div>
 </div>
 
-<div class="message-content">
-    <textarea id="con" placeholder="按enter回车发送消息"></textarea>
-    <a class="btn btn-primary">确定</a>
-</div>
 
-</div>
-
+<script src="/socket.io/socket.io.js"></script>
 <script type="text/javascript">
+    var socket = io.connect('http://localhost:3000');
+    socket.on('message', function(data) {
+        console.log(data);
+        var $item = $($("#tpl").html());
+        $item.find(".icon").attr("src","/images/face/m"+data.icon+".gif").end().find(".msg-body").text(data.msg);
+        $(".message-wrap").append($item);
+    });
 
     $(function() {
+        setMessageHeight();
+        $(window).resize(function() {
+            setMessageHeight();
+        });
 
-        $("#con").keyup(function(e) {
+        $("#msg").keyup(function(e) {
             if(e.keyCode == 13) {
-                console.log(e);
+                var msg = $(this).val();
+                if(msg) {
+                    socket.emit('chat', JSON.stringify({
+                        _id: '_id',
+                        msg: msg
+                    }));
+                }
             }
         })
+    });
 
-    })
+    function setMessageHeight() {
+        $(".message-wrap").css("height",($(window).height()-250)+"px");
+    }
 
 </script>

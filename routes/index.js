@@ -22,7 +22,7 @@ var adminRoleController = require("../app/admin/controllers/role");
 var adminPermissionController = require("../app/admin/controllers/permission");
 
 
-var common = require("./../helper/commonHelper");
+var tools = require("./../common/tools");
 var roleDao = require("./../dao/role");
 var permissionDao = require("./../dao/permission");
 var async = require("async");
@@ -31,6 +31,7 @@ var async = require("async");
  */
 var route = function(app) {
     this.app = app;
+    this.run();
 };
 
 route.prototype = {
@@ -53,69 +54,6 @@ route.prototype = {
                 next();
             }
         });
-        
-        
-        /**
-         * 权限
-         */
-        this.app.use(function(req,res,next) {
-            if(req.session.userModel) {
-                var url = req.url;
-                var username = req.session.userModel.username;
-
-                async.series({
-                    permissions:function(callback) {
-                        permissionDao.base.getList(function(err,results) {
-                            if(err) callback(err,null);
-                            else {
-                                var obj = {};
-                                results.forEach(function(item) {
-                                    obj[item.permissionCode] = item.permissionName;
-                                })
-                                callback(null,obj)
-                            };
-                        })
-                    },
-                    userOwnPermissions:function(callback) {
-                        roleDao.base.getByQuery({users:username},{permissions:1},{multi:true,upset:false},function(err,results) {
-                            var obj = {};
-                            if(err) callback(err,null);
-                            else {
-                                results.forEach(function(items) {
-                                    if(items && items.permissions.length>0) {
-                                        for(var i=0, len=items.permissions.length; i<len; i++) {
-                                            obj[items.permissions[i]] = true;
-                                        }
-                                    }
-                                });
-                                callback(null,obj);
-                            }
-                        })
-                    }
-                }, function (err, data) {
-                    if (data && data.permissions) {
-                        var isExist = false;
-                        for (var key in data.permissions) {
-                            if (url.indexOf(key) != -1) {
-                                isExist = true;
-                                break;
-                            }
-                        }
-                        
-                        if (isExist && (data.userOwnPermissions && !data.userOwnPermissions[url])) {
-                            return res.send("notPermission");
-                        } else {
-                            next();
-                        }
-                    } else {
-                        next();
-                    }
-                });
-            } else {
-                next();
-            }
-        })
-
 
         //　**********************　　前台　********************
         this.app.get('/',showIndexController.index);
@@ -216,19 +154,16 @@ route.prototype = {
         this.app.post("/permission/create",adminPermissionController.create);
         this.app.post("/permission/edit",adminPermissionController.edit);
         this.app.post("/permission/remove",adminPermissionController.remove);
-        
-        
+
         //聊天
         this.app.get("/chat/index",showChatController.index);
-        
-
     },
     apiRoute: function() {
         // api路由正则表达式   /api/v1.0/{control}/action/{params}
         var apiRouteRegEx = /^\/(api)\/(v[1-9]\.[0-9])\/([a-zA-Z0-9_\.~-]+)\/([a-zA-Z0-9_-]+)(.*)/;
         this.app.get(apiRouteRegEx,function(req,res) {
             //检查请求是否合法
-            if(common.checkReq(req, res))
+            if(tools.checkReq(req, res))
             {
                 //根据请求url引用对应的控制器　/api/v1.0/{control}/action/{params}
                 var controller = require("../api/"+req.params[1]+"/"+req.params[2]);
@@ -240,15 +175,15 @@ route.prototype = {
                     controller[action](req,res);
                 } else {
                     //如果没有直接返回错误信息
-                    common.resError(99,null,res);
+                    tools.resError(99,null,res);
                 }
             } else {
-                common.resError(100,null,res);
+                tools.resError(100,null,res);
             }
         });
         this.app.post(apiRouteRegEx,function(req,res) {
             //检查请求是否合法
-            if(common.checkReq(req, res))
+            if(tools.checkReq(req, res))
             {
                 //根据请求url引用对应的控制器　/api/v1.0/{control}/action/{params}
                 var controller = require("../api/"+req.params[1]+"/"+req.params[2]);
@@ -260,14 +195,14 @@ route.prototype = {
                     controller[action](req,res);
                 } else {
                     //如果没有直接返回错误信息
-                    common.resError(99,null,res);
+                    tools.resError(99,null,res);
                 }
             } else {
-                common.resError(100,null,res);
+                tools.resError(100,null,res);
             }
         });
     }
-}
+};
 
 module.exports = route;
 

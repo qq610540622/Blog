@@ -11,7 +11,7 @@
 
         <%
             if(pageData) {
-                pageData.listsArticles.obj.rows.forEach(function(item) { console.log(item);%>
+                pageData.listsArticles.obj.rows.forEach(function(item) { %>
                     <div class="panel panel-default">
                         <div class="panel-body">
                             <a href="/show/detail?articleId=<%= item._id %>">

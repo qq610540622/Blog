@@ -43,11 +43,6 @@ controller.operate = function(req,res) {
         });
     }
 };
-function a () {
-    if(1==true) {
-        var test=3;
-    }
-}
 
 
 /**

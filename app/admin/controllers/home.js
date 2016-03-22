@@ -3,7 +3,7 @@
  */
 
 var userDao = require("./../../../dao/user");
-var commonHelper = require("./../../../helper/commonHelper");
+var tools = require("./../../../common/tools");
 var controller = {};
 
 /**
@@ -47,7 +47,7 @@ controller.captcha = function(req,res) {
     var width=!isNaN(parseInt(req.query.width))?parseInt(req.query.width):100;
     var height=!isNaN(parseInt(req.query.height))?parseInt(req.query.height):30;
     var code = parseInt(Math.random()*9000+1000);
-    var imgbase64 = commonHelper.captcha(width,height,code);
+    var imgbase64 = tools.captcha(width,height,code);
 
     req.session.adminCaptcha = code;
     res.writeHead(200, {
@@ -84,7 +84,7 @@ controller.submit = function(req,res) {
             function(arg,callback) {
                 //检查没有管理员帐号就插入当前数据为管理员帐号
                 if(arg) {
-                    var model = {username:username,password:commonHelper.md5(password),type:type,status:0};
+                    var model = {username:username,password:tools.md5(password),type:type,status:0};
                     userDao.base.create(model,function(status,data) {
                         callback(null,true);
                     })
@@ -109,7 +109,7 @@ controller.submit = function(req,res) {
     } else {    //登录
         var session_captcha = req.session.adminCaptcha;
         if(captcha == session_captcha) {
-            userDao.base.getSingleByQuery({username:username,password:commonHelper.md5(password),type:1},function(err,result) {
+            userDao.base.getSingleByQuery({username:username,password:tools.md5(password),type:1},function(err,result) {
                 if(err) res.send("error");
                 else {req.session.adminName = username; res.send("success");}
             })

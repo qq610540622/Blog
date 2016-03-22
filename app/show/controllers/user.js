@@ -4,7 +4,7 @@
 
 var async = require("async");
 var userDao = require("./../../../dao/user");
-var commonHelper = require("./../../../helper/commonHelper");
+var tools = require("./../../../common/tools");
 var controller = {};
 
 
@@ -47,10 +47,8 @@ controller.isExistUsername = function(req,res) {
 controller.login = function(req,res) {
     var username = req.body.username;
     var password = req.body.password;
-    console.log(username);
-    console.log(password);
     if(username && password) {
-        var model = {username:username,password:commonHelper.md5(password)};
+        var model = {username:username,password:tools.md5(password)};
         userDao.base.getSingleByQuery(model,function(err,result) {
             if(err) res.send("error");
             else {
@@ -80,7 +78,7 @@ controller.signin = function(req,res) {
         var username = req.body.username;
         var password = req.body.password;
         if(username && password) {
-            var model = {username:username,password:commonHelper.md5(password),icon:commonHelper.random(1,64)};
+            var model = {username:username,password:tools.md5(password),icon:tools.random(1,64)};
             userDao.base.create(model,function(err,result) {
                 if(err) res.send("error");
                 else {
@@ -107,11 +105,11 @@ controller.signin = function(req,res) {
  * @param res
  */
 controller.captcha = function(req,res) {
-    var commonHelper = require("./../../../helper/commonHelper");
+    var tools = require("./../../../common/tools");
     var width=!isNaN(parseInt(req.query.width))?parseInt(req.query.width):100;
     var height=!isNaN(parseInt(req.query.height))?parseInt(req.query.height):30;
     var code = parseInt(Math.random()*9000+1000);
-    var imgbase64 = commonHelper.captcha(width,height,code);
+    var imgbase64 = tools.captcha(width,height,code);
     req.session.captcha = code;
     res.writeHead(200, {
         'Content-Type': 'image/png'

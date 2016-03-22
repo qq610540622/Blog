@@ -4,7 +4,7 @@
 
 
 var articleDao = require("./../../../dao/article");
-var robotHelper = require("./../../../helper/robotHelper");
+var robot = require("./../../../common/robot");
 var path = require('path');
 
 var controller = {};
@@ -146,7 +146,7 @@ controller.spider = function(req,res) {
 controller.submitSpider = function(req,res) {
     var arrayJson = req.body.articleList;
     var articleList = JSON.parse(arrayJson);
-    var robot = new robotHelper(articleList,function() {
+    var robot = new robot(articleList,function() {
         res.send("success");
     });
     robot.crawler();

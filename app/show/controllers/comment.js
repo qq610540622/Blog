@@ -3,8 +3,7 @@
 
 var async = require("async");
 var commentDao = require("./../../../dao/comment");
-var dateHelper = require("./../../../helper/dateHelper");
-var commonHelper = require("./../../../helper/commonHelper");
+var tools = require("./../../../common/tools");
 var session = require('express-session');
 var controller = {};
 

@@ -2,19 +2,19 @@
  * Created by Administrator on 2016-01-28.
  */
 var mongoose = require('mongoose');
-var settings = require('../settings');
+var config = require('../config');
 var fs = require('fs');
 
 
-mongoose.connect(settings.connectionstring);
+mongoose.connect(config.db);
 
 var db = mongoose.connection;
 db.on('error', function(err){
-    console.error('connect to %s error: ', settings.connectionstring, err.message);
+    console.error('connect to %s error: ', config.db, err.message);
     process.exit(1);
 });
 db.once('open', function () {
-    console.log('%s has been connected.', settings.connectionstring);
+    console.log('%s has been connected.', config.db);
 });
 var models_path = __dirname + '/mapping'
 
