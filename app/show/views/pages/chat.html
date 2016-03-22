@@ -1,4 +1,5 @@
 <% layout('./../layout') %>
+
 <script src="/socket.io/socket.io.js"></script>
 <script>
     var socket = io.connect('http://localhost:3000');
@@ -12,4 +13,117 @@
     }
 
 </script>
-<button id="test" onclick="btn();">test</button>
+<style type="text/css">
+    .media-body {border:3px solid #666;border-radius:10px;padding:10px 6px;}
+    .message-wrap {position:relative;height:395px;;overflow: auto;}
+    .item {clear:both;margin:20px 0;overflow: hidden;}
+    textarea {width:100%;height:80px;border:2px solid #999;border-radius:5px;background:#fff;color:#000;font-size:20px;padding:5px;}
+    .message-content {width:100%;height:130px;padding:10px 10px 30px 10px;border-top:3px solid #333;}
+
+</style>
+
+<div class="container-full">
+<div class="message-wrap">
+    <div class="item">
+        <div class="media col-sm-4 pull-left">
+            <a class="pull-left" href="#">
+                <img class="media-object" src="/images/face/m19.gif" alt="媒体对象">
+            </a>
+            <div class="media-body">
+                这是一些示例文本。这是一些示例文本。
+            </div>
+        </div>
+    </div>
+
+    <div class="item">
+        <div class="media col-sm-4 pull-right">
+            <img class="media-object pull-right" src="/images/face/m19.gif" alt="媒体对象">
+            <div class="media-body">
+                这是一些示例文本。这是一些示例文本。
+            </div>
+        </div>
+    </div>
+
+    <div class="item">
+        <div class="media col-sm-4 pull-left">
+            <a class="pull-left" href="#">
+                <img class="media-object" src="/images/face/m19.gif" alt="媒体对象">
+            </a>
+            <div class="media-body">
+                这是一些示例文本。这是一些示例文本。
+            </div>
+        </div>
+    </div>
+
+    <div class="item">
+        <div class="media col-sm-4 pull-left">
+            <a class="pull-left" href="#">
+                <img class="media-object" src="/images/face/m19.gif" alt="媒体对象">
+            </a>
+            <div class="media-body">
+                这是一些示例文本。这是一些示例文本。
+            </div>
+        </div>
+    </div>
+    <div class="item">
+        <div class="media col-sm-4 pull-left">
+            <a class="pull-left" href="#">
+                <img class="media-object" src="/images/face/m19.gif" alt="媒体对象">
+            </a>
+            <div class="media-body">
+                这是一些示例文本。这是一些示例文本。
+            </div>
+        </div>
+    </div>
+    <div class="item">
+        <div class="media col-sm-4 pull-left">
+            <a class="pull-left" href="#">
+                <img class="media-object" src="/images/face/m19.gif" alt="媒体对象">
+            </a>
+            <div class="media-body">
+                这是一些示例文本。这是一些示例文本。
+            </div>
+        </div>
+    </div>
+    <div class="item">
+        <div class="media col-sm-4 pull-left">
+            <a class="pull-left" href="#">
+                <img class="media-object" src="/images/face/m19.gif" alt="媒体对象">
+            </a>
+            <div class="media-body">
+                这是一些示例文本。这是一些示例文本。
+            </div>
+        </div>
+    </div>
+    <div class="item">
+        <div class="media col-sm-4 pull-left">
+            <a class="pull-left" href="#">
+                <img class="media-object" src="/images/face/m19.gif" alt="媒体对象">
+            </a>
+            <div class="media-body">
+                这是一些示例文本。这是一些示例文本。
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="message-content">
+    <textarea id="con" placeholder="按enter回车发送消息"></textarea>
+    <a class="btn btn-primary">确定</a>
+</div>
+
+</div>
+
+<script type="text/javascript">
+
+    $(function() {
+
+        $("#con").keyup(function(e) {
+            if(e.keyCode == 13) {
+                console.log(e);
+            }
+        })
+
+    })
+
+</script>
