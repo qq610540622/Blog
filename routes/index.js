@@ -23,9 +23,6 @@ var adminPermissionController = require("../app/admin/controllers/permission");
 
 
 var tools = require("./../common/tools");
-var roleDao = require("./../dao/role");
-var permissionDao = require("./../dao/permission");
-var async = require("async");
 /**
  * 路由器类
  */
@@ -85,6 +82,9 @@ route.prototype = {
         this.app.post("/guestbook/submitReply",showGuestbookController.submitReply);
         this.app.post("/guestbook/submitSupport",showGuestbookController.submitSupport);
 
+        //聊天
+        this.app.get("/chat/index",showChatController.index);
+        this.app.post("/chat/login",showChatController.login);
 
 
 
@@ -155,8 +155,6 @@ route.prototype = {
         this.app.post("/permission/edit",adminPermissionController.edit);
         this.app.post("/permission/remove",adminPermissionController.remove);
 
-        //聊天
-        this.app.get("/chat/index",showChatController.index);
     },
     apiRoute: function() {
         // api路由正则表达式   /api/v1.0/{control}/action/{params}

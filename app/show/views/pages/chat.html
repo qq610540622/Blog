@@ -1,4 +1,19 @@
-<% layout('./../layout') %>
+
+<!-- css样式 -->
+<link rel="stylesheet" type="text/css" href="/build/css/index.css">
+<link rel="stylesheet" type="text/css" href="/libs/bootstrap/dist/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="/libs/bootstrap/dist/css/bootstrap-theme.min.css">
+<link rel="stylesheet" type="text/css" href="/libs/Font-Awesome-3.2.1/css/font-awesome.min.css">
+<link rel="stylesheet" type="text/css" href="/libs/bootstrapvalidator/dist/css/bootstrapValidator.min.css">
+<link rel="stylesheet" type="text/css" href="/libs/csshake/dist/csshake.min.css">
+
+<!-- javascript脚本 -->
+<script type="text/javascript" src="/libs/jquery/dist/jquery.min.js"></script>
+<script type="text/javascript" src="/libs/bootstrap/dist/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/libs/bootstrapvalidator/dist/js/bootstrapValidator.min.js"></script>
+<script type="text/javascript" src="/build/js/global.js"></script>
+<title><%= title %></title>
+<link rel="shortcut icon" href="/images/favicon.ico">
 
 <style type="text/css">
     .media-body > span {border:3px solid #666;border-radius:10px;padding:10px 6px;display:inline-block;}
@@ -37,7 +52,7 @@
     </div>
 </div>
 
-<div id="tpl">
+<div id="tpl" class="hidden">
     <div class="item">
         <div class="media col-sm-4 pull-left">
             <a class="pull-left" href="#">
@@ -51,6 +66,101 @@
 </div>
 
 
+<!-- Modal -->
+<div class="modal fade" id="chatModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="myModalLabel">帐号</h4>
+            </div>
+
+            <div class="modal-body">
+                <ul id="myTab" class="nav nav-tabs">
+                    <li class="active"><a href="#login" data-toggle="tab">登录帐号</a></li>
+                    <li><a href="#signin" data-toggle="tab">注册帐号</a></li>
+                </ul>
+                <div id="myTabContent" class="tab-content">
+                    <div class="tab-pane fade in active" id="login">
+                        <div class="modal-body">
+                            <form class="form-horizontal" role="form" id="login-form" action="/user/login">
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">用户名：</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" name="username" class="form-control" placeholder="请输入用户名">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">密码：</label>
+                                    <div class="col-sm-10">
+                                        <input type="password" name="password" class="form-control" placeholder="请输入密码">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-offset-2 col-sm-10">
+                                        <button type="submit" class="btn btn-success">登录</button>
+                                        <button type="button" class="btn btn-default btn-cancel">取消</button>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label"></label>
+                                    <div class="col-sm-10">
+                                        <h5 id="login-error-message" class="hidden text-warning">用户名或密码不正确</h5>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="signin">
+                        <div class="modal-body">
+                            <form class="form-horizontal" role="form" id="signin-form">
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">用户名：</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" name="username" class="form-control" placeholder="请输入用户名">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">密码：</label>
+                                    <div class="col-sm-10">
+                                        <input type="password" name="password" class="form-control" placeholder="请输入密码">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">验证码：</label>
+                                    <div class="col-sm-10" id="captcha-box">
+                                        <input type="text" name="captcha" class="form-control" placeholder="请输入验证码">
+                                        <img id="captcha" src='/user/captcha?width=100&height=30' onclick="this.src='/user/captcha?width=100&height=30&timestamp='+new Date().getTime();"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-offset-2 col-sm-10">
+                                        <button type="submit" class="btn btn-warning">注册</button>
+                                        <button type="button" class="btn btn-default btn-cancel">取消</button>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label"></label>
+                                    <div class="col-sm-10">
+                                        <h5 id="signin-error-message" class="hidden text-warning">验证码错误</h5>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!--<div class="modal-footer">
+            </div>-->
+        </div>
+    </div>
+</div>
+
+
+
+
 <script src="/socket.io/socket.io.js"></script>
 <script type="text/javascript">
     var socket = io.connect('http://localhost:3000');
@@ -62,6 +172,9 @@
     });
 
     $(function() {
+        validate();
+        $("#chatModal").modal("show");
+
         setMessageHeight();
         $(window).resize(function() {
             setMessageHeight();
@@ -72,7 +185,7 @@
                 var msg = $(this).val();
                 if(msg) {
                     socket.emit('chat', JSON.stringify({
-                        _id: '_id',
+                        _id: '_id'+userModel._id,
                         msg: msg
                     }));
                 }
@@ -81,7 +194,181 @@
     });
 
     function setMessageHeight() {
-        $(".message-wrap").css("height",($(window).height()-250)+"px");
+        $(".message-wrap").css("height",($(window).height()-140)+"px");
     }
+
+    var userModel;
+
+    //验证
+    function validate() {
+
+        /**
+         * 登录
+         */
+        $("#login-form").bootstrapValidator({
+            message: '不是有效的值',
+            feedbackIcons: {
+                valid: 'glyphicon glyphicon-ok',
+                invalid: 'glyphicon glyphicon-remove',
+                validating: 'glyphicon glyphicon-refresh'
+            },
+            excluded: ':disabled',
+            fields: {
+                username: {
+                    message: '不是有效的值',
+                    validators: {
+                        notEmpty: {
+                            message: '用户名不能为空'
+                        },
+                        stringLength: {
+                            min: 3,
+                            max: 30,
+                            message: '长度必须长于3位，小于30位'
+                        },
+                        regexp: {
+                            regexp: /^[a-zA-Z0-9_]+$/,
+                            message: '只能包含字母数字_'
+                        }
+                    }
+                },
+                password: {
+                    validators: {
+                        notEmpty: {
+                            message: '密码不能为空'
+                        },
+                        stringLength: {
+                            min: 3,
+                            max: 30,
+                            message: '长度必须长于3位，小于30位'
+                        }
+                    }
+                }
+            }
+        }).on('success.form.bv', function (e) {
+            e.preventDefault();
+            $.ajax({
+                type:"post",
+                dataType:"text", 
+                url:"/chat/login",
+                data:$("#login-form").serialize(),
+                async:false,
+                success:function(data) {
+                    var res = JSON.parse(data);
+                    if(res && res.status == "success") {
+                        userModel = res.data;
+                        $('#chatModal').modal('hide');
+                        $("#login-form").bootstrapValidator('resetForm', true);
+                        $("#signin-form").bootstrapValidator('resetForm', true);
+                    } else {
+                        $("#login-error-message").removeClass("hidden");
+                    }
+                }
+            });
+        });
+
+
+        /**
+         * 注册
+         */
+        $("#signin-form").bootstrapValidator({
+            message: '不是有效的值',
+            feedbackIcons: {
+                valid: 'glyphicon glyphicon-ok',
+                invalid: 'glyphicon glyphicon-remove',
+                validating: 'glyphicon glyphicon-refresh'
+            },
+            excluded: ':disabled',
+            fields: {
+                username: {
+                    message: '不是有效的值',
+                    validators: {
+                        notEmpty: {
+                            message: '用户名不能为空'
+                        },
+                        stringLength: {
+                            min: 2,
+                            max: 20,
+                            message: '长度必须长于2位，小于20位'
+                        },
+                        regexp: {
+                            regexp: /^[a-zA-Z0-9_\u4E00-\u9FA5]+$/,
+                            message: '只能包含字母数字_'
+                        },
+                        callback: {
+                            message: '用户名已经被占用',
+                            callback: function (value, validator) {
+                                var res = true;
+                                if (value.match(/^[a-zA-Z0-9_]+$/)) {
+                                    $.ajax({
+                                        url: '/user/isExistUsername',
+                                        type: 'post',
+                                        dataType: 'text',
+                                        async: false,
+                                        data: {username: value},
+                                        success: function (data) {
+                                            if (data && data == 'exist') {
+                                                res = false;
+                                            }
+                                        }
+                                    });
+                                }
+                                return res;
+                            }
+                        }
+                    }
+                },
+                password: {
+                    validators: {
+                        notEmpty: {
+                            message: '密码不能为空'
+                        },
+                        stringLength: {
+                            min: 3,
+                            max: 30,
+                            message: '长度必须长于3位，小于30位'
+                        }
+                    }
+                },
+                captcha: {
+                    validators: {
+                        notEmpty: {
+                            message: '验证码不能为空'
+                        },
+                        stringLength: {
+                            min: 4,
+                            max: 4,
+                            message: '长度必须不等于4位'
+                        },
+                        regexp: {
+                            regexp: /^[0-9]{4}$/,
+                            message: '只能为数字'
+                        }
+                    }
+                }
+            }
+        }).on('success.form.bv', function (e) {
+            e.preventDefault();
+            $.ajax({
+                type:"post",
+                dataType:"text",
+                url:"/user/signin",
+                data:$("#signin-form").serialize(),
+                async:false,
+                success:function(data) {
+                    if(data) {
+                        if(data == "success") {
+                            $('#chatModal').modal('hide');
+                            $("#signin-form").bootstrapValidator('resetForm', true);
+                            $("#login-form").bootstrapValidator('resetForm', true);
+                        } else if(data == "captchaError") {
+                            $("#signin-error-message").removeClass("hidden");
+                            $("#captcha")[0].onclick();
+                        }
+                    }
+                }
+            });
+        });
+    }
+
 
 </script>

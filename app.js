@@ -42,7 +42,11 @@ app.use(session({
 
 //路由
 var route = require('./routes/index');
+var cache = require('./common/cache');
 new route(app);
+
+var onlineUsers = [];
+
 
 var server = http.createServer(app);
 var io = require('socket.io').listen(server);
@@ -53,7 +57,11 @@ io.sockets.on('connection', function(socket){
             icon:15,
             msg:data.msg
         };
-        io.emit('message', data);
+        console.log(cache.toString());
+        io.emit('message', responese);
+    });
+    socket.on('disconnect', function() {
+        console.log("disconnect");
     });
 });
 
