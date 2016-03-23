@@ -6,12 +6,8 @@ var http = require('http');
 var bodyParser = require('body-parser');
 var logger = require('./common/logger');
 var config = require('./config');
-var redisStore = require('connect-redis')(session);
+var RedisStore = require('connect-redis')(session);
 var app = express();
-
-
-
-
 
 //视图引擎
 app.set('views', ['./app/show/views/pages','./app/admin/views']);
@@ -31,7 +27,7 @@ app.use(bodyParser.urlencoded({ limit: '50mb',extended: true }));
 app.use(cookieParser(config.session_secret));
 app.use(session({
     secret: config.session_secret,
-    store: new redisStore({
+    store: new RedisStore({
         port: config.redis_port,
         host: config.redis_host,
     }),
@@ -45,23 +41,39 @@ var route = require('./routes/index');
 var cache = require('./common/cache');
 new route(app);
 
-var onlineUsers = [];
-
+//在线用户
+var onlineUsers = {};
+//当前在线人数
+var onlineCount = 0;
 
 var server = http.createServer(app);
 var io = require('socket.io').listen(server);
-io.sockets.on('connection', function(socket){
-    socket.on('chat', function(msg){
-        var data = JSON.parse(msg);
-        var responese = {
-            icon:15,
-            msg:data.msg
-        };
-        console.log(cache.toString());
-        io.emit('message', responese);
+io.on('connection', function(socket){
+    socket.on('login', function(obj){
+        var result = {};
+        socket.name = obj.userid;
+        if(!onlineUsers.hasOwnProperty(obj.userid)) {
+            onlineUsers[obj.userid] = obj.username;
+            onlineCount++;
+        }
+        result.onlineUsers = onlineUsers;
+        result.onlineCount = onlineCount;
+        result.user = obj;
+
+        io.emit('login', result);
     });
-    socket.on('disconnect', function() {
-        console.log("disconnect");
+
+    socket.on('message', function(obj){
+        io.emit('message', obj);
+    });
+
+    socket.on('disconnect', function(){
+        if(onlineUsers.hasOwnProperty(socket.name)) {
+            var obj = {userid:socket.name, username:onlineUsers[socket.name]};
+            delete onlineUsers[socket.name];
+            onlineCount--;
+            io.emit('logout', {onlineUsers:onlineUsers, onlineCount:onlineCount, user:obj});
+        }
     });
 });
 

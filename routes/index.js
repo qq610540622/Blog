@@ -84,8 +84,6 @@ route.prototype = {
 
         //聊天
         this.app.get("/chat/index",showChatController.index);
-        this.app.post("/chat/login",showChatController.login);
-
 
 
         //　**********************　　后台　********************

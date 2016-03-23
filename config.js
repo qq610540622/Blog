@@ -7,7 +7,7 @@ var config = {
     // debug 为 true 时，用于本地调试
     debug: true,
     host: 'localhost',
-    port: 3000,
+    port: 4000,
     cookieSecret:"blog",
     db: 'mongodb://127.0.0.1:27017/blog',
     file_limit: '1MB',
