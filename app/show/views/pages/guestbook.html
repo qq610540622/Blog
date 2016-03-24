@@ -159,7 +159,7 @@
                     loadMessage();
                     $('#guestbookModal').modal('hide');
                 } else if(data && data=="notPermission") {
-                    $("#not-permission-modal").modal("show");
+                    showMessage("你没有权限");
                 }
             }
         });
@@ -177,14 +177,13 @@
             async:false,
             url:"/guestbook/submit",
             success:function(data) {
-                console.log(data);
                 if(data && data == "success") {
                     pageIndex = 1;
                     $(".message").val("");
                     loadMessage();
                     $('#commentModal').modal('hide');
                 } else if(data && data == "notPermission") {
-                    $("#not-permission-modal").modal("show");
+                    showMessage("你没有权限");
                 }
             }
         });

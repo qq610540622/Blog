@@ -150,6 +150,7 @@
                     loadComment();
                 } else if(data && data == "notPermission") {
                     $(".reply-box").each(function(i,e) {
+                        showMessage("你没有权限");
                         if($(this).is(":visible")) {
                             $(this).hide();
                         }
@@ -170,11 +171,13 @@
             },
             url:"/comment/submitComment",
             success:function(data) {
+                console.log(data);
                 if(data && data == "success") {
                     $(".txt-content").val("");
                     loadComment();
                 } else if(data && data == "notPermission") {
                     $(".reply-box").each(function(i,e) {
+                        showMessage("你没有权限");
                         if($(this).is(":visible")) {
                             $(this).hide();
                         }

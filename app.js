@@ -6,6 +6,7 @@ var http = require('http');
 var bodyParser = require('body-parser');
 var logger = require('./common/logger');
 var config = require('./config');
+var auth = require("./middlewares/auth");
 var RedisStore = require('connect-redis')(session);
 var app = express();
 
@@ -34,6 +35,9 @@ app.use(session({
     resave: true,
     saveUninitialized: true,
 }));
+
+//中间件
+app.use(auth.authPermission);
 
 
 //路由
