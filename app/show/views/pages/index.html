@@ -73,6 +73,24 @@
             </div>
         </div>
 
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    文章搜索
+                </h3>
+            </div>
+
+            <div class="panel-body">
+                <div class="form-inline">
+                    <div class="form-group">
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="search-keywords" placeholder="试一下吧...">
+                            <div style="cursor:pointer;" class="input-group-addon btn-search">搜索</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <div class="panel panel-info">
             <div class="panel-heading">
@@ -139,6 +157,18 @@
 
 <script type="text/javascript">
     $(function() {
+
+        $(".btn-search").click(function() {
+            var keywords = $("#search-keywords").val();
+            window.location.href = "/show/lists?keywords="+keywords;
+        });
+        $("#search-keywords").keyup(function(e) {
+            if(e.keyCode == 13) {
+                var keywords = $(this).val();
+                window.location.href = "/show/lists?keywords="+keywords;
+            }
+        });
+
         $.ajax({
             type:"post",
             dataType:"json",
@@ -153,6 +183,5 @@
                 }
             }
         });
-
     })
 </script>

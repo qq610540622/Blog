@@ -190,3 +190,11 @@ a.navbar-brand i {
 
 .btn-support {
   cursor: pointer; }
+
+#to-top {
+  position: fixed;
+  bottom: 8%;
+  right: 3%;
+  padding: 0px 10px;
+  border: 2px solid white;
+  border-radius: 10px; }

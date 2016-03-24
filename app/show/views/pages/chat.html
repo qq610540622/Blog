@@ -35,7 +35,6 @@
     </div>
     <div class="panel-body">
         <div class="message-wrap">
-
         </div>
     </div>
     <div class="panel-footer">
@@ -61,7 +60,7 @@
 
 <script src="/socket.io/socket.io.js"></script>
 <script type="text/javascript">
-    var socket = io.connect('http://192.168.1.63:4000');
+    var socket = io.connect('http://192.168.1.63:3000');
     var username = '<%= userModel.username %>';
     var icon = '<%= userModel.icon %>';
     var userid = genUid();
@@ -86,7 +85,6 @@
     socket.on("logout",function(data) {
         show(data,"logout");
     });
-
     function show(data,operate) {
         $("#online-count").text(data.onlineCount);
         if(data.onlineUsers) {
@@ -102,7 +100,6 @@
             $(".message-wrap").append($('<div class="system"><span>'+data.user.username+'</span>退出</div>'));
         }
     }
-
     $(function() {
         $(".message-wrap").css("height",($(window).height()-245)+"px");
         $(window).resize(function() {

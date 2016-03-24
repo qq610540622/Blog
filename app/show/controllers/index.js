@@ -74,7 +74,11 @@ controller.index = function(req,res) {
  */
 controller.header = function(req,res) {
     forumDao.getAll(function(err,results) {
-        res.send(err?"error":results);
+        if(err) res.send("error");
+        else {
+            var userModel = req.session.userModel || "";
+            res.send({navs:results,user:userModel});
+        }
     });
 }
 

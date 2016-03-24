@@ -50,6 +50,7 @@ var server = http.createServer(app);
 var io = require('socket.io').listen(server);
 io.on('connection', function(socket){
     socket.on('login', function(obj){
+        console.log("login");
         var result = {};
         socket.name = obj.userid;
         if(!onlineUsers.hasOwnProperty(obj.userid)) {
@@ -59,7 +60,6 @@ io.on('connection', function(socket){
         result.onlineUsers = onlineUsers;
         result.onlineCount = onlineCount;
         result.user = obj;
-
         io.emit('login', result);
     });
 

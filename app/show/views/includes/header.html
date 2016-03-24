@@ -1,6 +1,11 @@
 <style type="text/css">
     a {cursor:pointer;}
+    .navbar-right{padding-right:30px;}
+    .navbar-right ul li {float:left;margin:17px 15px 0 0;}
+    .navbar-right a i {margin-right:4px;}
+    .navbar-right .group2 {display:none;}
 </style>
+
 <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
         <div class="navbar-header">
@@ -17,127 +22,120 @@
             <ul class="nav navbar-nav">
             </ul>
 
-            <form class="navbar-form navbar-right search-form" role="search">
-                <div class="form-group">
-                    <input type="text" class="form-control search-keywords" placeholder="快来试一下吧...">
-                </div>
-                <button type="button" class="btn btn-search btn-default">搜索</button>
-            </form>
+            <div class="navbar-right">
+                <ul>
+                    <li class="group1"><a id="signin"><i class="icon-user icon-large"></i>登录</a></li>
+                    <li class="group1"><a id="signup"><i class="icon-signin icon-large"></i>注册</a></li>
+
+                    <li class="group2"><a><i class="icon-user icon-large"></i>欢迎：<span id="sign-username"></span></a></li>
+                    <li class="group2"><a id="signout"><i class="icon-signout icon-large"></i>退出</a></li>
+                </ul>
+            </div>
         </div>
     </div>
 </nav>
 
-
-<!-- 模态框（Modal） -->
-<div class="modal fade" id="not-permission-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<!-- 消息modal -->
+<div class="modal fade" id="message-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-body">
-                <span style="font-size:24px;color:#666;">对不起，你没有权限。</span>
+                <span style="font-size:24px;color:#666;"></span>
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal -->
 </div>
 
-
-
-<!-- Modal -->
-<div class="modal fade" id="login-signout-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<!-- 登录Modal -->
+<div class="modal fade" id="signin-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                <h4 class="modal-title" id="myModalLabel">帐号</h4>
+                <h4 class="modal-title">登录</h4>
             </div>
 
             <div class="modal-body">
-                <ul id="myTab" class="nav nav-tabs">
-                    <li class="active"><a href="#login" data-toggle="tab">登录帐号</a></li>
-                    <li><a href="#signin" data-toggle="tab">注册帐号</a></li>
-                </ul>
-                <div id="myTabContent" class="tab-content">
-                    <div class="tab-pane fade in active" id="login">
-                        <div class="modal-body">
-                            <form class="form-horizontal" role="form" id="login-form">
-                                <div class="form-group">
-                                    <label class="col-sm-2 control-label">用户名：</label>
-                                    <div class="col-sm-10">
-                                        <input type="text" name="username" class="form-control" placeholder="请输入用户名">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-sm-2 control-label">密码：</label>
-                                    <div class="col-sm-10">
-                                        <input type="password" name="password" class="form-control" placeholder="请输入密码">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="col-sm-offset-2 col-sm-10">
-                                        <button type="submit" class="btn btn-success">登录</button>
-                                        <button type="button" class="btn btn-default btn-cancel">取消</button>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-sm-2 control-label"></label>
-                                    <div class="col-sm-10">
-                                        <h5 id="login-error-message" class="hidden text-warning">用户名或密码不正确</h5>
-                                    </div>
-                                </div>
-                            </form>
+                <form class="form-horizontal" role="form" id="signin-form">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">用户名：</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="username" class="form-control" placeholder="请输入用户名">
                         </div>
                     </div>
-
-                    <div class="tab-pane fade" id="signin">
-                        <div class="modal-body">
-                            <form class="form-horizontal" role="form" id="signin-form">
-                                <div class="form-group">
-                                    <label class="col-sm-2 control-label">用户名：</label>
-                                    <div class="col-sm-10">
-                                        <input type="text" name="username" class="form-control" placeholder="请输入用户名">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-sm-2 control-label">密码：</label>
-                                    <div class="col-sm-10">
-                                        <input type="password" name="password" class="form-control" placeholder="请输入密码">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-sm-2 control-label">验证码：</label>
-                                    <div class="col-sm-10" id="captcha-box">
-                                        <input type="text" name="captcha" class="form-control" placeholder="请输入验证码">
-                                        <img id="captcha" src='/user/captcha?width=100&height=30' onclick="this.src='/user/captcha?width=100&height=30&timestamp='+new Date().getTime();"/>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="col-sm-offset-2 col-sm-10">
-                                        <button type="submit" class="btn btn-warning">注册</button>
-                                        <button type="button" class="btn btn-default btn-cancel">取消</button>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-sm-2 control-label"></label>
-                                    <div class="col-sm-10">
-                                        <h5 id="signin-error-message" class="hidden text-warning">验证码错误</h5>
-                                    </div>
-                                </div>
-                            </form>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">密码：</label>
+                        <div class="col-sm-10">
+                            <input type="password" name="password" class="form-control" placeholder="请输入密码">
                         </div>
                     </div>
-                </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <button type="submit" class="btn btn-success">登录</button>
+                            <button type="button" class="btn btn-default btn-cancel">取消</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label"></label>
+                        <div class="col-sm-10">
+                            <h5 id="login-error-message" class="hidden text-warning">用户名或密码不正确</h5>
+                        </div>
+                    </div>
+                </form>
             </div>
 
-            <!--<div class="modal-footer">
-            </div>-->
         </div>
     </div>
 </div>
 
+<!-- 注册Modal -->
+<div class="modal fade" id="signup-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">注册</h4>
+            </div>
 
+            <div class="modal-body">
+                <form class="form-horizontal" role="form" id="signup-form">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">用户名：</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="username" class="form-control" placeholder="请输入用户名">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">密码：</label>
+                        <div class="col-sm-10">
+                            <input type="password" name="password" class="form-control" placeholder="请输入密码">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">验证码：</label>
+                        <div class="col-sm-10" id="captcha-box">
+                            <input type="text" name="captcha" class="form-control" placeholder="请输入验证码">
+                            <img id="captcha" src='/user/captcha?width=100&height=30' onclick="this.src='/user/captcha?width=100&height=30&timestamp='+new Date().getTime();"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <button type="submit" class="btn btn-warning">注册</button>
+                            <button type="button" class="btn btn-default btn-cancel">取消</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label"></label>
+                        <div class="col-sm-10">
+                            <h5 id="signin-error-message" class="hidden text-warning">验证码错误</h5>
+                        </div>
+                    </div>
+                </form>
+            </div>
 
-
-
-
+        </div>
+    </div>
+</div>
 
 
 <script type="text/javascript">
@@ -148,24 +146,29 @@
             url:"/index/header",
             async:false,
             success:function(data) {
-                if(data && data instanceof Array) {
+                if(data) {
                     var arr = [];
                     arr.push('<li class="active"><a href="/">首页</a></li>');
-                    for(var index in data) {
-                        var href = "/show/lists?forumId="+data[index]._id;
+                    for(var index in data.navs) {
+                        var href = "/show/lists?forumId="+data.navs[index]._id;
                         var $element = $("<li><a></a></li>");
                         $element.children().attr("href",href);
-                        $element.children().text(data[index].name);
+                        $element.children().text(data.navs[index].name);
                         arr.push($element);
                     }
-                    arr.push($('<li><a target="_blank" href="/chat/index">聊天室</a></li>'))
-                    arr.push($('<li><a href="/guestbook/index">留言板</a></li>'))
+                    arr.push($('<li><a target="_blank" href="/chat/index">聊天室</a></li>'));
+                    arr.push($('<li><a href="/guestbook/index">留言板</a></li>'));
                     $("ul.navbar-nav").prepend(arr);
+
+                    if(data.user) {
+                        $("#sign-username").text(data.user.username);
+                        $(".navbar-right").find(".group2").show().end().find(".group1").hide();
+                    }
+
                 }
             }
         });
-        
-        
+
         var url = window.location.pathname + window.location.search;
         $("ul.navbar-nav li").each(function(i,e) {
             var href = $(this).children().attr("href");
@@ -173,21 +176,39 @@
                 $(this).siblings(".active").removeClass().end().addClass("active");
             }
         });
-        
-        
         //点击事件
         $(".navbar-nav > li > a").click(function(e) {
             var text = $(this).text();
             if(text == "聊天室") {
                 if(!isLogin()) {
                     e.preventDefault();
-                    $("#login-signout-modal").modal("show");
+                    $("#signin-modal").modal("show");
                 }
             }
         });
 
+        //登录
+        $("#signin").click(function() {
+            $("#signin-modal").modal("show");
+        });
+        //注册
+        $("#signup").click(function() {
+            $("#signup-modal").modal("show");
+        });
+        //退出
+        $("#signout").click(function() {
+            $.ajax({
+                type:"post",
+                dataType:"text",
+                url:"/user/signout",
+                success:function(data) {
+                    if(data && data === "success") {
+                        window.location.reload();
+                    }
+                }
+            });
+        })
         validate();
-
     })
 
 
@@ -196,7 +217,7 @@
         /**
          * 登录
          */
-        $("#login-form").bootstrapValidator({
+        $("#signin-form").bootstrapValidator({
             message: '不是有效的值',
             feedbackIcons: {
                 valid: 'glyphicon glyphicon-ok',
@@ -239,18 +260,16 @@
             e.preventDefault();
             $.ajax({
                 type:"post",
-                dataType:"text",
-                url:"/user/login",
-                data:$("#login-form").serialize(),
+                dataType:"json",
+                url:"/user/signin",
+                data:$("#signin-form").serialize(),
                 async:false,
-                success:function(data) {
-                    if(data && data === "success") {
-                        var userModel = {};
-                        var username = $("#login-form input[name='username']").val();
-                        $('#chatModal').modal('hide');
-                        $("#login-form").bootstrapValidator('resetForm', true);
+                success:function(res) {
+                    if(res && res.status === "success") {
+                        $("#sign-username").text(res.data.username);
+                        $(".navbar-right").find(" .group1").hide().end().find(".group2").show();
+                        $('#signin-modal').modal('hide');
                         $("#signin-form").bootstrapValidator('resetForm', true);
-                        location.href="/chat/index";
                     } else {
                         $("#login-error-message").removeClass("hidden");
                     }
@@ -262,7 +281,7 @@
         /**
          * 注册
          */
-        $("#signin-form").bootstrapValidator({
+        $("#signup-form").bootstrapValidator({
             message: '不是有效的值',
             feedbackIcons: {
                 valid: 'glyphicon glyphicon-ok',
@@ -342,16 +361,17 @@
             e.preventDefault();
             $.ajax({
                 type:"post",
-                dataType:"text",
-                url:"/user/signin",
-                data:$("#signin-form").serialize(),
+                dataType:"json",
+                url:"/user/signup",
+                data:$("#signup-form").serialize(),
                 async:false,
                 success:function(data) {
                     if(data) {
-                        if(data == "success") {
-                            $('#chatModal').modal('hide');
-                            $("#signin-form").bootstrapValidator('resetForm', true);
-                            $("#login-form").bootstrapValidator('resetForm', true);
+                        if(data.status == "success") {
+                            $("#sign-username").text(data.data.username);
+                            $(".navbar-right").find(" .group1").hide().end().find(".group2").show();
+                            $('#signup-modal').modal('hide');
+                            $("#signup-form").bootstrapValidator('resetForm', true);
                         } else if(data == "captchaError") {
                             $("#signin-error-message").removeClass("hidden");
                             $("#captcha")[0].onclick();

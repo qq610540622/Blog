@@ -70,8 +70,9 @@ route.prototype = {
 
         //用户
         this.app.post("/user/isLogin",showUserController.isLogin);
-        this.app.post("/user/login",showUserController.login);
         this.app.post("/user/signin",showUserController.signin);
+        this.app.post("/user/signup",showUserController.signup);
+        this.app.post("/user/signout",showUserController.signout);
         this.app.post("/user/isExistUsername",showUserController.isExistUsername);
         this.app.get("/user/captcha",showUserController.captcha);
 

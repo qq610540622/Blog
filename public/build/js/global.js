@@ -3,16 +3,16 @@
  */
 function htmlEncode(str)
 {
-    var    s    =    "";
-    if    (str.length    ==    0)    return    "";
-    s    =    str.replace(/&/g, "&amp;");
-    s    =    s.replace(/</g, "&lt;");
-    s    =    s.replace(/>/g, "&gt;");
-    s    =    s.replace(/ /g, "&nbsp;");
-    s    =    s.replace(/\'/g,"&apos;");
-    s    =    s.replace(/\"/g, "&quot;");
-    s    =    s.replace(/\n/g, "<br>");
-    return    s;
+    var s  = "";
+    if(str.length    ==    0)    return    "";
+    s = str.replace(/&/g, "&amp;");
+    s = s.replace(/</g, "&lt;");
+    s = s.replace(/>/g, "&gt;");
+    s = s.replace(/ /g, "&nbsp;");
+    s = s.replace(/\'/g,"&apos;");
+    s = s.replace(/\"/g, "&quot;");
+    s = s.replace(/\n/g, "<br>");
+    return s;
 }
 function htmlDecode(str)
 {
@@ -74,23 +74,11 @@ function isLogin() {
 }
 
 
-
-//模态框垂直居中
-function centerModals($element) {
-    var $modals;
-    if ($element.length) {
-        $modals = $element;
-    } else {
-        $modals = $(".modal" + ':visible');
-    }
-    $modals.each( function(i) {
-        var $clone = $(this).clone().css('display', 'block').appendTo('body');
-        var top = Math.round(($clone.height() - $clone.find('.modal-content').height()) / 2);
-        top = top > 0 ? top : 0;
-        $clone.remove();
-        $(this).find('.modal-content').css("margin-top", top);
-    });
+function showMessage(msg) {
+    $("#message-modal .modal-body > span").text(msg);
+    $("#message-modal").modal("show");
 }
+
 
 function genUid(){
     return new Date().getTime()+""+Math.floor(Math.random()*899+100);

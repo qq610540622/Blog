@@ -44,20 +44,21 @@ controller.isExistUsername = function(req,res) {
  * @param req
  * @param res
  */
-controller.login = function(req,res) {
+controller.signin = function(req,res) {
     var username = req.body.username;
     var password = req.body.password;
     if(username && password) {
         var model = {username:username,password:tools.md5(password)};
         userDao.base.getSingleByQuery(model,function(err,result) {
-            if(err) res.send("error");
-            else {
+            if(err) {
+                res.send({status:"error"});
+            }else {
                 if(result && result._id) {
                     //如果登录成功就把它的存放cookie和session中
                     req.session.userModel = result;
-                    res.send("success");
+                    res.send({status:"success",data:result});
                 } else {
-                    res.send("error");
+                    res.send({status:"error"});
                 }
             }
         })
@@ -70,7 +71,7 @@ controller.login = function(req,res) {
  * @param req
  * @param res
  */
-controller.signin = function(req,res) {
+controller.signup = function(req,res) {
     var sessionCaptcha = req.session.captcha;
     var userIptCaptcha = req.body.captcha;
 
@@ -80,17 +81,17 @@ controller.signin = function(req,res) {
         if(username && password) {
             var model = {username:username,password:tools.md5(password),icon:tools.random(1,64)};
             userDao.base.create(model,function(err,result) {
-                if(err) res.send("error");
-                else {
+                if(err) {
+                    res.send({status:"error"});
+                }else {
                     //如果登录成功就把它的存放cookie和session中
                     req.session.userModel = model;
-                    res.cookie["username"] = username;
 
                     var roleDao = require("./../../../dao/role");
                     roleDao.base.update({roleCode:"default"},{$addToSet:{users:username}},{multi:false,upset:false},function(err) {
-                        if(err) res.send("error");
-                        else res.send("success");
-                    })
+                        if(err) res.send({status:"error"});
+                        else res.send({status:"success",data:result});
+                    });
                 }
             })
         }
@@ -98,6 +99,17 @@ controller.signin = function(req,res) {
         res.send("captchaError");
     }
 }
+
+
+controller.signout = function(req,res) {
+    try {
+        delete req.session.userModel;
+        res.send("success");
+    } catch(e) {
+        res.send("error");
+    }
+}
+
 
 /**
  * 验证码
