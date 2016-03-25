@@ -1,12 +1,11 @@
-/*
  var app = require('../../../app');
  var request = require('supertest')(app);
  var should = require("should");
  var support = require("../../support/support");
 
- /!**
+ /**
   * api v1.0 测试
-  *!/
+  */
  describe("api article", function () {
     
      it("article list", function (done) {
@@ -64,4 +63,4 @@
      });
     
     
- });*/
+ });

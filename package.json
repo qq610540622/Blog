@@ -33,6 +33,7 @@
     "ejs": "^2.4.1",
     "ejs-locals": "^1.0.2",
     "ejs-mate": "^2.3.0",
+    "errorhandler": "^1.4.3",
     "eventproxy": "^0.3.4",
     "express-handlebars": "^3.0.0",
     "express-partials": "^0.3.0",
