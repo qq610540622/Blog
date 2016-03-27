@@ -7,6 +7,7 @@ var errorhandler = require('errorhandler');
 var bodyParser = require('body-parser');
 var logger = require('./common/logger');
 var config = require('./config');
+var csrf = require('csurf');
 var auth = require("./middlewares/auth");
 var RedisStore = require('connect-redis')(session);
 var cluster = require('cluster');
@@ -55,6 +56,11 @@ if (cluster.isMaster) {
 
     //中间件
     app.use(auth.authPermission);
+    var csrfProtection = csrf({ cookie: true })
+    app.use(function (req, res, next) {
+        res.locals.csrf = req.csrfToken ? req.csrfToken() : '';
+        next();
+    });
 
     //路由
     var route = require('./routes/index');
