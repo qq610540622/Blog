@@ -56,13 +56,13 @@
 
         //添加
         $("#btn-forum-create").click(function() {
-            $('#win-forum-operate').dialog({closed:false,href: '/forum/operate?operate=create'});
+            $('#win-forum-operate').dialog({closed:false,href: '/admin/forum/operate?operate=create'});
         });
         //修改
         $("#btn-forum-edit").click(function() {
             var selectedItem = $("#forum").datagrid("getSelected");
             if(selectedItem) {
-                $('#win-forum-operate').dialog({closed:false,href: '/forum/operate?operate=edit&_id='+selectedItem._id});
+                $('#win-forum-operate').dialog({closed:false,href: '/admin/forum/operate?operate=edit&_id='+selectedItem._id});
             }
         });
         //删除
@@ -77,7 +77,7 @@
                             data:{
                                 _id:selectedItem._id
                             },
-                            url:"/forum/remove",
+                            url:"/admin/forum/remove",
                             async:false,
                             success:function(data) {
                                 if(data!=undefined&&data!='') {
@@ -106,7 +106,7 @@
             var selectedItem = $("#forum").datagrid("getSelected");
             if(selectedItem&&selectedItem._id) {
                 var name = encodeURI(selectedItem.name);
-                $('#spider').datagrid({url:'/article/spider?keywords='+name+"&forumId="+selectedItem._id});
+                $('#spider').datagrid({url:'/admin/article/spider?keywords='+name+"&forumId="+selectedItem._id});
                 $("#btn-spider-confirm").linkbutton({
                     iconCls: 'icon-ok'
                 });
@@ -122,7 +122,7 @@
                 }
                 var jsonArray = JSON.stringify(arr);
                 $("#loader").show();
-                $.post("/article/submitSpider",{articleList:jsonArray},function(data) {
+                $.post("/admin/article/submitSpider",{articleList:jsonArray},function(data) {
                     if(data&&data == "success") {
                         $("#loader").hide();
                         articleList = {};
@@ -145,7 +145,7 @@
                     closed: false,
                     cache: false,
                     modal: true,
-                    content:"<iframe src='/article/operate?operate=create&forumId="+selectedItem._id+"' width='97%' height='97%'></iframe>"
+                    content:"<iframe src='/admin/article/operate?operate=create&forumId="+selectedItem._id+"' width='97%' height='97%'></iframe>"
                 });
             }
         });
@@ -161,7 +161,7 @@
                     closed: false,
                     cache: false,
                     modal: true,
-                    content:"<iframe src='/article/operate?operate=edit&_id=" + selectedItem._id +"' width='97%' height='97%'></iframe>"
+                    content:"<iframe src='/admin/article/operate?operate=edit&_id=" + selectedItem._id +"' width='97%' height='97%'></iframe>"
                 });
             }
         });
@@ -178,7 +178,7 @@
                             data:{
                                 _id:selectedItem._id
                             },
-                            url:"/article/remove",
+                            url:"/admin/article/remove",
                             async:false,
                             success:function(data) {
                                 if(data!=undefined&&data!='') {
@@ -300,7 +300,7 @@
         $('#forum').datagrid({
             width:260,
             height:400,
-            url:'/forum/list',
+            url:'/admin/forum/list',
             toolbar:"#forum-toolbar",
             singleSelect:true,
             columns:[[
@@ -318,7 +318,7 @@
         $('#article').datagrid({
             width:800,
             height:400,
-            url:'/article/list?keywords=&forumId=',
+            url:'/admin/article/list?keywords=&forumId=',
             toolbar:"#article-toolbar",
             pagination:true,
             singleSelect:true,
@@ -346,11 +346,7 @@
                 {field:'readCount',title:'点击次数',align:"center",width:70}
             ]]
         });
-
-
-
     }
-
 </script>
 
 

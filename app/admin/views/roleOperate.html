@@ -37,7 +37,7 @@
         $("#btn-role-confirm").click(function() {
 
             var operate = $("#operate").text();
-            var url = "/role/"+operate;
+            var url = "/admin/role/"+operate;
             var roleName = $(".roleName").val();
             var roleCode = $(".roleCode").val();
 
@@ -77,8 +77,7 @@
             dataType:"text",
             data:{roleCode:roleCode},
             async:false,
-            url:"/role/isRepeatRoleCode",
-            cache:true,
+            url:"/admin/role/isRepeatRoleCode",
             success:function(data) {
                 if(data && data=="success") {
                     isRepeat = true;

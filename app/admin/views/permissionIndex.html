@@ -37,7 +37,7 @@
      */
     function listenerEvent() {
         $("#btn-permission-create").click(function() {
-            var url = "/permission/permissionOperate?operate=create";
+            var url = "/admin/permission/permissionOperate?operate=create";
             $('#win-permission-operate').dialog({href:url,closed:false});
         });
 
@@ -46,7 +46,7 @@
         $("#btn-permission-edit").click(function() {
             var selectedItem = $('#permission').datagrid("getSelected");
             if(selectedItem && selectedItem._id) {
-                var url = "/permission/permissionOperate?operate=edit&_id="+selectedItem._id;
+                var url = "/admin/permission/permissionOperate?operate=edit&_id="+selectedItem._id;
                 $('#win-permission-operate').dialog({href:url,closed:false});
             }
         });
@@ -60,14 +60,15 @@
                         var _ids = [];
                         selectedItems.forEach(function(item) {
                             _ids.push(item._id);
-                        })
-                        console.log(_ids);
-                        $.post("/permission/remove",{_ids:_ids},function(data) {
-                            console.log(data);
-                            if(data && data == "success") {
-                                $("#permission").datagrid("reload");
-                            }
-                        })
+                        });
+                        var ids_str = JSON.stringify(_ids);
+                        if(ids_str) {
+                            $.post("/admin/permission/remove",{ids_str:ids_str},function(data) {
+                                if(data && data == "success") {
+                                    $("#permission").datagrid("reload");
+                                }
+                            })
+                        }
                     }
                 });
             }
@@ -76,7 +77,6 @@
         /*搜索*/
         $("#btn-permission-search").click(function() {
             var keywords = $("#permissionname-search-keywords").val();
-            console.log(keywords);
             $("#permission").datagrid("load",{keywords:keywords});
         });
     }
@@ -118,7 +118,7 @@
         $('#permission').datagrid({
             width:330,
             height:400,
-            url:'/permission/getList',
+            url:'/admin/permission/getList',
             toolbar:"#permission-toolbar",
             singleSelect:true,
             columns:[[

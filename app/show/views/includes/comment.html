@@ -117,7 +117,8 @@
                     type:"post",
                     dataType:"text",
                     data:{
-                        _id:_id
+                        _id:_id,
+                        _csrf:csrf
                     },
                     async:false,
                     url:"/comment/submitSupport",
@@ -138,6 +139,7 @@
             type:"post",
             dataType:"text",
             data:{
+                _csrf:csrf,
                 _id:_id,
                 replyComment:replyComment,
                 articleId:articleId
@@ -166,12 +168,12 @@
             type:"post",
             dataType:"text",
             data:{
+                _csrf:csrf,
                 comment:comment,
                 articleId:articleId
             },
             url:"/comment/submitComment",
             success:function(data) {
-                console.log(data);
                 if(data && data == "success") {
                     $(".txt-content").val("");
                     loadComment();
@@ -194,6 +196,7 @@
             dataType:"json",
             url:"/comment/getComments",
             data:{
+                _csrf:csrf,
                 articleId:articleId
             },
             success:function(data) {

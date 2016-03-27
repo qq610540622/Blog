@@ -41,7 +41,6 @@ route.prototype = {
     webRoute: function() {
         /* 拦截器 */
         this.app.use(function(req,res,next) {
-            console.log(req.path);
             //后台登录
             if(req.path.length == 6 && new RegExp("/admin","i").test(req.path)) {
                 if(!req.session.adminName) {

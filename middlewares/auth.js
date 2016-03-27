@@ -16,10 +16,10 @@ exports.authPermission = function(req,res,next) {
                         var obj = {};
                         results.forEach(function(item) {
                             obj[item.permissionCode] = item.permissionName;
-                        })
+                        });
                         callback(null,obj)
                     };
-                })
+                });
             },
             userOwnPermissions:function(callback) {
                 roleDao.base.getByQuery({users:username},{permissions:1},{multi:true,upset:false},function(err,results) {
@@ -41,12 +41,11 @@ exports.authPermission = function(req,res,next) {
             if (data && data.permissions) {
                 var isExist = false;
                 for (var key in data.permissions) {
-                    if (url.indexOf(key) != -1) {
+                    if (url == key) {
                         isExist = true;
                         break;
                     }
                 }
-
                 if (isExist && (data.userOwnPermissions && !data.userOwnPermissions[url])) {
                     return res.send("notPermission");
                 } else {

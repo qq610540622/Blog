@@ -57,7 +57,7 @@ function convertTime(timestramp) {
 }
 
 //判断用户是否登录
-function isLogin(csrf) {
+function isLogin() {
     var res = false;
     $.ajax({
         type:"post",

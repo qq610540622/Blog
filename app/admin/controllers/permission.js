@@ -102,13 +102,16 @@ controller.edit = function(req,res) {
  * @param res
  */
 controller.remove = function(req,res) {
-    var _ids = req.body._ids;
-    if(_ids) {
-        permissionDao.base.remove({_id:{$in:_ids}},function(err) {
-            res.send(err ? "error" : "success");
-        });
-    } else {
-        res.send("error");
+    var ids_str = req.body.ids_str;
+    if(ids_str) {
+        var _ids = JSON.parse(ids_str);
+        if(_ids) {
+            permissionDao.base.remove({_id:{$in:_ids}},function(err) {
+                res.send(err ? "error" : "success");
+            });
+        } else {
+            res.send("error");
+        }
     }
 }
 

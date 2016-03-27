@@ -146,10 +146,10 @@ controller.spider = function(req,res) {
 controller.submitSpider = function(req,res) {
     var arrayJson = req.body.articleList;
     var articleList = JSON.parse(arrayJson);
-    var robot = new robot(articleList,function() {
+    var r = new robot(articleList,function() {
         res.send("success");
     });
-    robot.crawler();
+    r.crawler();
 }
 
 

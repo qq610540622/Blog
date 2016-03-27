@@ -44,7 +44,7 @@
         $("#btn-user-edit").click(function() {
             var selectedItem = $('#user').datagrid("getSelected");
             if(selectedItem && selectedItem._id) {
-                var url = "/user/userOperate?_id="+selectedItem._id;
+                var url = "/admin/user/userOperate?_id="+selectedItem._id;
                 $('#win-user-operate').dialog({href:url,closed:false});
             }
         });
@@ -55,7 +55,7 @@
             if(selectedItem && selectedItem._id) {
                 $.messager.confirm('删除','确定要删除?',function(r){
                     if (r){
-                        $.post("/user/remove",{_id:selectedItem._id},function(data) {
+                        $.post("/admin/user/remove",{_id:selectedItem._id},function(data) {
                             if(data && data == "success") {
                                 $("#user").datagrid("reload");
                             }
@@ -68,7 +68,6 @@
         /*搜索*/
         $("#btn-user-search").click(function() {
             var keywords = $("#username-search-keywords").val();
-            console.log(keywords);
             $("#user").datagrid("load",{keywords:keywords});
         });
     }

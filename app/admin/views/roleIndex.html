@@ -121,7 +121,7 @@
             type:"post",
             dataType:"json",
             data:{_id:currentRole._id},
-            url:"/role/getUsers",
+            url:"/admin/role/getUsers",
             async:false,
             success:function(data) {
                 if(data) {
@@ -146,10 +146,9 @@
             type:"post",
             dataType:"text",
             data:{users:users,_id:currentRole._id},
-            url:"/role/submitUsers",
+            url:"/admin/role/submitUsers",
             async:false,
             success:function(data) {
-                console.log(data);
                 if(data && data=="success") {
                     loadUsers();
                 }
@@ -165,7 +164,7 @@
             type:"post",
             dataType:"text",
             data:{_id:currentRole._id,permissions:permissions},
-            url:"/role/submitPermissions",
+            url:"/admin/role/submitPermissions",
             async:false,
             success:function(data) {
                 if(data && data == "success") {
@@ -184,7 +183,7 @@
             type:"post",
             dataType:"json",
             data:{_id:currentRole._id},
-            url:"/role/getPermissions",
+            url:"/admin/role/getPermissions",
             async:false,
             success:function(data) {
                 if(data && data instanceof Array) {
@@ -215,13 +214,13 @@
          */
 
         $("#btn-role-create").click(function() {
-            var url = "/role/roleOperate?operate=create";
+            var url = "/admin/role/roleOperate?operate=create";
             $("#win-role-operate").dialog({closed:false,href:url});
         });
         $("#btn-role-update").click(function() {
             var selectedItem = $("#role").datagrid("getSelected");
             if(selectedItem && selectedItem._id) {
-                var url = "/role/roleOperate?operate=edit&_id="+selectedItem._id;
+                var url = "/admin/role/roleOperate?operate=edit&_id="+selectedItem._id;
                 $("#win-role-operate").dialog({closed:false,href:url});
             }
         });
@@ -234,11 +233,11 @@
                 }
                 $.messager.confirm('删除','确定要删除?',function(r){
                     if (r){
-                        $.post("/role/remove",{_id:selectedItem._id},function(data) {
+                        $.post("/admin/role/remove",{_id:selectedItem._id},function(data) {
                             if(data && data == "success") {
                                 $("#role").datagrid("reload");
                             }
-                        })
+                        });
                     }
                 });
             }
@@ -278,7 +277,7 @@
                     type:"post",
                     dataType:"text",
                     data:{users:users,_id:currentRole._id},
-                    url:"/role/removeUsers",
+                    url:"/admin/role/removeUsers",
                     async:false,
                     success:function(data) {
                         if(data && data=="success") {
@@ -337,7 +336,7 @@
                     type:"post",
                     dataType:"text",
                     data:{permissions:permissions,_id:currentRole._id},
-                    url:"/role/removePermissions",
+                    url:"/admin/role/removePermissions",
                     async:false,
                     success:function(data) {
                         if(data && data=="success") {
@@ -407,7 +406,7 @@
         $('#role').datagrid({
             width:270,
             height:300,
-            url:'/role/list',
+            url:'/admin/role/list',
             toolbar:"#role-toolbar",
             singleSelect:true,
             columns:[[
@@ -419,7 +418,7 @@
         $('#role-user').datagrid({
             width:480,
             height:400,
-            url:'/user/getList',
+            url:'/admin/user/getList',
             toolbar:"#role-user-toolbar",
             pagination:true,
             singleSelect:false,
@@ -437,7 +436,7 @@
         $('#role-permission').datagrid({
             width:330,
             height:370,
-            url:'/permission/getList',
+            url:'/admin/permission/getList',
             toolbar:"#role-permission-toolbar",
             singleSelect:false,
             columns:[[

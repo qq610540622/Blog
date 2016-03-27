@@ -35,8 +35,7 @@
                 $.messager.confirm('删除','确定要删除?',function(r){
                     if (r){
                         console.log(selectedItem._id);
-                        $.post("/comment/remove",{_id:selectedItem._id},function(data) {
-                            console.log(data);
+                        $.post("/admin/comment/remove",{_id:selectedItem._id},function(data) {
                             if(data && data == "success") {
                                 $("#comment").datagrid("reload");
                             }
@@ -48,7 +47,6 @@
         /*搜索*/
         $("#btn-comment-search").click(function() {
             var keywords = $("#commentname-search-keywords").val();
-            console.log(keywords);
             $("#comment").datagrid("load",{keywords:keywords});
         });
     }
@@ -91,7 +89,7 @@
         $('#comment').datagrid({
             width:600,
             height:400,
-            url:'/comment/getCommentList',
+            url:'/admin/comment/getCommentList',
             toolbar:"#comment-toolbar",
             pagination:true,
             singleSelect:true,

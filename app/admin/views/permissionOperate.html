@@ -29,7 +29,7 @@
     $(function() {
         $("#btn-permission-confirm").click(function() {
             var operate = $("#operate").text();
-            var url = "/permission/"+operate;
+            var url = "/admin/permission/"+operate;
             $.ajax({
                 type:"post",
                 dataType:"text",

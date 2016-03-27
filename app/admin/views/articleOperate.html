@@ -86,9 +86,9 @@
             }
             
             if(operate == "create") {
-                url = "/article/create";
+                url = "/admin/article/create";
             } else if(operate == "edit") {
-                url = "/article/edit";
+                url = "/admin/article/edit";
             }
             $.ajax({
                 type:"post",
@@ -110,7 +110,7 @@
         })
 
         $("#btn-choice-tag").click(function() {
-            $.post("/article/getTag",function(data) {
+            $.post("/admin/article/getTag",function(data) {
                 $("#win-choice-tag ul").empty();
                 if(data && data instanceof Array) {
                     var tagObj = {};
@@ -202,7 +202,7 @@
                     jSave.click(function() {
                         var formData = new FormData(jForm.prevObject[0]);
                         $.ajax({
-                            url: '/article/uploadImg',
+                            url: '/admin/article/uploadImg',
                             type: 'POST',
                             data: formData,
                             async: false,
@@ -254,7 +254,7 @@
                     _this.showDialog(jCode);
                 }}
             },
-            upImgUrl:"/article/upload",
+            upImgUrl:"/admin/article/upload",
             loadCSS:'<style>pre{margin-left:2em;border-left:3px solid #CCC;padding:0 1em;}</style>',
         });
     }

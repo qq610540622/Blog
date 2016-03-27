@@ -8,7 +8,7 @@ var http = require("http");
 var https = require("https");
 var cheerio = require("cheerio");
 var fs = require("fs");
-
+ 
 
 function robot(articleList,callback) {
     this.articleList = articleList;

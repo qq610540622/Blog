@@ -172,6 +172,7 @@
         $.ajax({
             type:"post",
             dataType:"json",
+            data:{_csrf:csrf},
             url:"/index/statistics",
             success:function(data) {
                 if(data) {
