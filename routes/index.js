@@ -23,6 +23,7 @@ var adminPermissionController = require("../app/admin/controllers/permission");
 
 
 var tools = require("./../common/tools");
+var cors = require('cors');
 /**
  * 路由器类
  */
@@ -40,16 +41,15 @@ route.prototype = {
     webRoute: function() {
         /* 拦截器 */
         this.app.use(function(req,res,next) {
+            console.log(req.path);
             //后台登录
-            if(new RegExp("/admin","i").test(req.url)) {
+            if(req.path.length == 6 && new RegExp("/admin","i").test(req.path)) {
                 if(!req.session.adminName) {
-                    res.redirect("/login");
-                } else {
-                    next();
+                    res.redirect("/admin/login");
+                    return;
                 }
-            } else {
-                next();
             }
+            next();
         });
 
         //　**********************　　前台　********************
@@ -70,8 +70,8 @@ route.prototype = {
 
         //用户
         this.app.post("/user/isLogin",showUserController.isLogin);
-        this.app.post("/user/signin",showUserController.signin);
-        this.app.post("/user/signup",showUserController.signup);
+        this.app.post("/user/signin", showUserController.signin);                 //登录
+        this.app.post("/user/signup", showUserController.signup);                 //注册
         this.app.post("/user/signout",showUserController.signout);
         this.app.post("/user/isExistUsername",showUserController.isExistUsername);
         this.app.get("/user/captcha",showUserController.captcha);
@@ -90,75 +90,75 @@ route.prototype = {
         //　**********************　　后台　********************
         //后台管理页
         this.app.get('/admin',adminIndexController.index);
-        this.app.get('/login',adminIndexController.login);
-        this.app.post('/login/submit',adminIndexController.submit);
-        this.app.get('/login/captcha',adminIndexController.captcha);
-        this.app.post('/login/isExistAdmin',adminIndexController.isExistAdmin);
+        this.app.get('/admin/login',adminIndexController.login);
+        this.app.post('/admin/login/submit',adminIndexController.submit);
+        this.app.get('/admin/login/captcha',adminIndexController.captcha);
+        this.app.post('/admin/login/isExistAdmin',adminIndexController.isExistAdmin);
 
         //用户
-        this.app.get("/user/index",adminUserController.index);
-        this.app.post("/user/getList",adminUserController.getList);
-        this.app.get("/user/userOperate",adminUserController.userOperate);
-        this.app.post("/user/update",adminUserController.update);
-        this.app.post("/user/remove",adminUserController.remove);
+        this.app.get("/admin/user/index",adminUserController.index);
+        this.app.post("/admin/user/getList",adminUserController.getList);
+        this.app.get("/admin/user/userOperate",adminUserController.userOperate);
+        this.app.post("/admin/user/update",adminUserController.update);
+        this.app.post("/admin/user/remove",adminUserController.remove);
 
         //文章
-        this.app.get('/article/index',adminArticleController.index);
-        this.app.get('/article/operate',adminArticleController.operate);
-        this.app.post('/article/list',adminArticleController.list);
-        this.app.post('/article/create',adminArticleController.create);
-        this.app.post('/article/remove',adminArticleController.remove);
-        this.app.post('/article/edit',adminArticleController.edit);
-        this.app.post('/article/getTag',adminArticleController.getTag);
-        this.app.post('/article/spider',adminArticleController.spider);
-        this.app.post('/article/submitSpider',adminArticleController.submitSpider);
+        this.app.get('/admin/article/index',adminArticleController.index);
+        this.app.get('/admin/article/operate',adminArticleController.operate);
+        this.app.post('/admin/article/list',adminArticleController.list);
+        this.app.post('/admin/article/create',adminArticleController.create);
+        this.app.post('/admin/article/remove',adminArticleController.remove);
+        this.app.post('/admin/article/edit',adminArticleController.edit);
+        this.app.post('/admin/article/getTag',adminArticleController.getTag);
+        this.app.post('/admin/article/spider',adminArticleController.spider);
+        this.app.post('/admin/article/submitSpider',adminArticleController.submitSpider);
 
 
         var multipart = require('connect-multiparty');
         var multipartMiddleware = multipart();
-        this.app.post('/article/uploadImg',multipartMiddleware, adminArticleController.uploadImg);
+        this.app.post('/admin/article/uploadImg',multipartMiddleware, adminArticleController.uploadImg);
 
         //模块
-        this.app.post('/forum/list',adminForumController.list);
-        this.app.post('/forum/create',adminForumController.create);
-        this.app.post('/forum/edit',adminForumController.edit);
-        this.app.post('/forum/remove',adminForumController.remove);
-        this.app.get('/forum/operate',adminForumController.operate);
+        this.app.post('/admin/forum/list',adminForumController.list);
+        this.app.post('/admin/forum/create',adminForumController.create);
+        this.app.post('/admin/forum/edit',adminForumController.edit);
+        this.app.post('/admin/forum/remove',adminForumController.remove);
+        this.app.get('/admin/forum/operate',adminForumController.operate);
 
 
         //评论
-        this.app.get('/comment/index',adminCommentController.index);
-        this.app.post('/comment/getCommentList', adminCommentController.getCommentList);
-        this.app.post('/comment/remove',adminCommentController.remove);
+        this.app.get('/admin/comment/index',adminCommentController.index);
+        this.app.post('/admin/comment/getCommentList', adminCommentController.getCommentList);
+        this.app.post('/admin/comment/remove',adminCommentController.remove);
 
         //角色
-        this.app.get('/role/index',adminRoleController.index);
-        this.app.get('/role/roleOperate',adminRoleController.roleOperate);
-        this.app.post('/role/create',adminRoleController.create);
-        this.app.post('/role/edit',adminRoleController.edit);
-        this.app.post('/role/list',adminRoleController.list);
-        this.app.post('/role/remove',adminRoleController.remove);
-        this.app.post('/role/getUsers',adminRoleController.getUsers);
-        this.app.post('/role/getPermissions',adminRoleController.getPermissions);
-        this.app.post('/role/submitUsers',adminRoleController.submitUsers);
-        this.app.post('/role/removeUsers',adminRoleController.removeUsers);
-        this.app.post('/role/submitPermissions',adminRoleController.submitPermissions);
-        this.app.post('/role/removePermissions',adminRoleController.removePermissions);
-        this.app.post('/role/isRepeatRoleCode',adminRoleController.isRepeatRoleCode);
+        this.app.get('/admin/role/index',adminRoleController.index);
+        this.app.get('/admin/role/roleOperate',adminRoleController.roleOperate);
+        this.app.post('/admin/role/create',adminRoleController.create);
+        this.app.post('/admin/role/edit',adminRoleController.edit);
+        this.app.post('/admin/role/list',adminRoleController.list);
+        this.app.post('/admin/role/remove',adminRoleController.remove);
+        this.app.post('/admin/role/getUsers',adminRoleController.getUsers);
+        this.app.post('/admin/role/getPermissions',adminRoleController.getPermissions);
+        this.app.post('/admin/role/submitUsers',adminRoleController.submitUsers);
+        this.app.post('/admin/role/removeUsers',adminRoleController.removeUsers);
+        this.app.post('/admin/role/submitPermissions',adminRoleController.submitPermissions);
+        this.app.post('/admin/role/removePermissions',adminRoleController.removePermissions);
+        this.app.post('/admin/role/isRepeatRoleCode',adminRoleController.isRepeatRoleCode);
 
         //权限
-        this.app.get("/permission/index",adminPermissionController.index);
-        this.app.post("/permission/getList",adminPermissionController.getList);
-        this.app.get("/permission/permissionOperate",adminPermissionController.permissionOperate);
-        this.app.post("/permission/create",adminPermissionController.create);
-        this.app.post("/permission/edit",adminPermissionController.edit);
-        this.app.post("/permission/remove",adminPermissionController.remove);
+        this.app.get("/admin/permission/index",adminPermissionController.index);
+        this.app.post("/admin/permission/getList",adminPermissionController.getList);
+        this.app.get("/admin/permission/permissionOperate",adminPermissionController.permissionOperate);
+        this.app.post("/admin/permission/create",adminPermissionController.create);
+        this.app.post("/admin/permission/edit",adminPermissionController.edit);
+        this.app.post("/admin/permission/remove",adminPermissionController.remove);
 
     },
     apiRoute: function() {
         // api路由正则表达式   /api/v1.0/{control}/action/{params}
         var apiRouteRegEx = /^\/(api)\/(v[1-9]\.[0-9])\/([a-zA-Z0-9_\.~-]+)\/([a-zA-Z0-9_-]+)(.*)/;
-        this.app.get(apiRouteRegEx,function(req,res) {
+        this.app.get(apiRouteRegEx,cors(),function(req,res) {
             //检查请求是否合法
             if(tools.checkReq(req, res))
             {

@@ -107,8 +107,9 @@ tools.checkIP = function (req) {
  */
 tools.checkReq = function (req, res) {
     // Set access control headers
-    res.header('Access-Control-Allow-Origin', '*');
-    
+    //res.header('Access-Control-Allow-Origin', '*');
+    //res.header('Access-Control-Allow-Methods', 'POST, GET, PUT, DELETE, OPTIONS');
+    //res.header('Access-Control-Allow-Headers', 'Content-Type');
     //不合法就直接返回100的错误码
     if(!this.checkVersion(req) || !this.checkKey(req) || !this.checkIP(req)) {
         return false;

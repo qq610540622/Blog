@@ -57,6 +57,7 @@
 
             <div class="modal-body">
                 <form class="form-horizontal" role="form" id="signin-form">
+                    <input type="hidden" name="_csrf" value="<%= csrf %>"/>
                     <div class="form-group">
                         <label class="col-sm-2 control-label">用户名：</label>
                         <div class="col-sm-10">
@@ -99,6 +100,9 @@
 
             <div class="modal-body">
                 <form class="form-horizontal" role="form" id="signup-form">
+
+                    <input type="hidden" name="_csrf" value="<%= csrf %>"/>
+
                     <div class="form-group">
                         <label class="col-sm-2 control-label">用户名：</label>
                         <div class="col-sm-10">
@@ -144,8 +148,10 @@
             type:"post",
             dataType:"json",
             url:"/index/header",
+            data:{_csrf:"<%= csrf %>"},
             async:false,
             success:function(data) {
+                console.log(data);
                 if(data) {
                     var arr = [];
                     arr.push('<li class="active"><a href="/">首页</a></li>');

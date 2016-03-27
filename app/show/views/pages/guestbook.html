@@ -11,7 +11,7 @@
             <li class="list-group-item">
                 <form role="form">
                     <div class="form-group">
-                        <label for="name">留言</label>
+                        <label>留言</label>
                         <textarea placeholder="有什么想对博主说的，请详细道来吧！~^_^~" class="form-control message" rows="5"></textarea>
                     </div>
                     <div class="form-group">
@@ -61,6 +61,7 @@
 
 
 <script type="text/javascript">
+    var csrf = "<%= csrf %>";
     $(function() {
         //加载留言板信息
         loadMessage();
@@ -76,7 +77,7 @@
             var message = $(".message").val();
             console.log(message);
             if(message) {
-                if(isLogin()) {
+                if(isLogin(csrf)) {
                     commitMessage(message);
                 } else {
                     $("#signin-modal").modal("show");
@@ -172,11 +173,13 @@
             type:"post",
             dataType:"text",
             data:{
+                _csrf:"<%= csrf %>",
                 content:content
             },
             async:false,
             url:"/guestbook/submit",
             success:function(data) {
+                console.log(data);
                 if(data && data == "success") {
                     pageIndex = 1;
                     $(".message").val("");

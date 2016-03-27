@@ -5,6 +5,7 @@
 var articleDao = require("./../../../dao/article");
 var forumDao = require("./../../../dao/forum");
 var async = require("async");
+var logger = require("./../../../common/logger");
 var controller = {};
 
 /**
@@ -13,6 +14,7 @@ var controller = {};
  * @param res
  */
 controller.index = function(req,res) {
+    logger.error(res.locals);
     async.series({
         indexArticles: function(callback){
             articleDao.getArticles(10,function(err,items) {

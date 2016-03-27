@@ -13,7 +13,6 @@
                     <div  class="article-content-box" data-id="<%= item._id %>">
                         <%= item.content%>
                     </div>
-
                     <div class="article-info">
                         <i class="icon-time"><span><script>document.write(convertTime(<%= item.createDate %>))</script></span></i>
                         <i class="icon-user"><span><%= item.author %></span></i>
@@ -25,6 +24,7 @@
          }
          %>
     </div>
+
 
     <!-- 右侧内容 -->
     <div class="col-md-3">
