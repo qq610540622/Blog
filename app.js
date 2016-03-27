@@ -59,7 +59,6 @@ if (cluster.isMaster) {
 
     //路由
     var route = require('./routes/index');
-    var cache = require('./common/cache');
     new route(app);
 
 
