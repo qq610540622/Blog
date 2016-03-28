@@ -1,19 +1,23 @@
 
 <style type="text/css">
 
-    #win-config {padding:15px;}
+    #win-config {padding:10px;}
     .config-tabs {width:100%;overflow: hidden;}
+    .config-tabs ul:after {content:"";clear:both;display:table;}
+    .config-tabs ul li {float:left;}
+
+    .tools li {margin:2px 5px;}
+
     .tabs-nav {overflow: hidden;}
     .tabs-nav li {float:left;width:50%; height:30px;background:#555;text-align: center;line-height:30px;color:#eee;cursor:pointer;}
     .tabs-nav li:nth-of-type(1) {border-radius: 5px 0 0 0;}
     .tabs-nav li:nth-of-type(2) {border-radius: 0 5px 0 0;}
     .tabs-nav li.active {background: #337ab7;color: #fff;font-weight: bold;}
 
-    .tabs-content li {display:none;float:left;width:100%;overflow: hidden;height: 300px;}
+    .tabs-content li {display:none;float:left;width:100%;overflow: hidden;height: 270px;}
     .tabs-content li.active {display:block;}
 
     .top-box {height: 270px;background-color: #f0f0f0;overflow: auto;}
-    .bottom-box {height: 30px;border-radius: 0 0 5px 5px;background:#ccc;text-align:center;}
     .bottom-box a {padding: 3px 20px;border: 1px solid #666;cursor:pointer;border-radius: 8px;color: #333;margin: 4px 0;display: inline-block;background:#fff;}
     .bottom-box a:hover {background:#f1f1f1;}
 
@@ -45,6 +49,11 @@
 
     <div id="win-config">
         <div class="config-tabs">
+            <ul class="tools">
+                <li><a id="btn-add">添加</a></li>
+                <li><a id="btn-remove">删除</a></li>
+            </ul>
+
             <ul class="tabs-nav">
                 <li class="active" data-id="0">用户</li>
                 <li data-id="1">权限</li>
@@ -53,10 +62,6 @@
             <ul class="tabs-content">
                 <li class="active">
                     <div class="top-box">
-                    </div>
-                    <div class="bottom-box">
-                        <a id="btn-user-add">添加</a>
-                        <a id="btn-user-remove">删除</a>
                     </div>
                 </li>
                 <li>
@@ -67,11 +72,12 @@
                         <div class="item"><input type="checkbox"><span>搜索</span></div>
                         <div class="item"><input type="checkbox"><span>个人日记</span></div>
                     </div>
-                    <div class="bottom-box">
-                        <a id="btn-permission-add">添加</a>
-                        <a id="btn-permission-remove">删除</a>
-                    </div>
                 </li>
+            </ul>
+
+            <ul class="tools">
+                <li><a id="btn-confirm">确定</a></li>
+                <li><a id="btn-cancel">取消</a></li>
             </ul>
         </div>
     </div>
@@ -81,6 +87,7 @@
 <script type="text/javascript">
 
     var currentRole = "";
+    var currentOperate = "user";
     $(function() {
 
         //加载对话框
@@ -95,7 +102,6 @@
         //事件监听
         listenerEvent();
 
-
         $("#btn-user-submit").linkbutton({
             iconCls: 'icon-ok'
         });
@@ -103,6 +109,14 @@
             iconCls: 'icon-ok'
         });
     });
+
+
+    /**
+     * 关闭窗口
+     */
+    function closeWindow() {
+        $("#win-role-operate").dialog("close");
+    }
 
     /**
      * 关闭对话框并重新加载角色
@@ -130,7 +144,7 @@
                     var elems = [];
                     data.forEach(function(item) {
                         elems.push($('<div class="item"><input type="checkbox"><span>'+item+'</span></div>'))
-                    })
+                    });
                     $box.append(elems);
                 }
             }
@@ -191,7 +205,7 @@
                     $box.empty();
                     var elems = [];
                     data.forEach(function(item) {
-                        elems.push($('<div class="item"><input type="checkbox"><span data-permission-code='+item.permissionCode+'>'+item.permissionName+'</span></div>'))
+                        elems.push($('<div class="item"><input type="checkbox"><span permission-code='+item.permissionCode+'>'+item.permissionName+'</span></div>'))
                     })
                     $box.append(elems);
                 }
@@ -254,97 +268,121 @@
                 $("#win-config").dialog("open");
                 loadUsers();
                 loadPermissions();
+                loadButton();
             }
         });
+
 
         //添加
-        $("#btn-user-add").click(function() {
-            $("#win-role-user").dialog("open");
-        });
-
-
-        //删除
-        $("#btn-user-remove").click(function() {
-            var users = [];
-            $(".tabs-content li.active .top-box .item").each(function(i,e) {
-                if($(this).find("input[type='checkbox']").is(":checked")){ //jQuery方式判断
-                    users.push($(this).find("span").text());
-                }
-            });
-
-            if(users && users.length>0) {
-                $.ajax({
-                    type:"post",
-                    dataType:"text",
-                    data:{users:users,_id:currentRole._id},
-                    url:"/admin/role/removeUsers",
-                    async:false,
-                    success:function(data) {
-                        if(data && data=="success") {
-                            loadUsers();
-                        }
-                    }
-                });
+        $("#btn-add").click(function() {
+            var data_id = $(".tabs-nav li.active").attr("data-id");
+            if(data_id == 0) {
+                $("#win-role-user").dialog("open");
+            } else if(data_id == 1) {
+                $("#win-role-permission").dialog("open");
             }
         });
 
-
-        //确定添加
+        //添加用户
         $("#btn-user-submit").click(function() {
             var selectedItems = $('#role-user').datagrid("getSelections");
             if(selectedItems && selectedItems.length>0) {
-                var users = [];
+                var $box = $(".tabs-content li:eq(0) .top-box");
+
+                var existObj = {};
+                var selectedObj = {};
+                $box.find(".item > span").each(function(i,e) {
+                    var key = $(this).text();
+                    existObj[key] = true;
+                });
                 selectedItems.forEach(function(item) {
-                    users.push(item.username);
-                })
-                submitUsers(users);
+                    var key = item.username;
+                    selectedObj[key] = true;
+                });
+                //去掉重复的
+                for(var key in selectedObj) {
+                    existObj[key] = true;
+                }
+
+                var elems = [];
+                for(var key in existObj) {
+                    elems.push($('<div class="item"><input type="checkbox"><span>'+ key +'</span></div>'));
+                }
+                $box.empty();
+                $box.append(elems);
+                $("#role-user").datagrid("unselectAll");
             }
             $("#win-role-user").dialog("close");
         });
 
-
-        $("#btn-permission-add").click(function() {
-            $("#win-role-permission").dialog("open");
-        });
-
-
-        /**
-         * 添加权限 - 确定按钮
-         */
+        //添加权限
         $("#btn-permission-submit").click(function() {
-            var selectedItems = $("#role-permission").datagrid("getSelections");
+            var selectedItems = $('#role-permission').datagrid("getSelections");
             if(selectedItems && selectedItems.length>0) {
-                var permissions = [];
+                var $box = $(".tabs-content li:eq(1) .top-box");
+                var existObj = {};
+                var selectedObj = {};
+                $box.find(".item > span").each(function(i,e) {
+                    var key = $(this).text();
+                    var value = $(this).attr("permission-code");
+                    existObj[key] = value;
+                });
                 selectedItems.forEach(function(item) {
-                    permissions.push(item.permissionCode);
-                })
-                submitPermissions(permissions);
+                    var key = item.permissionName;
+                    selectedObj[key] = item.permissionCode;
+                });
+
+                //去掉重复的
+                for(var key in selectedObj) {
+                    existObj[key] = selectedObj[key];
+                }
+
+                var elems = [];
+                for(var key in existObj) {
+                    elems.push($('<div class="item"><input type="checkbox"><span permission-code="'+ existObj[key] +'">'+ key +'</span></div>'));
+                }
+                $box.empty();
+                $box.append(elems);
+                $("#role-permission").datagrid("unselectAll");
             }
             $("#win-role-permission").dialog("close");
         });
 
-        $("#btn-permission-remove").click(function() {
-            var permissions = [];
+        //删除
+        $("#btn-remove").click(function() {
             $(".tabs-content li.active .top-box .item").each(function(i,e) {
                 if($(this).find("input[type='checkbox']").is(":checked")){ //jQuery方式判断
-                    permissions.push($(this).find("span").attr("data-permission-code"));
+                    $(this).remove();
                 }
             });
+        });
 
-            if(permissions && permissions.length>0) {
-                $.ajax({
-                    type:"post",
-                    dataType:"text",
-                    data:{permissions:permissions,_id:currentRole._id},
-                    url:"/admin/role/removePermissions",
-                    async:false,
-                    success:function(data) {
-                        if(data && data=="success") {
-                            loadPermissions();
-                        }
+        //确定
+        $("#btn-confirm").click(function() {
+            var users = [];
+            $(".tabs-content li:eq(0) .top-box .item").each(function(i,e) {
+                var user = $(this).find("span").text();
+                users.push(user);
+            });
+            var permissions = [];
+            $(".tabs-content li:eq(1) .top-box .item").each(function(i,e) {
+                var permissionCode = $(this).find("span").attr("permission-code");
+                permissions.push(permissionCode);
+            });
+
+            $.ajax({
+                type:"post",
+                dataType:"text",
+                data:{_id:currentRole._id,users:JSON.stringify(users),permissions:JSON.stringify(permissions)},
+                url:"/admin/role/update",
+                success:function(data) {
+                    if(data && data === "success") {
+                        $("#win-config").dialog("close");
+                    } else {
+                        OpenMessageAlert("保存失败",null);
                     }
-                });
-            }
+                }
+            });
         });
     }
 
@@ -361,6 +399,24 @@
 
 
     /**
+     * 加载按钮
+     */
+    function loadButton() {
+        $('#btn-add').linkbutton({
+            iconCls: 'icon-add'
+        });
+        $('#btn-remove').linkbutton({
+            iconCls: 'icon-remove'
+        });
+        $('#btn-confirm').linkbutton({
+            iconCls: 'icon-ok'
+        });
+        $('#btn-cancel').linkbutton({
+            iconCls: 'icon-no'
+        });
+    }
+
+    /**
      * 加载对话框
      */
     function loadDialog() {
@@ -375,7 +431,7 @@
         $("#win-config").dialog({
             title: '配置权限',
             width: 500,
-            height: 400,
+            height: 420,
             closed: true,
             cache: false,
             modal: true

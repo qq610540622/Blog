@@ -47,10 +47,10 @@ if (cluster.isMaster) {
         secret: config.session_secret,
         store: new RedisStore({
             port: config.redis_port,
-            host: config.redis_host,
+            host: config.redis_host
         }),
         resave: true,
-        saveUninitialized: true,
+        saveUninitialized: true
     }));
 
     //自定义中间件
@@ -83,8 +83,6 @@ if (cluster.isMaster) {
             return res.render("error");
         });
     }
-
-
 
     //在线用户
     var onlineUsers = {};

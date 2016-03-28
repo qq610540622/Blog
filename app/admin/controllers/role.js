@@ -12,26 +12,39 @@ controller.index = function(req,res) {
     res.render("roleIndex");
 }
 
+/**
+ * 删除
+ * @param req
+ * @param res
+ */
 controller.remove = function(req,res) {
     var _id = req.body._id;
     if(_id) {
         roleDao.base.remove({_id:_id},function(err) {
-            res.send(err?"error":"success");
+            res.send(err ? "error" : "success");
         });
     } else {
         res.send("error");
     }
 }
 
+
+/**
+ * 获取角色集合
+ * @param req
+ * @param res
+ */
 controller.list = function(req,res) {
     roleDao.base.getList(function(err,items) {
-        if(err) res.send("");
-        else {
-            res.send(items);
-        };
+        res.send(err ? "error" : items);
     });
 }
 
+/**
+ * 角色操作(添加，修改)
+ * @param req
+ * @param res
+ */
 controller.roleOperate = function(req,res) {
     var data = {};
     var operate = req.query.operate;
@@ -54,6 +67,21 @@ controller.roleOperate = function(req,res) {
 }
 
 
+controller.update = function(req,res) {
+
+    var _id = req.body._id;
+    var users = req.body.users?JSON.parse(req.body.users):[];
+    var permissions = req.body.permissions?JSON.parse(req.body.permissions):[];
+
+    if(_id) {
+        roleDao.base.update({_id:_id},{$set:{users:users,permissions:permissions}},{multi:false,upset:false},function(err) {
+            res.send(err?"error":"success");
+        });
+    } else {
+        res.send("error");
+    }
+}
+
 
 /**
  * 获取角色下面的用户
@@ -68,13 +96,11 @@ controller.getUsers = function(req,res) {
             else {
                 res.json(result.users);
             }
-        })
+        });
     } else {
         res.send("error");
     }
 }
-
-
 /**
  * 获取角色下面的权限
  * @param req
@@ -94,161 +120,6 @@ controller.getPermissions = function(req,res) {
         });
     } else {
         res.send("error");
-    }
-}
-
-/**
- * 角色下面添加用户
- * @param req
- * @param res
- */
-controller.submitUsers = function(req,res) {
-    var users = req.body.users;
-    var _id = req.body._id;
-    if(users) {
-        roleDao.base.getSingleByQuery({_id:_id},function(err,result) {
-            if(err) res.send("error");
-            else {
-                var usersObj = {};
-                users.forEach(function(user) {
-                    usersObj[user] = true;
-                })
-                var dbUsersObj = {};
-                result.users.forEach(function(user) {
-                    dbUsersObj[user] = true;
-                })
-                var uniq = [];//拿到没有重复的元素
-                for(var key in usersObj) {
-                    if(!dbUsersObj[key]) {
-                        uniq.push(key);
-                    }
-                }
-
-                if(uniq.length>0) {
-                    var newUsers = result.users.concat(uniq);
-                    roleDao.base.update({_id:_id},{users:newUsers},{multi:false,upset:false},function(err) {
-                        res.send(err==null?"success":"error");
-                    });
-                } else {
-                    res.send("success");
-                }
-            }
-        })
-    }
-}
-
-
-/**
- * 删除用户
- * @param req
- * @param res
- */
-controller.removeUsers = function(req,res) {
-    var users = req.body.users;
-    var _id = req.body._id;
-    if(users) {
-        roleDao.base.getSingleByQuery({_id:_id},function(err,result) {
-            if(err) res.send("error");
-            else {
-                var usersObj = {};
-                users.forEach(function(user) {
-                    usersObj[user] = true;
-                });
-                var dbUsersObj = {};
-                result.users.forEach(function(user) {
-                    dbUsersObj[user] = true;
-                });
-
-                var afterUsers = [];    //删除之后的
-                for(var key in dbUsersObj) {
-                    if(!usersObj[key]) {
-                        afterUsers.push(key);
-                    }
-                }
-
-                roleDao.base.update({_id:_id},{users:afterUsers},{multi:false,upset:false},function(err) {
-                    res.send(err==null?"success":"error");
-                });
-            }
-        })
-    }
-}
-
-
-/**
- * 提交角色对应的权限
- * @param req
- * @param res
- */
-controller.submitPermissions = function(req,res) {
-    var _id = req.body._id;
-    var permissions = req.body.permissions;
-
-    if(_id && permissions) {
-        roleDao.base.getSingleByQuery({_id:_id},function(err,result) {
-            if(err) res.send("error");
-            else {
-                var permissionsObj = {};
-                permissions.forEach(function(p) {
-                    permissionsObj[p] = true;
-                })
-                var dbPermissionsObj = {};
-                result.permissions.forEach(function(p) {
-                    dbPermissionsObj[p] = true;
-                })
-                var uniq = [];//拿到没有重复的元素
-                for(var key in permissionsObj) {
-                    if(!dbPermissionsObj[key]) {
-                        uniq.push(key);
-                    }
-                }
-
-                if(uniq.length>0) {
-                    var newPermissions = result.permissions.concat(uniq);
-                    roleDao.base.update({_id:_id},{permissions:newPermissions},{multi:false,upset:false},function(err) {
-                        res.send(err==null?"success":"error");
-                    });
-                } else {
-                    res.send("success");
-                }
-            }
-        });
-    } else {
-        res.send("error");
-    }
-}
-
-
-controller.removePermissions = function(req,res) {
-
-    var _id = req.body._id;
-    var permissions = req.body.permissions;
-
-    if(_id && permissions) {
-        roleDao.base.getSingleByQuery({_id:_id},function(err,result) {
-            if(err) res.send("error");
-            else {
-                var permissionsObj = {};
-                permissions.forEach(function(p) {
-                    permissionsObj[p] = true;
-                });
-                var dbPermissionsObj = {};
-                result.permissions.forEach(function(p) {
-                    dbPermissionsObj[p] = true;
-                });
-
-                var afterPermissions = [];    //删除之后的
-                for(var key in dbPermissionsObj) {
-                    if(!permissionsObj[key]) {
-                        afterPermissions.push(key);
-                    }
-                }
-
-                roleDao.base.update({_id:_id},{permissions:afterPermissions},{multi:false,upset:false},function(err) {
-                    res.send(err==null?"success":"error");
-                });
-            }
-        })
     }
 }
 

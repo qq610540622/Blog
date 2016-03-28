@@ -139,11 +139,8 @@ route.prototype = {
         this.app.post('/admin/role/remove',adminRoleController.remove);
         this.app.post('/admin/role/getUsers',adminRoleController.getUsers);
         this.app.post('/admin/role/getPermissions',adminRoleController.getPermissions);
-        this.app.post('/admin/role/submitUsers',adminRoleController.submitUsers);
-        this.app.post('/admin/role/removeUsers',adminRoleController.removeUsers);
-        this.app.post('/admin/role/submitPermissions',adminRoleController.submitPermissions);
-        this.app.post('/admin/role/removePermissions',adminRoleController.removePermissions);
         this.app.post('/admin/role/isRepeatRoleCode',adminRoleController.isRepeatRoleCode);
+        this.app.post('/admin/role/update',adminRoleController.update);
 
         //权限
         this.app.get("/admin/permission/index",adminPermissionController.index);
