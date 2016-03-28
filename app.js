@@ -11,7 +11,10 @@ var csrf = require('csurf');
 var auth = require("./middlewares/auth");
 var RedisStore = require('connect-redis')(session);
 var cluster = require('cluster');
+var _ = require('lodash');
+var loader = require('loader');
 var csurf = require('csurf');
+
 
 if (cluster.isMaster) {
     var cpuCount = require('os').cpus().length;
@@ -33,8 +36,28 @@ if (cluster.isMaster) {
     app.enable('trust proxy');
 
 
+    // assets
+    var assets = {};
+    if (config.mini_assets) {
+        try {
+            assets = require('./assets.json');
+        } catch (e) {
+            logger.error('You must execute `make build` before start app when mini_assets is true.');
+            throw e;
+        }
+    }
+
     //指定静态资源
     app.use(express.static(path.join(__dirname, 'public')));
+    _.extend(app.locals, {
+        config: config,
+        loader: loader,
+        assets:assets
+    });
+    console.log(app.locals);
+
+
+
 
     //http请求体中间件
     app.use(bodyParser.json());

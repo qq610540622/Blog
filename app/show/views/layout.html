@@ -2,19 +2,43 @@
 <html>
 <head>
     <!-- css样式 -->
-    <link rel="stylesheet" type="text/css" href="/build/css/index.css">
-    <link rel="stylesheet" type="text/css" href="/libs/bootstrap/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="/libs/bootstrap/dist/css/bootstrap-theme.min.css">
-    <link rel="stylesheet" type="text/css" href="/libs/Font-Awesome-3.2.1/css/font-awesome.min.css">
-    <link rel="stylesheet" type="text/css" href="/libs/bootstrapvalidator/dist/css/bootstrapValidator.min.css">
-    <link rel="stylesheet" type="text/css" href="/libs/csshake/dist/csshake.min.css">
+
+    <!-- style -->
+    <%- loader('css')
+    .css('/build/css/index.css')
+    .css('/libs/bootstrap/dist/css/bootstrap.min.css')
+    .css('/libs/bootstrap/dist/css/bootstrap-theme.min.css')
+    .css('/libs/Font-Awesome-3.2.1/css/font-awesome.min.css')
+    .css('/libs/bootstrapvalidator/dist/css/bootstrapValidator.min.css')
+    .css('/libs/csshake/dist/csshake.min.css')
+    .done()
+    %>
+
+    <!--<link rel="stylesheet" type="text/css" href="/build/css/index.css">-->
+    <!--<link rel="stylesheet" type="text/css" href="/libs/bootstrap/dist/css/bootstrap.min.css">-->
+    <!--<link rel="stylesheet" type="text/css" href="/libs/bootstrap/dist/css/bootstrap-theme.min.css">-->
+    <!--<link rel="stylesheet" type="text/css" href="/libs/Font-Awesome-3.2.1/css/font-awesome.min.css">-->
+    <!--<link rel="stylesheet" type="text/css" href="/libs/bootstrapvalidator/dist/css/bootstrapValidator.min.css">-->
+    <!--<link rel="stylesheet" type="text/css" href="/libs/csshake/dist/csshake.min.css">-->
 
     <title><%= title %></title>
     <link rel="shortcut icon" href="/images/favicon.ico">
+    <script type="text/javascript">
+        var csrf = "<%= csrf %>";
+    </script>
     <!-- javascript脚本 -->
-    <script type="text/javascript" src="/libs/jquery/dist/jquery.min.js"></script>
+    <%- loader('js')
+    .js('/libs/jquery/dist/jquery.min.js')
+    .js('/libs/bootstrap/dist/js/bootstrap.min.js')
+    .js('/libs/bootstrapvalidator/dist/js/bootstrapValidator.min.js')
+    .js('/build/js/global.js')
+    .done()
+    %>
+
+   <!-- <script type="text/javascript" src="/libs/jquery/dist/jquery.min.js"></script>
     <script type="text/javascript" src="/libs/bootstrap/dist/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="/libs/bootstrapvalidator/dist/js/bootstrapValidator.min.js"></script>
+    <script type="text/javascript" src="/build/js/global.js"></script>-->
 </head>
 <body>
 <header>
@@ -30,5 +54,4 @@
 </footer>
 
 </body>
-<script type="text/javascript" src="/build/js/global.js"></script>
 </html>

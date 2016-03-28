@@ -4,7 +4,7 @@
 function htmlEncode(str)
 {
     var s  = "";
-    if(str.length    ==    0)    return    "";
+    if(str.length === 0)    return    "";
     s = str.replace(/&/g, "&amp;");
     s = s.replace(/</g, "&lt;");
     s = s.replace(/>/g, "&gt;");
@@ -17,7 +17,7 @@ function htmlEncode(str)
 function htmlDecode(str)
 {
     var s = "";
-    if(str.length    ==    0)    return    "";
+    if(str.length === 0) return"";
     s = s.replace(/&lt;/g, "<");
     s = s.replace(/&gt;/g, ">");
     s = s.replace(/&nbsp;/g," ");
@@ -41,12 +41,10 @@ function getRandomInt(min, max) {
 }
 
 
-
-
 function convertTime(timestramp) {
     var res = "";
-    if(timestramp && typeof timestramp == "number") {
-        var time = new Date(timestramp);
+    if(timestramp) {
+        var time = new Date(parseInt(timestramp));
         var year = time.getFullYear();
         var month = time.getMonth()+1;
         month = month < 10 ? '0' + month : month;

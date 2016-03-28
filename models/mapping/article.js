@@ -4,7 +4,7 @@ var schema = new mongoose.Schema({
     forumId:String,
     title:String,
     content:String,
-    author:String,
+    author:{type:String,default:"admin"},
     redirectUrl:{type:String,default:""},
     tag:[],
     createDate:Number,
