@@ -10,7 +10,7 @@
      })
 
      it("forum list",function(done) {
-         request.post('/forum/list')
+         request.post('/admin/forum/list')
              .expect(200,function(err,res) {
                  should.not.exist(err);
                  res.should.not.equal("error");
@@ -18,9 +18,10 @@
              });
      });
 
+
      it("form create", function(done) {
          var model = support.forum;
-         request.post('/forum/create')
+         request.post('/admin/forum/create')
              .send(model)
              .expect(200,function(err,res) {
                  should.not.exist(err);
@@ -31,7 +32,7 @@
 
      it("form remove",function(done) {
          var model = support.forum;
-         request.post('/forum/remove')
+         request.post('/admin/forum/remove')
              .send({_id:model._id})
              .expect(200,function(err,res) {
                  should.not.exist(err);
@@ -43,7 +44,7 @@
      it("forum edit",function(done) {
          var model = support.forum;
          model.sortId = 100;
-         request.post("/forum/edit")
+         request.post("/admin/forum/edit")
              .send(model)
              .expect(200,function(err,res) {
                  should.not.exist(err);

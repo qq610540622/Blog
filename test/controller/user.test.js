@@ -9,14 +9,14 @@
      });
 
      it("user list", function (done) {
-          request.post('/user/getList')
+          request.post('/admin/user/getList')
               .expect(200)
               .end(done);
      });
 
      it("user update", function (done) {
          var model = support.user;
-          request.post('/user/update')
+          request.post('/admin/user/update')
               .send({_id:model._id, status:model.status})
               .expect(200,function(err,res) {
                   res.text.should.containEql("success")
@@ -26,7 +26,7 @@
 
      it("user remove", function (done) {
          var model = support.user;
-         request.post('/user/remove')
+         request.post('/admin/user/remove')
              .send({_id:model._id})
              .expect(200,function(err,res) {
                  res.text.should.containEql("success")

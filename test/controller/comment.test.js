@@ -12,7 +12,7 @@
      })
 
      it("comment list",function(done) {
-         request.post('/comment/getList')
+         request.post('/admin/comment/getCommentList')
              .send({page:1,rows:5})
              .expect(200,function(err,res) {
                  should.not.exist(err);
@@ -23,7 +23,7 @@
 
      it("comment remove",function(done) {
          var model = support.comment;
-         request.post('/comment/remove')
+         request.post('/admin/comment/remove')
              .send({_id:model._id})
              .expect(200,function(err,res) {
                  should.not.exist(err);

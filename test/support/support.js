@@ -20,7 +20,6 @@ proxy.fail(function(err) {
 ready(exports);
 
 proxy.all('article','articles', 'comment','user','forum', function(article,articles, comment,user,forum) {
-    console.log(comment);
 	exports.article = article;
 	exports.articles = articles;
 	exports.comment = comment;

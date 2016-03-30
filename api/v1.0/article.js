@@ -107,8 +107,8 @@ controller.create = function(req,res) {
             createDate : req.body.createDate || Date.now(),
             readCount:req.body.readCount || 0
         };
-        articleDao.base.create(model,function(status,item) {
-            if(!status) tools.resError(109,null,res);
+        articleDao.base.create(model,function(err,item) {
+            if(err) tools.resError(109,null,res);
             else tools.resSuccess(item,res);
         });
     } else if(req.body.list) {
@@ -121,8 +121,8 @@ controller.create = function(req,res) {
             }
         }
         if(isOk) {
-            articleDao.base.create(list,function(status,item) {
-                if(!status) tools.resError(109,null,res);
+            articleDao.base.create(list,function(err,item) {
+                if(err) tools.resError(109,null,res);
                 else tools.resSuccess(item,res);
             });
         } else {

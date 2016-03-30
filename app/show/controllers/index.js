@@ -14,7 +14,6 @@ var controller = {};
  * @param res
  */
 controller.index = function(req,res) {
-    logger.error(res.locals);
     async.series({
         indexArticles: function(callback){
             articleDao.getArticles(10,function(err,items) {

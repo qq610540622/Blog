@@ -5,7 +5,7 @@
 
 var config = {
     // debug 为 true 时，用于本地调试
-    debug: false,
+    debug: true,
     mini_assets : false,
     site_static_host: '',
     host: 'localhost',
