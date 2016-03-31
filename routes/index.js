@@ -11,8 +11,6 @@ var showGuestbookController = require("../app/show/controllers/guestbook");
 var showChatController = require("../app/show/controllers/chat");
 
 
-
-
 var adminIndexController = require("../app/admin/controllers/home");
 var adminArticleController = require("../app/admin/controllers/article");
 var adminUserController = require("../app/admin/controllers/user");
