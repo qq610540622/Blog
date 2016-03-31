@@ -5,7 +5,7 @@
 
 var config = {
     // debug 为 true 时，用于本地调试
-    debug: true,
+    debug: false,
     mini_assets : false,
     site_static_host: '',
     host: 'localhost',
@@ -48,7 +48,7 @@ var config = {
 };
 
 if (process.env.NODE_ENV === 'test') {
-    config.db = 'mongodb://127.0.0.1/node_club_test';
+    config.db = 'mongodb://127.0.0.1/blog_test';
 }
 
 module.exports = config;
